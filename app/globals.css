@@ -1,0 +1,411 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
+}
+
+body {
+  background: #0a0a0b;
+  color: #ededed;
+  overflow-x: hidden;
+  font-feature-settings: "kern", "liga", "calt";
+  font-kerning: normal;
+  text-wrap: pretty;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+::selection {
+  background: #6d5ef6;
+  color: #fff;
+}
+
+/* ─── Typography utilities ──────────────────────────────────────────────── */
+.text-balance {
+  text-wrap: balance;
+}
+
+.serif-display {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  font-variation-settings:
+    "opsz" 144,
+    "SOFT" 40;
+}
+
+.serif-num {
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" 40;
+  font-feature-settings: "lnum", "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Film grain overlay ────────────────────────────────────────────────── */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -200%;
+  width: 400%;
+  height: 400%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 8s steps(10) infinite;
+}
+@keyframes grain {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-5%, -5%);
+  }
+  30% {
+    transform: translate(3%, -8%);
+  }
+  50% {
+    transform: translate(-7%, 4%);
+  }
+  70% {
+    transform: translate(6%, 6%);
+  }
+  90% {
+    transform: translate(-4%, 2%);
+  }
+}
+
+/* ─── Aurora — animated drifting layers ────────────────────────────────── */
+@keyframes aurora-drift-a {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(3%, 4%, 0) scale(1.06);
+  }
+}
+@keyframes aurora-drift-b {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.03);
+  }
+  100% {
+    transform: translate3d(-4%, -3%, 0) scale(1);
+  }
+}
+
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    60rem 40rem at 75% -10%,
+    rgba(109, 94, 246, 0.2),
+    transparent 60%
+  );
+}
+
+/* Layer A — violet blob */
+.aurora::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    50rem 40rem at 10% 10%,
+    rgba(167, 139, 250, 0.12),
+    transparent 55%
+  );
+  animation: aurora-drift-a 34s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Layer B — amber bloom (bottom) */
+.aurora::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    40rem 30rem at 50% 110%,
+    rgba(245, 181, 68, 0.07),
+    transparent 60%
+  );
+  animation: aurora-drift-b 28s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* ─── Shell ─────────────────────────────────────────────────────────────── */
+.shell {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: max(1.5rem, env(safe-area-inset-left));
+  padding-right: max(1.5rem, env(safe-area-inset-right));
+}
+
+/* ─── Eyebrow / hairline ────────────────────────────────────────────────── */
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8a8a92;
+}
+
+.hairline {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ─── Card — glass elevation + spotlight hook ───────────────────────────── */
+.card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.035),
+    rgba(255, 255, 255, 0.012)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.25rem;
+  backdrop-filter: blur(8px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 20px 40px -24px rgba(0, 0, 0, 0.6);
+}
+
+/* Cursor-follow spotlight — written by JS via --mx / --my CSS vars */
+.card-spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s;
+  background: radial-gradient(
+    16rem 16rem at var(--mx, 50%) var(--my, 50%),
+    rgba(109, 94, 246, 0.12),
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+/* ─── Card hover — desktop only ─────────────────────────────────────────── */
+.card-hover {
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.4s,
+    background 0.4s;
+}
+
+@media (hover: hover) {
+  .card-hover:hover {
+    transform: translateY(-4px);
+    border-color: rgba(109, 94, 246, 0.45);
+    background: linear-gradient(
+      180deg,
+      rgba(109, 94, 246, 0.07),
+      rgba(255, 255, 255, 0.012)
+    );
+  }
+
+  .card-spotlight:hover::before {
+    opacity: 1;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px -12px rgba(237, 237, 237, 0.5);
+  }
+
+  .btn-ghost:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+/* Touch press feedback (always active) */
+.card-hover:active,
+.btn-primary:active,
+.btn-ghost:active {
+  transform: scale(0.98);
+}
+
+/* ─── Buttons ───────────────────────────────────────────────────────────── */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #ededed;
+  color: #0a0a0b;
+  font-weight: 600;
+  padding: 0.85rem 1.4rem;
+  border-radius: 999px;
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.3s;
+}
+
+/* Shimmer sweep on hover — reduced-motion guarded */
+@media (prefers-reduced-motion: no-preference) {
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      110deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.45) 50%,
+      transparent 70%
+    );
+    transform: translateX(-120%);
+    transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+  }
+
+  @media (hover: hover) {
+    .btn-primary:hover::after {
+      transform: translateX(120%);
+    }
+  }
+}
+
+/* Arrow nudge inside btn-primary */
+.btn-primary:hover span[aria-hidden] {
+  transform: translateX(4px);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+span[aria-hidden] {
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: inline-block;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ededed;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 0.85rem 1.4rem;
+  border-radius: 999px;
+  transition:
+    border-color 0.3s,
+    background 0.3s;
+}
+
+/* ─── Focus-visible rings (WCAG 2.4.7) ─────────────────────────────────── */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid #a78bfa;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid #a78bfa;
+  outline-offset: 3px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.35);
+}
+
+.btn-ghost:focus-visible {
+  outline: 2px solid #a78bfa;
+  outline-offset: 3px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.35);
+}
+
+/* ─── Link underline draw utility ──────────────────────────────────────── */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ─── Edge fade — horizontal track mask ────────────────────────────────── */
+.edge-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+
+/* ─── Skip link (layout.tsx) ────────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 9000;
+  background: #6d5ef6;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0 0 6px 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* ─── Marquee track ─────────────────────────────────────────────────────── */
+.marquee-track {
+  /* JS or reduced-motion guard overrides via animation:none */
+}
+
+/* ─── prefers-reduced-motion guard ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .grain::after {
+    animation: none;
+  }
+  .aurora,
+  .aurora::before,
+  .aurora::after {
+    animation: none;
+  }
+  .marquee-track {
+    animation: none;
+  }
+  * {
+    scroll-behavior: auto !important;
+  }
+}
