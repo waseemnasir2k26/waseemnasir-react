@@ -18,6 +18,7 @@ interface Variant {
   palette: string; // short readable description
   accentHex: string; // the one key accent colour
   photo: string; // representative image from /img/pro/
+  recommended?: boolean; // Claude's top pick
 }
 
 const VARIANTS: Variant[] = [
@@ -79,6 +80,7 @@ const VARIANTS: Variant[] = [
     palette: "True Black #070707 / Champagne #CBA968 / Cream",
     accentHex: "#CBA968",
     photo: "PORTRAIT-2026-05-18-black-prince-coat-balcony-rail-sunglasses.jpg",
+    recommended: true,
   },
 ];
 
@@ -118,7 +120,12 @@ export default function VariantsIndex() {
           style={{ color: "#7a7a92" }}
         >
           Six distinct design directions for the same founder story. Compare,
-          pick, or ship any of them. The live homepage at{" "}
+          pick, or ship any of them.{" "}
+          <span style={{ color: "#CBA968", fontWeight: 600 }}>
+            Dark Luxe is the recommended direction
+          </span>{" "}
+          — premium B2B authority, best fit for client trust. The live homepage
+          at{" "}
           <Link
             href="/"
             className="underline underline-offset-2 hover:opacity-80 transition-opacity"
@@ -190,6 +197,18 @@ export default function VariantsIndex() {
                   >
                     {v.scroll}
                   </div>
+                  {/* recommended badge */}
+                  {v.recommended && (
+                    <div
+                      className="absolute top-3 left-3 font-mono text-[10px] font-bold tracking-widest px-2 py-1 rounded uppercase"
+                      style={{
+                        background: v.accentHex,
+                        color: "#070707",
+                      }}
+                    >
+                      ★ Recommended
+                    </div>
+                  )}
                 </div>
 
                 {/* info */}
