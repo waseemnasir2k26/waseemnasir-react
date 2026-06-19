@@ -26,16 +26,16 @@ export default function About() {
   const imageY = prefersReduced ? "0%" : rawY;
 
   return (
-    <section id="about" ref={sectionRef} className="py-28 md:py-40">
+    <section id="about" ref={sectionRef} className="section-y-lg">
       <div className="shell grid items-center gap-14 lg:grid-cols-[0.85fr_1.15fr]">
-        {/* ── Image column ── */}
-        <Reveal className="order-2 lg:order-1">
-          {/* Outer clip: hides overscroll edges from parallax */}
-          <div className="relative overflow-hidden rounded-[1.75rem] border border-line">
+        {/* ── Image column — stacked editorial pair ── */}
+        <Reveal className="relative order-2 lg:order-1">
+          {/* Primary: gold-edged parallax portrait. aspect-ratio reserves space pre-decode (no CLS) */}
+          <div className="rule-gold relative aspect-[680/820] overflow-hidden rounded-[1.75rem] border border-line">
             {/* Inner wrapper moves; outer keeps shape */}
             <motion.div
               style={{ y: imageY }}
-              className="relative"
+              className="absolute inset-0"
               /* Scale slightly so -6%/+6% travel never exposes edge gaps */
               initial={{ scale: 1.13 }}
               animate={{ scale: 1.13 }}
@@ -43,14 +43,28 @@ export default function About() {
               <Image
                 src="/img/about.jpg"
                 alt="Waseem Nasir working"
-                width={680}
-                height={820}
+                fill
                 sizes="(max-width: 1024px) 90vw, 45vw"
                 decoding="async"
-                className="h-full w-full object-cover"
+                className="object-cover"
               />
             </motion.div>
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" />
+          </div>
+
+          {/* Secondary inset — Bali terrace, signals the remote-founder story */}
+          <div className="absolute -bottom-7 -right-3 hidden w-[38%] overflow-hidden rounded-2xl border border-gold/30 shadow-2xl sm:block lg:-right-7">
+            <div className="relative aspect-[4/5]">
+              <Image
+                src="/img/pro/CAFE-WORK-2026-05-22-bali-terrace-typing-laptop-latte-sunglasses.jpg"
+                alt="Waseem working from a Bali terrace cafe"
+                fill
+                sizes="(max-width: 1024px) 35vw, 18vw"
+                decoding="async"
+                className="object-cover"
+                style={{ objectPosition: "center" }}
+              />
+            </div>
           </div>
         </Reveal>
 
@@ -58,10 +72,10 @@ export default function About() {
         <Reveal delay={0.08} className="order-1 lg:order-2">
           <p className="eyebrow">About</p>
 
-          <h2 className="text-h2-fluid text-balance mt-4 font-semibold text-chalk">
+          <h2 className="serif-display text-h2-fluid text-balance mt-4 font-normal text-chalk">
             From Pakistan to Bali,
             <br />
-            <span className="font-serif font-light italic text-accent2">
+            <span className="serif-italic text-accent2">
               building since 2019.
             </span>
           </h2>
@@ -69,8 +83,8 @@ export default function About() {
           <div className="mt-6 space-y-4 text-mute">
             <p className="text-lead">
               I started SkynetLabs to do one thing well: take the boring,
-              breaking, money-leaking parts of a business and engineer them out
-              of existence with software.
+              breaking, money-leaking parts of a business and engineer them away
+              with software.
             </p>
             <p className="text-lead">
               I&apos;m a builder before I&apos;m a seller. I&apos;d rather show
@@ -101,7 +115,9 @@ export default function About() {
             >
               GitHub ↗
             </a>
-            <span className="text-mute">Bali, Indonesia · works worldwide</span>
+            <span className="text-mute">
+              Bali, Indonesia · 9 countries served, remote
+            </span>
           </div>
         </Reveal>
       </div>

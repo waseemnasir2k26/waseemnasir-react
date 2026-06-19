@@ -22,7 +22,7 @@ export default function ScrollProgress() {
   return (
     <motion.div
       style={{ scaleX, transformOrigin: "0%" }}
-      className="fixed top-0 inset-x-0 h-[2px] z-[60] pointer-events-none bg-gradient-to-r from-accent via-accent2 to-amber"
+      className="fixed top-0 inset-x-0 h-[2px] z-[60] pointer-events-none bg-gradient-to-r from-accent via-accent2 to-accent"
       aria-hidden
     />
   );

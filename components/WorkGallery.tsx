@@ -124,7 +124,7 @@ export default function WorkGallery({ items }: WorkGalleryProps) {
           >
             <div>
               <p className="eyebrow mb-6">Ready to start?</p>
-              <p className="text-h2-fluid font-serif font-light text-chalk text-balance leading-tight">
+              <p className="serif-display text-h2-fluid font-normal text-chalk text-balance leading-tight">
                 Want a system like these?
               </p>
             </div>

@@ -57,7 +57,7 @@ function HeadlineBloom({ scrollY }: { scrollY: MotionValue<number> }) {
         className="h-full w-full rounded-full opacity-[0.42]"
         style={{
           background:
-            "radial-gradient(ellipse 60% 55% at 40% 50%, #6D5EF6 0%, #A78BFA 38%, rgba(245,181,68,0.08) 75%, transparent 100%)",
+            "radial-gradient(ellipse 60% 55% at 40% 50%, #7B6CFF 0%, #B7AAFF 38%, rgba(244,192,98,0.08) 75%, transparent 100%)",
           filter: "blur(72px)",
         }}
       />
@@ -124,7 +124,7 @@ function Portrait({ parallaxY }: { parallaxY: MotionValue<number> }) {
                 transformPerspective: 1000,
               }
         }
-        className="relative overflow-hidden rounded-[1.75rem] border border-line"
+        className="rule-gold relative overflow-hidden rounded-[1.75rem] border border-line"
       >
         {/* Over-scale the image so parallax never reveals an edge */}
         <div className="relative scale-[1.06]">
@@ -144,7 +144,7 @@ function Portrait({ parallaxY }: { parallaxY: MotionValue<number> }) {
             <div className="text-sm font-medium text-chalk">Waseem Nasir</div>
             <div className="text-xs text-mute">Founder · SkynetLabs</div>
           </div>
-          <div className="font-mono text-[0.65rem] uppercase tracking-widest text-accent2">
+          <div className="font-mono text-[0.65rem] uppercase tracking-widest text-gold">
             Bali · remote
           </div>
         </div>
@@ -198,7 +198,7 @@ export default function Hero() {
           >
             <PresenceDot />
             <span className="eyebrow !text-chalk/70">
-              Independent · taking on 4 builds / month
+              Independent · a few builds a month
             </span>
           </motion.div>
 
@@ -208,12 +208,10 @@ export default function Hero() {
               as="h1"
               mode="mount"
               delayChildren={0.1}
-              className="text-display font-semibold text-chalk text-balance"
+              className="serif-display text-mega font-normal text-chalk text-balance"
             >
               {"I make your busywork "}
-              <span className="font-serif font-light italic text-accent2">
-                disappear.
-              </span>
+              <span className="serif-italic text-gold">disappear.</span>
             </TextReveal>
           </motion.div>
 
@@ -222,10 +220,10 @@ export default function Hero() {
             variants={SPRING_ITEM}
             className="mt-7 max-w-xl text-lead leading-relaxed text-mute"
           >
-            I&apos;m Waseem — a founder who builds quiet AI &amp; automation
-            systems behind the scenes of growing businesses. Missed leads, dead
-            follow-ups, manual ops that eat your week. I find the leak and
-            engineer it shut.
+            I&apos;m Waseem — a founder who builds the quiet AI systems that run
+            behind a business, so the owner stops doing robot work. Missed
+            leads, dead follow-ups, manual ops that eat your week. I find the
+            leak and engineer it shut.
           </motion.p>
 
           {/* CTA row */}
@@ -264,7 +262,7 @@ export default function Hero() {
           >
             {PROOF.map((p) => (
               <div key={p.label}>
-                <div className="font-serif text-2xl text-chalk">
+                <div className="serif-num text-3xl text-gold">
                   <CountUp
                     to={p.value}
                     suffix={p.suffix}

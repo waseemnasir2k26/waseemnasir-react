@@ -100,7 +100,9 @@ function MobileCard({ item, index }: { item: WorkItem; index: number }) {
 
 // ─── Section ──────────────────────────────────────────────────────────────────
 export default function Work() {
-  const isDesktop = useMediaQuery("(min-width: 768px)", false);
+  // Gallery cards are fixed-width (~480px) — only run the pinned horizontal
+  // pan where there's genuine room (≥1024px). Tablets fall back to the grid.
+  const isDesktop = useMediaQuery("(min-width: 1024px)", false);
   const reduce = useReducedMotion();
   const animated = isDesktop && !reduce;
 
@@ -111,16 +113,14 @@ export default function Work() {
      *   !animated → h-auto (normal vertical flow, no spacer)
      * No empty 320vh spacer is ever injected on mobile.
      */
-    <section id="work" className={animated ? "" : "py-24 md:py-32"}>
+    <section id="work" className={animated ? "" : "section-y"}>
       {/* ── Section header — always in normal flow ── */}
-      <div className={animated ? "shell pt-24 md:pt-32 pb-16" : "shell"}>
+      <div className={animated ? "shell section-y !pb-16" : "shell"}>
         <Reveal variant="blur">
           <p className="eyebrow">Selected work</p>
-          <h2 className="mt-4 max-w-2xl text-h2-fluid font-semibold text-chalk text-balance">
+          <h2 className="serif-display mt-4 max-w-2xl text-h2-fluid font-normal text-chalk text-balance">
             Real systems, quietly running{" "}
-            <span className="font-serif font-light italic text-accent2">
-              right now.
-            </span>
+            <span className="serif-italic text-accent2">right now.</span>
           </h2>
         </Reveal>
       </div>

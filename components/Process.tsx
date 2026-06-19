@@ -33,7 +33,7 @@ function Connector({ reduced }: { reduced: boolean }) {
         style={{ zIndex: 1 }}
       >
         <motion.div
-          className="h-full w-full origin-left bg-gradient-to-r from-accent/60 via-accent2/40 to-transparent"
+          className="h-full w-full origin-left bg-gradient-to-r from-accent/60 via-gold/50 to-transparent"
           initial={reduced ? false : { scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true, margin: "-60px" }}
@@ -48,7 +48,7 @@ function Connector({ reduced }: { reduced: boolean }) {
         style={{ zIndex: 1 }}
       >
         <motion.div
-          className="h-full w-full origin-top bg-gradient-to-b from-accent/60 via-accent2/40 to-transparent"
+          className="h-full w-full origin-top bg-gradient-to-b from-accent/60 via-gold/50 to-transparent"
           initial={reduced ? false : { scaleY: 0 }}
           whileInView={{ scaleY: 1 }}
           viewport={{ once: true, margin: "-60px" }}
@@ -78,7 +78,7 @@ export default function Process() {
   const itemVariants = reduced ? { hidden: {}, show: {} } : SPRING_ITEM;
 
   return (
-    <section className="relative py-24 md:py-36">
+    <section className="surface-1 section-y relative">
       <div className="shell">
         {/* Section header */}
         <motion.div
@@ -88,9 +88,9 @@ export default function Process() {
           transition={reduced ? undefined : { ...SPRING_SOFT, delay: 0 }}
         >
           <p className="eyebrow">How working together works</p>
-          <h2 className="mt-4 max-w-2xl text-h2-fluid font-semibold text-chalk text-balance">
+          <h2 className="serif-display mt-4 max-w-2xl text-h2-fluid font-normal text-chalk text-balance">
             Simple, because{" "}
-            <span className="font-serif font-light italic text-accent2">
+            <span className="serif-italic text-accent2">
               it&apos;s just me.
             </span>
           </h2>
@@ -119,13 +119,13 @@ export default function Process() {
                   className="pointer-events-none absolute inset-0 rounded-none opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                   style={{
                     background:
-                      "radial-gradient(320px circle at 50% 0%, rgba(109,94,246,0.07), transparent 70%)",
+                      "radial-gradient(320px circle at 50% 0%, rgba(123,108,255,0.07), transparent 70%)",
                   }}
                 />
 
-                {/* Step number — spring-scales in, warms to indigo on group hover */}
+                {/* Step number — spring-scales in, warms to gold on group hover */}
                 <motion.div
-                  className="step-num font-serif text-6xl font-light tabular-nums text-white/10 transition-colors duration-300 group-hover:text-accent/50 md:text-7xl"
+                  className="step-num serif-display text-6xl tabular-nums text-white/10 transition-colors duration-300 group-hover:text-gold/50 md:text-7xl"
                   initial={reduced ? false : { opacity: 0, scale: 0.6 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true, margin: "-40px" }}
@@ -151,7 +151,7 @@ export default function Process() {
                   <span className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent/5 px-3 py-1 text-xs font-medium text-accent2">
                     <span
                       aria-hidden
-                      className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent2"
+                      className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent2 motion-reduce:animate-none"
                     />
                     Runs 24 / 7
                   </span>

@@ -13,7 +13,8 @@ const CARDS = [
     tag: "Leads slipping",
     title: "Enquiries that never get answered",
     body: "A missed call at 9pm is a lost customer by morning. I wire up systems that catch every lead and reply in seconds — not the next business day.",
-    span: "md:col-span-3",
+    span: "md:col-span-6",
+    feature: true,
   },
   {
     k: "02",
@@ -21,27 +22,31 @@ const CARDS = [
     title: "Work a robot should be doing",
     body: "Sorting inbox, chasing follow-ups, copy-pasting between tools. I build n8n automations that run it quietly in the background, 24/7.",
     span: "md:col-span-3",
+    feature: false,
   },
   {
     k: "03",
     tag: "Invisible online",
     title: "Customers can't find you",
-    body: "When people ask ChatGPT or Google for someone like you and your name never comes up. I fix the site, the schema, and the signals so you show up.",
-    span: "md:col-span-2",
+    body: "When people ask ChatGPT or Google for someone like you and your name never comes up. I fix the site and the structured data underneath it, so your name surfaces when people ask.",
+    span: "md:col-span-3",
+    feature: false,
   },
   {
     k: "04",
     tag: "Half-built systems",
     title: "Tools that don't talk to each other",
     body: "Your site, CRM, payments and inbox living on separate islands. I connect them into one system you can actually run.",
-    span: "md:col-span-2",
+    span: "md:col-span-3",
+    feature: false,
   },
   {
     k: "05",
     tag: "One person",
     title: "You, accountable — start to ship",
     body: "No account managers, no handoffs. You talk to the person building it. That's the whole point.",
-    span: "md:col-span-2",
+    span: "md:col-span-3",
+    feature: false,
   },
 ] as const;
 
@@ -108,25 +113,45 @@ export default function Solve() {
           className={c.span}
         >
           <SpotlightCard className="group h-full">
-            <div className="card card-hover card-spotlight h-full p-7">
+            <div
+              className={[
+                "card card-hover card-spotlight h-full",
+                c.feature ? "card--feature p-8 md:p-10" : "p-7",
+              ].join(" ")}
+            >
               {/* Header row: tag + ghost number */}
               <div className="flex items-center justify-between">
                 <span className="font-mono text-xs uppercase tracking-widest text-accent">
                   {c.tag}
                 </span>
-                {/* Ghost number shifts from white/15 → indigo on group hover */}
+                {/* Ghost number shifts from white/15 → gold on group hover */}
                 <span
                   className={[
-                    "step-num font-serif text-2xl transition-colors duration-300",
-                    "text-white/15 group-hover:text-accent/60",
+                    "step-num serif-num transition-colors duration-300",
+                    c.feature ? "text-4xl" : "text-2xl",
+                    "text-white/15 group-hover:text-gold/60",
                   ].join(" ")}
                 >
                   {c.k}
                 </span>
               </div>
 
-              <h3 className="mt-5 text-xl font-medium text-chalk">{c.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-mute">{c.body}</p>
+              <h3
+                className={[
+                  "font-medium text-chalk",
+                  c.feature ? "mt-6 text-h3-fluid md:max-w-md" : "mt-5 text-xl",
+                ].join(" ")}
+              >
+                {c.title}
+              </h3>
+              <p
+                className={[
+                  "mt-3 leading-relaxed text-mute",
+                  c.feature ? "text-[0.95rem] md:max-w-lg" : "text-sm",
+                ].join(" ")}
+              >
+                {c.body}
+              </p>
             </div>
           </SpotlightCard>
         </motion.div>
@@ -135,18 +160,16 @@ export default function Solve() {
   );
 
   return (
-    <section id="solve" className="py-16 sm:py-24 md:py-32">
+    <section id="solve" className="surface-1 section-y">
       <div className="shell">
         {/* Section header */}
         <Reveal>
           <p className="eyebrow">What I solve</p>
-          <h2 className="text-h2-fluid text-balance mt-4 max-w-2xl font-semibold text-chalk">
+          <h2 className="serif-display text-h2-fluid text-balance mt-4 max-w-2xl font-normal text-chalk">
             Most businesses aren&apos;t missing effort.
             <br />
             They&apos;re{" "}
-            <span className="font-serif font-light italic text-accent2">
-              leaking it.
-            </span>
+            <span className="serif-italic text-accent2">leaking it.</span>
           </h2>
           <p className="mt-5 max-w-xl text-mute">
             I don&apos;t sell a stack of services. I find the specific place

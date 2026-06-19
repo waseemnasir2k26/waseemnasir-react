@@ -22,6 +22,47 @@ interface Variant {
 
 const VARIANTS: Variant[] = [
   {
+    slug: "cinema-horizontal",
+    label: "Cinema Horizontal ★ NEW",
+    scroll: "HORIZONTAL",
+    descriptor:
+      "Near-black canvas, scroll-pinned horizontal photo-track pan, restrained signal amber. Velocity-skew filmstrip.",
+    palette: "Near-black #0C0C0E / Bone #EDEAE3 / Amber #FF8A3D",
+    accentHex: "#FF8A3D",
+    photo: "CAFE-WORK-2026-02-14-night-rooftop-cafe-phone-city-lights.jpg",
+  },
+  {
+    slug: "editorial-warm",
+    label: "Editorial Warm ★ NEW",
+    scroll: "VERTICAL",
+    descriptor:
+      "2026 warm-neutral magazine look — Instrument Serif masthead, oxblood accent, sticky-image editorial splits.",
+    palette: "Cream #F4EADE / Espresso #2B1D14 / Oxblood #5A1A1A",
+    accentHex: "#5A1A1A",
+    photo: "PORTRAIT-2026-03-29-beige-tracksuit-pockets-glass-building.jpg",
+  },
+  {
+    slug: "bento-glass",
+    label: "Bento Glass ★ NEW",
+    scroll: "VERTICAL",
+    descriptor:
+      "Modern asymmetric bento photo grid, live count-up stat cells, subtle frosted-glass depth, cool indigo accent.",
+    palette: "Slate #14171C / Frost #F5F7FA / Indigo #5B6CFF",
+    accentHex: "#5B6CFF",
+    photo:
+      "PORTRAIT-2026-05-18-arms-crossed-sunglasses-confident-table-pose.jpg",
+  },
+  {
+    slug: "gallery-exhibition",
+    label: "Gallery Exhibition ★ NEW",
+    scroll: "VERTICAL",
+    descriptor:
+      "Photography-maximal — museum-plate masonry wall + a horizontal pinned gallery interlude. 22 photos, whitespace luxury.",
+    palette: "Gallery White #FCFBF9 / Charcoal #1A1A1A / Taupe #8A7968",
+    accentHex: "#8A7968",
+    photo: "TRAVEL-2025-05-31-nusa-penida-arms-spread-cliffs.jpg",
+  },
+  {
     slug: "light-editorial",
     label: "Light Editorial",
     scroll: "VERTICAL",
@@ -117,8 +158,9 @@ export default function VariantsIndex() {
           className="font-sans text-base max-w-xl"
           style={{ color: "#7a7a92" }}
         >
-          Six distinct design directions for the same founder story. Compare,
-          pick, or ship any of them. The live homepage at{" "}
+          Ten distinct design directions for the same founder story (four new
+          flagship builds first). Compare, pick, or ship any of them. The live
+          homepage at{" "}
           <Link
             href="/"
             className="underline underline-offset-2 hover:opacity-80 transition-opacity"
@@ -247,9 +289,10 @@ export default function VariantsIndex() {
         style={{ borderColor: "#1e1e2a" }}
       >
         <p className="font-mono text-xs" style={{ color: "#40404e" }}>
-          Routes: /variants (this page) · /v/light-editorial · /v/warm-cinematic
-          · /v/brutalist · /v/gradient-glass · /v/editorial-emerald ·
-          /v/dark-luxe
+          Routes: /variants (this page) · /v/cinema-horizontal ·
+          /v/editorial-warm · /v/bento-glass · /v/gallery-exhibition ·
+          /v/light-editorial · /v/warm-cinematic · /v/brutalist ·
+          /v/gradient-glass · /v/editorial-emerald · /v/dark-luxe
         </p>
         <p className="font-mono text-xs mt-1" style={{ color: "#2e2e3a" }}>
           Live site: / — untouched. All variants are isolated under

@@ -132,14 +132,30 @@ export default function Nav() {
     setScrolled(v > 24);
   });
 
-  // ─── Lenis lock helpers ──────────────────────────────────────────────────────
+  // ─── Scroll lock helpers ──────────────────────────────────────────────────────
+  // iOS-safe: `overflow:hidden` alone does NOT stop background touch-scroll on
+  // iOS Safari, so we pin the body with position:fixed and restore scroll on close.
+  // Works whether or not Lenis is running (it early-returns under reduced-motion).
+  const scrollYRef = useRef(0);
   const lockScroll = useCallback(() => {
+    scrollYRef.current = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollYRef.current}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
     document.body.style.overflow = "hidden";
     window.__lenis?.stop();
   }, []);
 
   const unlockScroll = useCallback(() => {
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
     document.body.style.overflow = "";
+    window.scrollTo(0, scrollYRef.current);
     window.__lenis?.start();
   }, []);
 
@@ -178,13 +194,12 @@ export default function Nav() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, closeSheet]);
 
-  // Cleanup scroll lock on unmount
+  // Cleanup scroll lock on unmount — full reset so the body never stays pinned
   useEffect(() => {
     return () => {
-      document.body.style.overflow = "";
-      window.__lenis?.start();
+      unlockScroll();
     };
-  }, []);
+  }, [unlockScroll]);
 
   // ─── Focus trap ──────────────────────────────────────────────────────────────
   const handleSheetKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
@@ -220,7 +235,7 @@ export default function Nav() {
               className="grid h-8 w-8 place-items-center rounded-lg bg-accent/15 text-accent font-mono text-sm font-bold ring-1 ring-accent/30"
               whileHover={{
                 scale: 1.08,
-                backgroundColor: "rgba(109,94,246,0.22)",
+                backgroundColor: "rgba(123,108,255,0.22)",
               }}
               transition={SPRING_SNAP}
             >
@@ -251,7 +266,7 @@ export default function Nav() {
                   {isActive && (
                     <motion.span
                       layoutId="nav-active"
-                      className="absolute -bottom-0.5 left-0 right-0 h-px bg-accent"
+                      className="absolute -bottom-0.5 left-0 right-0 h-px bg-gold"
                       transition={SPRING_SNAP}
                     />
                   )}

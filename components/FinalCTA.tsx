@@ -23,7 +23,7 @@ export default function FinalCTA() {
       : { opacity: 0.22, scale: 1 };
 
   return (
-    <section id="contact" className="relative py-28 md:py-40">
+    <section id="contact" className="surface-2 section-y-lg relative">
       <div className="shell">
         <motion.div
           ref={sectionRef}
@@ -41,7 +41,7 @@ export default function FinalCTA() {
               transition={SPRING_SOFT}
               style={{
                 background:
-                  "radial-gradient(44rem 28rem at 50% 0%, rgba(109,94,246,0.28), transparent 70%)",
+                  "radial-gradient(44rem 28rem at 50% 0%, rgba(123,108,255,0.28), transparent 70%)",
                 willChange: "transform, opacity",
               }}
             />
@@ -60,7 +60,7 @@ export default function FinalCTA() {
               transition={{ ...SPRING_SOFT, delay: 0.1 }}
               style={{
                 background:
-                  "radial-gradient(28rem 16rem at 65% 100%, rgba(245,181,68,0.35), transparent 70%)",
+                  "radial-gradient(28rem 16rem at 65% 100%, rgba(244,192,98,0.42), transparent 70%)",
                 willChange: "transform, opacity",
               }}
             />
@@ -79,7 +79,7 @@ export default function FinalCTA() {
                   className="flex items-baseline gap-1.5"
                   aria-label={`${value}${suffix} ${label}`}
                 >
-                  <span className="font-mono text-base font-semibold tracking-tight text-chalk sm:text-lg">
+                  <span className="serif-num text-xl font-semibold tracking-tight text-gold sm:text-2xl">
                     <CountUp
                       to={value}
                       suffix={suffix}
@@ -101,12 +101,10 @@ export default function FinalCTA() {
               as="h2"
               mode="inview"
               delayChildren={0.08}
-              className="mx-auto max-w-3xl text-balance text-4xl font-semibold leading-[1.05] tracking-[-0.03em] text-chalk sm:text-5xl lg:text-[3.5rem]"
+              className="serif-display mx-auto max-w-3xl text-balance text-4xl font-normal leading-[1.02] tracking-[-0.03em] text-chalk sm:text-5xl lg:text-[3.5rem]"
             >
               {"Tell me what’s "}
-              <span className="font-serif font-light italic text-accent2">
-                slowing you down.
-              </span>
+              <span className="serif-italic text-gold">slowing you down.</span>
             </TextReveal>
 
             {/* Sub-copy */}

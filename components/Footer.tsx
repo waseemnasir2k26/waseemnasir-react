@@ -14,6 +14,14 @@ export default function Footer() {
   return (
     <footer className="hairline border-t border-line py-12">
       <Reveal delay={0.05} y={16}>
+        {/* Oversized editorial signature — a flagship closes with a name, not a copyright */}
+        <div
+          aria-hidden
+          className="shell serif-display mb-10 select-none text-balance text-5xl leading-none text-chalk/[0.10] sm:text-7xl md:text-8xl"
+        >
+          Waseem Nasir
+        </div>
+
         <div className="shell flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           {/* Brand block */}
           <div>
@@ -26,8 +34,8 @@ export default function Footer() {
               </span>
             </div>
             <p className="mt-4 max-w-xs text-sm text-mute">
-              Independent founder building AI &amp; automation that solves real
-              problems. Bali · worldwide.
+              Independent founder. I build the AI systems that close the leaks
+              costing you time and money. Bali · 9 countries.
             </p>
           </div>
 

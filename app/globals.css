@@ -4,6 +4,14 @@
 
 :root {
   color-scheme: dark;
+
+  /* ─── Token bridge — single source for raw CSS + inline gradients ───────── */
+  --ink: 8 8 10;
+  --accent: 123 108 255;
+  --accent2: 183 170 255;
+  --gold: 244 192 98;
+  --chalk: 237 237 237;
+  --mute: 138 138 146;
 }
 
 html {
@@ -13,7 +21,7 @@ html {
 }
 
 body {
-  background: #0a0a0b;
+  background: #08080a;
   color: #ededed;
   overflow-x: hidden;
   font-feature-settings: "kern", "liga", "calt";
@@ -31,7 +39,7 @@ html.lenis body {
 }
 
 ::selection {
-  background: #6d5ef6;
+  background: #7b6cff;
   color: #fff;
 }
 
@@ -43,9 +51,56 @@ html.lenis body {
 .serif-display {
   font-family: var(--font-serif);
   font-optical-sizing: auto;
+  /* Higher optical size + lighter weight = the high-contrast editorial cut */
   font-variation-settings:
     "opsz" 144,
-    "SOFT" 40;
+    "wght" 400,
+    "SOFT" 0;
+}
+
+/* The accent-word italic — Fraunces italic at display optical size */
+.serif-italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-optical-sizing: auto;
+  font-variation-settings:
+    "opsz" 72,
+    "wght" 430,
+    "SOFT" 0;
+}
+
+/* ─── Section vertical rhythm — one cadence across the whole page ────────── */
+.section-y {
+  padding-block: clamp(5rem, 11vh, 9rem);
+}
+.section-y-lg {
+  padding-block: clamp(7rem, 15vh, 13rem);
+}
+
+/* ─── Surface chapters — tonal shifts so sections read as chapters ──────── */
+.surface-1 {
+  background: #0e0e12;
+}
+.surface-2 {
+  background: radial-gradient(130% 100% at 50% 0%, #16131f 0%, #08080a 68%);
+}
+
+/* ─── Gold hairline top-edge — frames hero portrait / feature media ──────── */
+.rule-gold {
+  position: relative;
+}
+.rule-gold::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  z-index: 2;
+  background: linear-gradient(
+    90deg,
+    rgb(var(--gold) / 0.9),
+    rgb(var(--gold) / 0.15) 55%,
+    transparent 80%
+  );
 }
 
 .serif-num {
@@ -66,7 +121,12 @@ html.lenis body {
   z-index: 9999;
   opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: grain 8s steps(10) infinite;
+}
+/* Animate grain only on fine-pointer devices — static on touch (battery/GPU) */
+@media (hover: hover) and (pointer: fine) {
+  .grain::after {
+    animation: grain 8s steps(10) infinite;
+  }
 }
 @keyframes grain {
   0%,
@@ -115,7 +175,7 @@ html.lenis body {
   pointer-events: none;
   background: radial-gradient(
     60rem 40rem at 75% -10%,
-    rgba(109, 94, 246, 0.2),
+    rgba(123, 108, 255, 0.2),
     transparent 60%
   );
 }
@@ -127,7 +187,7 @@ html.lenis body {
   inset: 0;
   background: radial-gradient(
     50rem 40rem at 10% 10%,
-    rgba(167, 139, 250, 0.12),
+    rgba(183, 170, 255, 0.12),
     transparent 55%
   );
   animation: aurora-drift-a 34s ease-in-out infinite alternate;
@@ -179,12 +239,22 @@ html.lenis body {
     rgba(255, 255, 255, 0.035),
     rgba(255, 255, 255, 0.012)
   );
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
   backdrop-filter: blur(8px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 20px 40px -24px rgba(0, 0, 0, 0.6);
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 60px -32px rgba(0, 0, 0, 0.8);
+}
+
+/* Feature card — heavier weight for the lead block in a grid */
+.card--feature {
+  border-color: rgba(123, 108, 255, 0.24);
+  background: linear-gradient(
+    180deg,
+    rgba(123, 108, 255, 0.07),
+    rgba(255, 255, 255, 0.012)
+  );
 }
 
 /* Cursor-follow spotlight — written by JS via --mx / --my CSS vars */
@@ -197,7 +267,7 @@ html.lenis body {
   transition: opacity 0.3s;
   background: radial-gradient(
     16rem 16rem at var(--mx, 50%) var(--my, 50%),
-    rgba(109, 94, 246, 0.12),
+    rgba(123, 108, 255, 0.12),
     transparent 60%
   );
   pointer-events: none;
@@ -214,10 +284,10 @@ html.lenis body {
 @media (hover: hover) {
   .card-hover:hover {
     transform: translateY(-4px);
-    border-color: rgba(109, 94, 246, 0.45);
+    border-color: rgba(123, 108, 255, 0.45);
     background: linear-gradient(
       180deg,
-      rgba(109, 94, 246, 0.07),
+      rgba(123, 108, 255, 0.07),
       rgba(255, 255, 255, 0.012)
     );
   }
@@ -310,23 +380,23 @@ span[aria-hidden] {
 
 /* ─── Focus-visible rings (WCAG 2.4.7) ─────────────────────────────────── */
 :where(a, button, [tabindex]):focus-visible {
-  outline: 2px solid #a78bfa;
+  outline: 2px solid #b7aaff;
   outline-offset: 3px;
   border-radius: 6px;
 }
 
 .btn-primary:focus-visible {
-  outline: 2px solid #a78bfa;
+  outline: 2px solid #b7aaff;
   outline-offset: 3px;
   border-radius: 999px;
-  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.35);
+  box-shadow: 0 0 0 4px rgba(183, 170, 255, 0.35);
 }
 
 .btn-ghost:focus-visible {
-  outline: 2px solid #a78bfa;
+  outline: 2px solid #b7aaff;
   outline-offset: 3px;
   border-radius: 999px;
-  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.35);
+  box-shadow: 0 0 0 4px rgba(183, 170, 255, 0.35);
 }
 
 /* ─── Link underline draw utility ──────────────────────────────────────── */
@@ -375,7 +445,7 @@ span[aria-hidden] {
   top: -100%;
   left: 1rem;
   z-index: 9000;
-  background: #6d5ef6;
+  background: #7b6cff;
   color: #fff;
   padding: 0.5rem 1rem;
   border-radius: 0 0 6px 6px;
