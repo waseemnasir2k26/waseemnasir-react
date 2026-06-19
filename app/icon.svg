@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0B5D3B"/>
+      <stop offset="100%" stop-color="#0A130E"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0E7C66"/>
+      <stop offset="55%" stop-color="#0E7C66"/>
+      <stop offset="100%" stop-color="#C9A24B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background: rounded square, deep emerald-to-ink -->
+  <rect width="32" height="32" rx="7" fill="url(#bg)"/>
+
+  <!--
+    WN monogram — W left half + N right half sharing a stroke at x=17.
+    Contained in inner area ~x:4–28, y:7–26.
+    Stroke weight 2.4 for crisp 32px rendering.
+  -->
+
+  <!-- W: (4,8) → (7.5,24) → (12,14) → (16.5,24) → (20,8) -->
+  <polyline
+    points="4,8 7.5,24 12,14 16.5,24 20,8"
+    stroke="url(#mark)"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+
+  <!-- N: (20,8) → (20,24) → (28,8) → (28,24) -->
+  <polyline
+    points="20,8 20,24 28,8 28,24"
+    stroke="url(#mark)"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+
+  <!-- Gold accent dot — bottom right, consistent with Monogram component -->
+  <circle cx="27.2" cy="25.5" r="1.8" fill="#C9A24B"/>
+</svg>

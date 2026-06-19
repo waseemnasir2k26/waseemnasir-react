@@ -202,35 +202,21 @@ export default function EditorialWarm() {
 
   return (
     <>
-      {/* ── Cream canvas — kills global dark body + aurora ── */}
-      <div
-        className="fixed inset-0 z-0"
-        style={{ background: CREAM }}
-        aria-hidden
-      />
-      {/* Subtle warm paper texture bloom */}
-      <div
-        className="fixed inset-0 z-0 pointer-events-none"
-        aria-hidden
-        style={{
-          background:
-            "radial-gradient(ellipse 120% 60% at 80% -10%, rgba(176,125,78,0.08), transparent 60%), radial-gradient(ellipse 80% 50% at -10% 110%, rgba(90,26,26,0.04), transparent 55%)",
-        }}
-      />
-
-      {/* skip link */}
-      <a
-        href="#main-content"
-        className="fixed left-4 top-4 z-[200] -translate-y-20 rounded px-4 py-2 text-sm font-medium focus:translate-y-0"
-        style={{ background: ESPRESSO, color: CREAM }}
-      >
-        Skip to content
-      </a>
-
+      {/* Scope body/html background to cream for this route only — prevents
+          the global dark body (#08080a) from bleeding through if <main>
+          doesn't cover full viewport height during paint or scroll overshoot. */}
+      <style>{`html, body { background: #F4EADE !important; color-scheme: light !important; }`}</style>
       <main
         id="main-content"
         className={`relative z-10 ${instrumentSerif.variable}`}
-        style={{ color: ESPRESSO, overflowX: "clip" }}
+        style={{
+          background: CREAM,
+          color: ESPRESSO,
+          overflowX: "clip",
+          /* Warm paper texture bloom — pinned to the main block, not the viewport */
+          backgroundImage:
+            "radial-gradient(ellipse 120% 30% at 80% 0%, rgba(176,125,78,0.08), transparent 60%), radial-gradient(ellipse 80% 20% at -10% 100%, rgba(90,26,26,0.04), transparent 55%)",
+        }}
       >
         <TopBar reduce={reduce} />
         <MastheadHero reduce={reduce} />
@@ -702,8 +688,7 @@ function AboutSticky({ reduce }: { reduce: boolean }) {
     <section
       id="about"
       ref={ref}
-      className="relative"
-      style={{ minHeight: `${STORY_BEATS.length * 100}svh` }}
+      className="relative lg:min-h-[200svh]"
       aria-label="About Waseem"
     >
       {/* Section label */}
@@ -740,6 +725,7 @@ function AboutSticky({ reduce }: { reduce: boolean }) {
                     alt={STORY_BEATS[activeBeat].alt}
                     fill
                     sizes="45vw"
+                    priority={activeBeat === 0}
                     className="object-cover object-top"
                     style={{ filter: "saturate(0.95)" }}
                   />
@@ -873,7 +859,7 @@ function AboutSticky({ reduce }: { reduce: boolean }) {
         {/* Scroll height spacer — invisible, drives progress */}
         <div
           style={{
-            height: `${STORY_BEATS.length * 100}svh`,
+            height: "200svh",
             marginTop: "-100svh",
           }}
           aria-hidden
@@ -1016,9 +1002,9 @@ function WorkCard({
 }) {
   return (
     <motion.article
-      initial={reduce ? false : { opacity: 0, y: 32 }}
+      initial={reduce ? false : { opacity: 1, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
+      viewport={{ once: true, margin: "-60px", amount: 0 }}
       transition={{ ...SP_GENTLE, delay }}
       className="group relative overflow-hidden"
       style={{
@@ -1036,6 +1022,7 @@ function WorkCard({
           alt={w.alt}
           fill
           sizes="(max-width:768px) 90vw, (max-width:1200px) 55vw, 45vw"
+          loading="eager"
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
           style={{ filter: "saturate(0.9)" }}
         />
@@ -1131,6 +1118,7 @@ function ParallaxInterlude({ reduce }: { reduce: boolean }) {
           alt="Waseem on a mountain trail with a backpack — wide sky behind"
           fill
           sizes="100vw"
+          loading="eager"
           className="object-cover object-[50%_35%]"
           style={{ filter: "saturate(0.88) brightness(0.82)" }}
         />
@@ -1250,9 +1238,9 @@ function PhotoWall({ reduce }: { reduce: boolean }) {
           {PHOTO_WALL.map((photo, i) => (
             <motion.figure
               key={photo.src}
-              initial={reduce ? false : { opacity: 0, y: 24 }}
+              initial={reduce ? false : { opacity: 1, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, margin: "-50px", amount: 0 }}
               transition={{ ...SP_GENTLE, delay: (i % 3) * 0.06 }}
               className="group relative overflow-hidden"
               style={{
@@ -1266,6 +1254,7 @@ function PhotoWall({ reduce }: { reduce: boolean }) {
                 alt={photo.alt}
                 fill
                 sizes="(max-width:640px) 45vw, 30vw"
+                loading="eager"
                 className="object-cover transition-all duration-700 ease-out group-hover:scale-[1.04]"
                 style={{
                   filter: reduce ? "none" : "grayscale(0.65) saturate(0.7)",
