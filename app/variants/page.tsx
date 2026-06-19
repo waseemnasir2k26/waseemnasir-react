@@ -22,6 +22,58 @@ interface Variant {
 
 const VARIANTS: Variant[] = [
   {
+    slug: "aurora-luxe",
+    label: "Aurora Luxe ★ NEW",
+    scroll: "HORIZONTAL",
+    descriptor:
+      "Founder-glass series: glassmorphism + gradient blooms in emerald/teal/gold jewel tones. Fraunces serif. No AI palette.",
+    palette: "Forest-ink #0A130E / Emerald #0B5D3B / Gold #C9A24B",
+    accentHex: "#C9A24B",
+    photo:
+      "CAFE-WORK-2026-05-22-bali-terrace-typing-laptop-latte-sunglasses.jpg",
+  },
+  {
+    slug: "obsidian-aurum",
+    label: "Obsidian Aurum ★ NEW",
+    scroll: "HORIZONTAL",
+    descriptor:
+      "Monochrome obsidian + champagne–bronze metallic gradient glass. Cormorant display serif. The most restrained / luxe.",
+    palette: "Obsidian #0A0A0B / Champagne #CBA968 / Bronze #9C6F3A",
+    accentHex: "#CBA968",
+    photo: "PORTRAIT-2026-05-18-black-prince-coat-balcony-rail-sunglasses.jpg",
+  },
+  {
+    slug: "bordeaux-glass",
+    label: "Bordeaux Glass ★ NEW",
+    scroll: "HORIZONTAL",
+    descriptor:
+      "Wine-cellar luxe: bordeaux→wine→bone-gold gradient glass on aubergine-black. Fraunces serif.",
+    palette: "Aubergine #150A10 / Bordeaux #6E1F2E / Gold #C9A24B",
+    accentHex: "#C9A24B",
+    photo:
+      "PORTRAIT-2026-05-18-arms-crossed-sunglasses-confident-table-pose.jpg",
+  },
+  {
+    slug: "ink-atelier",
+    label: "Ink Atelier ★ NEW",
+    scroll: "HORIZONTAL",
+    descriptor:
+      "Architectural founder: steel-blue + deep-teal + brass restrained gradient glass. Spectral serif.",
+    palette: "Ink-navy #0B1018 / Steel #3A5A78 / Brass #B08D4F",
+    accentHex: "#B08D4F",
+    photo: "CAFE-WORK-2026-03-30-dual-laptop-analytics-dashboard-coffee.jpg",
+  },
+  {
+    slug: "warm-glass-dusk",
+    label: "Warm Glass Dusk ★ NEW",
+    scroll: "HORIZONTAL",
+    descriptor:
+      "Earthy sunset glass: terracotta + amber + dusty rose blooms on warm charcoal. Newsreader serif.",
+    palette: "Charcoal-brown #14100D / Terracotta #C2673F / Amber #E0A050",
+    accentHex: "#E0A050",
+    photo: "CAFE-WORK-2026-06-01-rooftop-laptop-orange-juice-foreground.jpg",
+  },
+  {
     slug: "cinema-horizontal",
     label: "Cinema Horizontal ★ NEW",
     scroll: "HORIZONTAL",

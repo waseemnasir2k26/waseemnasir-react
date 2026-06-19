@@ -6,6 +6,7 @@ import Work from "@/components/Work";
 import Process from "@/components/Process";
 import About from "@/components/About";
 import FinalCTA from "@/components/FinalCTA";
+import VariantLinks from "@/components/VariantLinks";
 import Footer from "@/components/Footer";
 
 export default function Page() {
@@ -19,6 +20,7 @@ export default function Page() {
       <Process />
       <About />
       <FinalCTA />
+      <VariantLinks />
       <Footer />
     </main>
   );
