@@ -23,37 +23,46 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
-const SITE = "https://waseemnasir.com";
+const SITE = "https://www.waseemnasir.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: "Waseem Nasir — AI automation that runs your business",
   description:
-    "I'm Waseem Nasir, founder of SkynetLabs. I build n8n automations, AI agents, and Shopify systems that ship to production and stay shipped — live for Takycorp, idea-viaggi, Christelle, and a Lahore dental practice. Book a 30-minute call.",
+    "I'm Waseem Nasir, founder of SkynetLabs. I find where your business leaks time and money, then build AI automation that plugs it — live for Takycorp, idea-viaggi & more. Book a free audit.",
   keywords: [
     "Waseem Nasir",
     "SkynetLabs",
     "AI automation",
-    "n8n",
+    "AI automation agency",
+    "business automation",
+    "n8n automation",
     "AI agents",
-    "workflow automation",
-    "Shopify",
-    "WhatsApp bots",
+    "Shopify automation",
     "founder",
   ],
   openGraph: {
     title: "Waseem Nasir — AI automation that runs your business",
     description:
-      "Founder of SkynetLabs. n8n automations, AI agents, and Shopify systems that ship to production and stay shipped. Book a 30-minute call.",
+      "I find where your business leaks time and money, then build AI automation that plugs it. Live for Takycorp, idea-viaggi & more. Book a free audit.",
     url: SITE,
     siteName: "Waseem Nasir",
     type: "website",
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Waseem Nasir — AI automation that pays for itself",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Waseem Nasir — AI automation that runs your business",
     description:
-      "n8n, AI agents & Shopify systems that run in production. Book a 30-minute call.",
+      "I find where your business leaks time and money, then build AI automation that plugs it. Book a free audit.",
+    images: ["/og.jpg"],
   },
   alternates: { canonical: SITE },
 };
