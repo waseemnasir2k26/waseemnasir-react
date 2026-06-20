@@ -75,6 +75,7 @@ const NODES = [
   { id: "stack", n: "04", label: "STACK" },
   { id: "proof", n: "05", label: "PROOF" },
   { id: "about", n: "06", label: "FOUNDER" },
+  { id: "gallery", n: "07", label: "GALLERY" },
 ];
 
 /* ─── Reusable bits ─── */
@@ -257,6 +258,7 @@ export default function Blueprint() {
         <Proof reduce={reduce} />
         <NowBuilding reduce={reduce} />
         <About reduce={reduce} />
+        <Gallery reduce={reduce} />
         <Convert reduce={reduce} />
         <SiteFooter reduce={reduce} />
         <MobileCTABar />
@@ -568,10 +570,10 @@ function Hero({ reduce }: { reduce: boolean }) {
           >
             {[
               "4 systems in production",
+              "115 public repos",
               "3 verticals",
               "n8n",
               "Shopify",
-              "WordPress",
             ].map((c) => (
               <span
                 key={c}
@@ -612,9 +614,9 @@ function Hero({ reduce }: { reduce: boolean }) {
             <div className="relative" style={{ aspectRatio: "4/5" }}>
               <Image
                 src={IMG(
-                  "CAFE-WORK-2026-03-30-dual-laptop-analytics-dashboard-coffee.jpg",
+                  "CAFE-WORK-2026-03-29-rooftop-cafe-laptop-mountain-clouds.jpg",
                 )}
-                alt="Waseem Nasir working at a dual-laptop analytics dashboard with coffee"
+                alt="Waseem Nasir working on a laptop at a rooftop cafe with a mountain view"
                 fill
                 priority
                 sizes="(max-width:1024px) 90vw, 40vw"
@@ -1319,9 +1321,9 @@ function About({ reduce }: { reduce: boolean }) {
             <div className="relative" style={{ aspectRatio: "4/5" }}>
               <Image
                 src={IMG(
-                  "PORTRAIT-2026-05-18-arms-crossed-sunglasses-confident-table-pose.jpg",
+                  "PORTRAIT-2026-05-18-black-prince-coat-balcony-rail-sunglasses.jpg",
                 )}
-                alt="Waseem Nasir — arms crossed, confident portrait at a table"
+                alt="Waseem Nasir — confident founder portrait, black coat and sunglasses on a balcony"
                 fill
                 sizes="(max-width:1024px) 90vw, 40vw"
                 loading="eager"
@@ -1399,6 +1401,168 @@ function About({ reduce }: { reduce: boolean }) {
             ))}
           </div>
         </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────
+   GALLERY — life, work & travel (masonry); + the GitHub build-proof
+   ────────────────────────────────────────────────────────────── */
+const GITHUB = "https://github.com/waseemnasir2k26";
+const GALLERY: { src: string; alt: string }[] = [
+  {
+    src: "CAFE-WORK-2026-03-30-dual-laptop-analytics-dashboard-coffee.jpg",
+    alt: "Waseem at a dual-laptop analytics dashboard",
+  },
+  {
+    src: "WORK-2025-08-06-night-coworking-team-laptops-selfie.jpg",
+    alt: "Late-night coworking session with the team",
+  },
+  {
+    src: "EVENT-2026-05-25-bali-cafe-coworking-group-meetup.jpg",
+    alt: "Bali founder coworking meetup",
+  },
+  {
+    src: "CAFE-WORK-2026-06-02-night-cafe-typing-backlit-keyboard-candid.jpg",
+    alt: "Typing on a backlit keyboard at a night cafe",
+  },
+  {
+    src: "TRAVEL-2025-05-31-nusa-penida-arms-spread-cliffs.jpg",
+    alt: "Arms spread on the cliffs of Nusa Penida",
+  },
+  {
+    src: "EVENT-expo-booth-navy-polo-chandelier-hall.jpg",
+    alt: "At an expo booth in a chandelier hall",
+  },
+  {
+    src: "CAFE-WORK-2026-05-22-bali-terrace-typing-laptop-latte-sunglasses.jpg",
+    alt: "Working from a sunlit Bali terrace cafe",
+  },
+  {
+    src: "TRAVEL-2026-03-27-motorbike-helmet-backpack-mountain-road.jpg",
+    alt: "On a motorbike on a mountain road",
+  },
+  {
+    src: "LIFESTYLE-2026-06-09-acoustic-guitar-smile-white-cafe.jpg",
+    alt: "Playing acoustic guitar in a white cafe",
+  },
+  {
+    src: "WORK-2025-08-04-cafe-client-thumbs-up-smiles.jpg",
+    alt: "Thumbs up with a client at a cafe",
+  },
+  {
+    src: "PORTRAIT-2026-05-18-window-seat-sunglasses-facing-camera-relaxed.jpg",
+    alt: "Relaxed window-seat portrait",
+  },
+  {
+    src: "CAFE-WORK-2026-06-01-rooftop-laptop-dragonfruit-smoothie-smile.jpg",
+    alt: "Rooftop laptop session with a dragonfruit smoothie",
+  },
+  {
+    src: "TRAVEL-2026-03-27-khyber-pakhtunkhwa-welcome-arch-backpack.jpg",
+    alt: "At the Khyber Pakhtunkhwa welcome arch with a backpack",
+  },
+  {
+    src: "LIFESTYLE-2025-08-08-rattan-chair-headphones-pavilion-relaxed.jpg",
+    alt: "Relaxed in a rattan chair with headphones",
+  },
+  {
+    src: "TRAVEL-2026-05-24-jungle-bridge-standing-sunglasses-front.jpg",
+    alt: "Standing on a jungle bridge",
+  },
+  {
+    src: "CAFE-WORK-2026-06-05-garden-cafe-blue-polo-smile-laptop.jpg",
+    alt: "Smiling over a laptop at a garden cafe",
+  },
+];
+function Gallery({ reduce }: { reduce: boolean }) {
+  return (
+    <section
+      id="gallery"
+      style={{ background: C.surface, borderTop: `1px solid ${C.hairline}` }}
+    >
+      <div className="mx-auto max-w-[1200px] px-5 py-24 sm:px-6 sm:py-28">
+        <Reveal
+          reduce={reduce}
+          className="mb-12 flex flex-wrap items-end justify-between gap-5"
+        >
+          <div>
+            <Mono color={C.accent}>07 — On the ground</Mono>
+            <h2
+              className="mt-4"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontWeight: 500,
+                fontSize: "clamp(1.9rem,4vw,3rem)",
+                lineHeight: 1.04,
+                letterSpacing: "-0.026em",
+                color: C.ink,
+              }}
+            >
+              Built from cafes, rooftops &amp; rice fields.
+            </h2>
+            <p
+              className="mt-3"
+              style={{ color: C.body, fontSize: "1.0625rem", maxWidth: "46ch" }}
+            >
+              Shipping production systems from wherever the work happens —
+              between Lahore and Bali, and{" "}
+              <strong style={{ color: C.ink, fontWeight: 600 }}>
+                115 public repositories
+              </strong>{" "}
+              of it is open on GitHub.
+            </p>
+          </div>
+          <Link
+            href={GITHUB}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bp-cta inline-flex shrink-0 items-center rounded-full font-semibold transition-opacity hover:opacity-90"
+            style={{
+              background: C.card,
+              color: C.accent,
+              border: `1px solid ${C.hairline}`,
+              fontSize: "0.92rem",
+              padding: "0.7rem 1.3rem",
+              boxShadow: SHADOW.sm,
+            }}
+          >
+            115 repos on GitHub →
+          </Link>
+        </Reveal>
+
+        {/* masonry via CSS columns */}
+        <div
+          style={{ columnGap: 16 }}
+          className="columns-2 sm:columns-3 lg:columns-4"
+        >
+          {GALLERY.map((g, i) => (
+            <Reveal as="div" reduce={reduce} delay={(i % 4) * 0.04} key={g.src}>
+              <figure
+                className="bp-tile group relative mb-4 overflow-hidden"
+                style={{
+                  breakInside: "avoid",
+                  borderRadius: 14,
+                  border: `1px solid ${C.hairline}`,
+                  background: C.card,
+                  boxShadow: SHADOW.sm,
+                }}
+              >
+                <Image
+                  src={IMG(g.src)}
+                  alt={g.alt}
+                  width={600}
+                  height={750}
+                  sizes="(max-width:640px) 45vw, (max-width:1024px) 30vw, 22vw"
+                  loading="eager"
+                  className="h-auto w-full"
+                  style={{ display: "block", filter: "saturate(0.96)" }}
+                />
+              </figure>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );
