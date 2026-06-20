@@ -1,6 +1,7 @@
 /**
- * Root route — renders the Editorial Warm design (variant 02).
- * Source of truth: app/v/editorial-warm/page.tsx
- * /v/editorial-warm and /variants remain fully independent.
+ * Root route — renders the Blueprint design (Modern-SaaS founder site).
+ * Source of truth: app/v/blueprint/page.tsx
+ * /v/blueprint and /variants remain fully independent.
+ * (Previous root: editorial-warm — superseded 2026-06-20.)
  */
-export { default } from "./v/editorial-warm/page";
+export { default } from "./v/blueprint/page";

@@ -255,6 +255,7 @@ export default function Blueprint() {
         <How reduce={reduce} />
         <Stack reduce={reduce} />
         <Proof reduce={reduce} />
+        <NowBuilding reduce={reduce} />
         <About reduce={reduce} />
         <Convert reduce={reduce} />
         <SiteFooter reduce={reduce} />
@@ -501,7 +502,8 @@ function Hero({ reduce }: { reduce: boolean }) {
         <div className="lg:col-span-7">
           <motion.div {...stagger(0)} className="mb-5">
             <Mono color={C.accent}>
-              AI Automation for service businesses &amp; stores
+              AI automation · n8n · AI agents · for service businesses &amp;
+              stores
             </Mono>
           </motion.div>
           <motion.h1
@@ -513,10 +515,10 @@ function Hero({ reduce }: { reduce: boolean }) {
               lineHeight: 1.02,
               letterSpacing: "-0.028em",
               color: C.ink,
-              maxWidth: "16ch",
+              maxWidth: "15ch",
             }}
           >
-            I build the automations your team keeps doing by hand.
+            I make the work your team does by hand run itself.
           </motion.h1>
           <motion.p
             {...stagger(2)}
@@ -528,10 +530,10 @@ function Hero({ reduce }: { reduce: boolean }) {
               maxWidth: "52ch",
             }}
           >
-            For travel, dental, and care businesses — and Shopify stores.
-            I&apos;m Waseem Nasir, founder of SkynetLabs. I ship n8n and
-            AI-agent systems that run in production — for Takycorp, idea-viaggi,
-            Christelle, and a Lahore dental practice.
+            n8n automations, AI agents, and Shopify builds that ship to
+            production and stay shipped — not slideware. I&apos;m Waseem Nasir,
+            founder of SkynetLabs, running live systems for Takycorp,
+            idea-viaggi, Christelle, and a Lahore dental practice.
           </motion.p>
           <motion.div
             {...stagger(3)}
@@ -907,6 +909,11 @@ const TILES = [
     t: "WordPress",
     d: "Custom plugins and gated systems, native, no bloat.",
   },
+  {
+    n: "07",
+    t: "Video Systems",
+    d: "Editing + publishing whole videos with Claude Code — my newest pipeline.",
+  },
 ];
 function Stack({ reduce }: { reduce: boolean }) {
   return (
@@ -1184,6 +1191,112 @@ function Proof({ reduce }: { reduce: boolean }) {
 }
 
 /* ──────────────────────────────────────────────────────────────
+   NOW BUILDING — featured highlight: the video-editing-with-Claude-Code skill
+   ────────────────────────────────────────────────────────────── */
+const VIDEO_LINK = "https://skynetjoe.com/edit-videos-with-claude";
+function NowBuilding({ reduce }: { reduce: boolean }) {
+  return (
+    <section
+      id="now"
+      className="mx-auto max-w-[1200px] px-5 py-16 sm:px-6 sm:py-20"
+    >
+      <Reveal reduce={reduce}>
+        <div
+          className="relative overflow-hidden"
+          style={{
+            borderRadius: 20,
+            border: `1px solid ${C.hairline}`,
+            background: C.accentDeep,
+            boxShadow: SHADOW.lg,
+          }}
+        >
+          {/* blueprint dot-matrix texture on the deep band */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(rgba(234,244,241,0.10) 1px, transparent 1px)`,
+              backgroundSize: "22px 22px",
+            }}
+          />
+          <div className="relative flex flex-col items-start gap-7 p-8 sm:p-12 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-[58ch]">
+              <div
+                className="mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1"
+                style={{ background: "rgba(234,244,241,0.12)" }}
+              >
+                <span
+                  className="bp-pulse"
+                  style={{
+                    width: 7,
+                    height: 7,
+                    borderRadius: 999,
+                    background: C.live,
+                  }}
+                  aria-hidden
+                />
+                <span
+                  className="font-mono uppercase"
+                  style={{
+                    color: C.onDeep,
+                    fontSize: "0.66rem",
+                    fontWeight: 500,
+                    letterSpacing: "0.1em",
+                  }}
+                >
+                  Now building
+                </span>
+              </div>
+              <h2
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontWeight: 500,
+                  fontSize: "clamp(1.9rem,3.5vw,2.75rem)",
+                  lineHeight: 1.08,
+                  letterSpacing: "-0.024em",
+                  color: "#FFFFFF",
+                }}
+              >
+                Editing whole videos with Claude Code.
+              </h2>
+              <p
+                className="mt-4"
+                style={{
+                  fontSize: "1.0625rem",
+                  lineHeight: 1.6,
+                  color: C.onDeep,
+                  maxWidth: "52ch",
+                }}
+              >
+                My newest system: scripting, cutting, captioning, and publishing
+                short-form video straight from the terminal — the same
+                automation-first way I ship everything else. I packaged the
+                exact prompts and pipeline so you can run it too.
+              </p>
+            </div>
+            <Link
+              href={VIDEO_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bp-cta inline-flex shrink-0 items-center rounded-full font-semibold transition-opacity hover:opacity-90"
+              style={{
+                background: C.accentTint,
+                color: C.accentDeep,
+                fontSize: "0.95rem",
+                padding: "0.85rem 1.6rem",
+                boxShadow: SHADOW.md,
+              }}
+            >
+              See how it works →
+            </Link>
+          </div>
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────
    ABOUT — operator who shipped these; portrait demoted to support card
    ────────────────────────────────────────────────────────────── */
 function About({ reduce }: { reduce: boolean }) {
@@ -1403,7 +1516,7 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
                 Lahore · Bali
               </Mono>
               <a
-                href="mailto:waseembali2k26@gmail.com"
+                href="mailto:waseem@skynetjoe.com"
                 className="bp-link"
                 style={{
                   color: C.accent,
@@ -1411,7 +1524,7 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
                   width: "fit-content",
                 }}
               >
-                waseembali2k26@gmail.com
+                waseem@skynetjoe.com
               </a>
             </div>
           </Reveal>
