@@ -1742,9 +1742,12 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
                 [
                   "Connect",
                   [
-                    [CTA, "Book a call"],
-                    ["https://skynetjoe.com", "skynetjoe.com"],
+                    [CTA, "Book a free audit"],
+                    ["https://www.linkedin.com/in/waseemnasir2k26", "LinkedIn"],
+                    ["https://x.com/skynetlabs", "X (Twitter)"],
+                    ["https://youtube.com/@skynetlabs", "YouTube"],
                     ["https://github.com/waseemnasir2k26", "GitHub"],
+                    ["https://skynetjoe.com", "skynetjoe.com"],
                   ],
                 ],
               ].map(([title, links]) => (

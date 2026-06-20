@@ -74,7 +74,13 @@ const jsonLd = {
   jobTitle: "Founder & Automation Engineer",
   url: SITE,
   email: "mailto:waseem@skynetjoe.com",
-  sameAs: ["https://github.com/waseemnasir2k26", "https://skynetjoe.com"],
+  sameAs: [
+    "https://www.linkedin.com/in/waseemnasir2k26",
+    "https://x.com/skynetlabs",
+    "https://youtube.com/@skynetlabs",
+    "https://github.com/waseemnasir2k26",
+    "https://skynetjoe.com",
+  ],
   knowsAbout: [
     "AI automation",
     "n8n",
