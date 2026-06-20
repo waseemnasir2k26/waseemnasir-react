@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  .card{position:relative;width:1200px;height:630px;background:#FBFCFD;
+    padding:80px 84px;display:flex;flex-direction:column;justify-content:space-between;
+    font-family:'Hanken Grotesk',sans-serif;overflow:hidden}
+  .wash{position:absolute;inset:0;
+    background:radial-gradient(50% 70% at 88% 6%,rgba(17,126,115,0.12),transparent 60%),
+               radial-gradient(36% 50% at 8% 0%,rgba(226,241,238,0.7),transparent 65%)}
+  .dots{position:absolute;inset:0;background-image:radial-gradient(#E2EAE8 1.4px,transparent 1.4px);
+    background-size:26px 26px;opacity:.5}
+  .bar{position:absolute;left:0;top:0;bottom:0;width:14px;background:#0A3D38}
+  .rel{position:relative;z-index:2}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-weight:500;letter-spacing:.14em;
+    text-transform:uppercase;color:#117E73;font-size:21px}
+  h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:#0E1B1A;
+    font-size:84px;line-height:1.02;letter-spacing:-0.028em;margin-top:26px;max-width:14ch}
+  .sub{color:#3C4744;font-size:30px;line-height:1.45;margin-top:26px;max-width:30ch;font-weight:500}
+  .foot{display:flex;align-items:center;justify-content:space-between}
+  .pill{display:inline-flex;align-items:center;gap:10px;background:#117E73;color:#fff;
+    font-weight:600;font-size:25px;padding:16px 30px;border-radius:999px}
+  .dot{width:11px;height:11px;border-radius:999px;background:#15A06B;display:inline-block}
+  .url{font-family:'JetBrains Mono',monospace;font-weight:500;color:#5B6764;font-size:22px;letter-spacing:.04em}
+  .name{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;color:#0E1B1A;font-size:26px}
+</style></head>
+<body>
+  <div class="card">
+    <div class="wash"></div><div class="dots"></div><div class="bar"></div>
+    <div class="rel">
+      <div class="eyebrow">Waseem Nasir · Founder · SkynetLabs</div>
+      <h1>AI automation that pays for itself.</h1>
+      <div class="sub">I find where your business leaks time and money — then build the systems that plug it.</div>
+    </div>
+    <div class="rel foot">
+      <span class="pill"><span class="dot"></span> Book a free audit →</span>
+      <span class="url">waseemnasir.com</span>
+    </div>
+  </div>
+</body></html>
