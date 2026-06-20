@@ -27,31 +27,33 @@ const SITE = "https://waseemnasir.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
-  title: "Waseem Nasir — I make your busywork disappear",
+  title: "Waseem Nasir — AI automation that runs your business",
   description:
-    "Independent founder building AI + automation systems that quietly solve real business problems. Missed leads, dead follow-ups, manual ops — handled. Book a 30-minute call.",
+    "I'm Waseem Nasir, founder of SkynetLabs. I build n8n automations, AI agents, and Shopify systems that ship to production and stay shipped — live for Takycorp, idea-viaggi, Christelle, and a Lahore dental practice. Book a 30-minute call.",
   keywords: [
     "Waseem Nasir",
+    "SkynetLabs",
     "AI automation",
     "n8n",
+    "AI agents",
     "workflow automation",
-    "Next.js developer",
-    "AEO",
+    "Shopify",
+    "WhatsApp bots",
     "founder",
   ],
   openGraph: {
-    title: "Waseem Nasir — I make your busywork disappear",
+    title: "Waseem Nasir — AI automation that runs your business",
     description:
-      "Independent founder building AI + automation systems that solve real business problems. Book a 30-minute call.",
+      "Founder of SkynetLabs. n8n automations, AI agents, and Shopify systems that ship to production and stay shipped. Book a 30-minute call.",
     url: SITE,
     siteName: "Waseem Nasir",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Waseem Nasir — I make your busywork disappear",
+    title: "Waseem Nasir — AI automation that runs your business",
     description:
-      "AI + automation that solves real problems. Book a 30-minute call.",
+      "n8n, AI agents & Shopify systems that run in production. Book a 30-minute call.",
   },
   alternates: { canonical: SITE },
 };
@@ -62,7 +64,7 @@ const jsonLd = {
   name: "Waseem Nasir",
   jobTitle: "Founder & Automation Engineer",
   url: SITE,
-  email: "mailto:waseembali2k26@gmail.com",
+  email: "mailto:waseem@skynetjoe.com",
   sameAs: ["https://github.com/waseemnasir2k26", "https://skynetjoe.com"],
   knowsAbout: [
     "AI automation",
