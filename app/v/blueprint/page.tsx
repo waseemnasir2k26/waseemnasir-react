@@ -504,7 +504,7 @@ function Hero({ reduce }: { reduce: boolean }) {
         <div className="lg:col-span-7">
           <motion.div {...stagger(0)} className="mb-5">
             <Mono color={C.accent}>
-              AI automation · n8n · AI agents · for service businesses &amp;
+              AI automation that pays for itself · for service businesses &amp;
               stores
             </Mono>
           </motion.div>
@@ -517,10 +517,10 @@ function Hero({ reduce }: { reduce: boolean }) {
               lineHeight: 1.02,
               letterSpacing: "-0.028em",
               color: C.ink,
-              maxWidth: "15ch",
+              maxWidth: "16ch",
             }}
           >
-            I make the work your team does by hand run itself.
+            Every hour your team works by hand, your business leaks money.
           </motion.h1>
           <motion.p
             {...stagger(2)}
@@ -529,13 +529,14 @@ function Hero({ reduce }: { reduce: boolean }) {
               fontSize: "clamp(1.0625rem,1.4vw,1.1875rem)",
               lineHeight: 1.62,
               color: C.body,
-              maxWidth: "52ch",
+              maxWidth: "54ch",
             }}
           >
-            n8n automations, AI agents, and Shopify builds that ship to
-            production and stay shipped — not slideware. I&apos;m Waseem Nasir,
-            founder of SkynetLabs, running live systems for Takycorp,
-            idea-viaggi, Christelle, and a Lahore dental practice.
+            Leads ghost. Follow-ups slip. Your team drowns in repetitive ops.
+            I&apos;m Waseem Nasir, founder of SkynetLabs — I find exactly where
+            your business bleeds time and money, then build the systems that
+            stop it. Already running for Takycorp, idea-viaggi, Christelle, and
+            a Lahore dental practice.
           </motion.p>
           <motion.div
             {...stagger(3)}
@@ -554,7 +555,7 @@ function Hero({ reduce }: { reduce: boolean }) {
                 boxShadow: SHADOW.md,
               }}
             >
-              Book a call
+              Book a free audit
             </Link>
             <a
               href="#proof"
@@ -569,11 +570,10 @@ function Hero({ reduce }: { reduce: boolean }) {
             className="mt-10 flex flex-wrap items-center gap-2.5"
           >
             {[
+              "Shipped in ~14 days",
+              "Pays for itself",
               "4 systems in production",
               "115 public repos",
-              "3 verticals",
-              "n8n",
-              "Shopify",
             ].map((c) => (
               <span
                 key={c}
@@ -638,7 +638,9 @@ function Hero({ reduce }: { reduce: boolean }) {
                 }}
                 aria-hidden
               />
-              <Mono color={C.pillInk}>In production · n8n + WordPress</Mono>
+              <Mono color={C.pillInk}>
+                In production · live for real clients
+              </Mono>
             </figcaption>
           </figure>
         </motion.div>
@@ -651,16 +653,20 @@ function Hero({ reduce }: { reduce: boolean }) {
    TRUST — honest scale anchor; 4 real clients as a status row
    ────────────────────────────────────────────────────────────── */
 const CLIENTS = [
-  { name: "Takycorp", sub: "n8n · Email bots", status: "LIVE" as const },
+  { name: "Takycorp", sub: "Inbox, auto-handled", status: "LIVE" as const },
   {
     name: "idea-viaggi / KODIASIMMO",
-    sub: "WordPress · Trip-auth",
+    sub: "Per-customer access",
     status: "DELIVERED" as const,
   },
-  { name: "Christelle", sub: "n8n · Care bots", status: "LIVE" as const },
+  {
+    name: "Christelle",
+    sub: "Care intake, automated",
+    status: "LIVE" as const,
+  },
   {
     name: "Lahore dental practice",
-    sub: "WhatsApp · Front-desk",
+    sub: "Front desk, automated",
     status: "SHIPPED" as const,
   },
 ];
@@ -745,7 +751,7 @@ function NodeGraph({
     >
       <div className="mb-5 flex items-center justify-between">
         <Mono color={C.pillInk}>
-          {kind === "flow" ? "n8n · workflow" : "wordpress · access"}
+          {kind === "flow" ? "Inbound · auto-handled" : "Access · per customer"}
         </Mono>
         <span
           className="bp-pulse"
@@ -797,22 +803,22 @@ function NodeGraph({
 }
 const ROWS = [
   {
-    h: "Agents that do the work, not just chat.",
-    p: "n8n + AI-agent pipelines that triage the inbox, route leads, and reply on WhatsApp — the email bots running live at Takycorp, plus the care-intake bots for Christelle.",
+    h: "Every lead answered before it goes cold.",
+    p: "Inbound emails and messages get read, sorted, and replied to the moment they land — so nothing waits on a human. Running live for Takycorp's inbox and Christelle's care intake.",
     nodes: [
       "New email / message",
-      "AI triage + classify",
+      "Read + classify",
       "Route by intent",
       "Auto-reply / escalate",
     ],
     kind: "flow" as const,
   },
   {
-    h: "Systems that ship and stay shipped.",
-    p: "Per-user trip authorization built natively into WordPress for idea-viaggi / KODIASIMMO — ~20 trip pages, each gated so a customer only sees the trips they booked. Delivered, in production, handed off with video docs.",
+    h: "Customers only ever see what's theirs.",
+    p: "For idea-viaggi / KODIASIMMO, ~20 trip pages each locked to the right customer — so everyone sees only the trips they booked, nobody else's. Delivered, in production, handed off with video docs.",
     nodes: [
       "Customer logs in",
-      "CTM per-user gate",
+      "Per-customer gate",
       "Allowed trips resolved",
       "Trip page renders",
     ],
@@ -826,7 +832,7 @@ function How({ reduce }: { reduce: boolean }) {
       className="mx-auto max-w-[1200px] px-5 py-24 sm:px-6 sm:py-28"
     >
       <Reveal reduce={reduce} className="mb-16 flex items-center gap-3">
-        <Mono color={C.accent}>03 — What I build</Mono>
+        <Mono color={C.accent}>03 — How I fix it</Mono>
         <div
           style={{ height: 1, flex: 1, background: C.hairline }}
           aria-hidden
@@ -886,35 +892,39 @@ function How({ reduce }: { reduce: boolean }) {
 const TILES = [
   {
     n: "01",
-    t: "AI Agents",
-    d: "Inbox triage, lead routing, and replies that sound like your team.",
+    t: "Leads go cold",
+    d: "Most buyers pick whoever replies first. I make your follow-up answer in seconds — day, night, weekend.",
     hero: true,
   },
   {
     n: "02",
-    t: "n8n Automation",
-    d: "The plumbing that connects your tools and runs 24/7.",
+    t: "Your week disappears",
+    d: "The repetitive admin nobody wants to touch — handled automatically, around the clock.",
   },
   {
     n: "03",
-    t: "Shopify Build",
-    d: "Stores wired for conversion, not just launched.",
+    t: "Deals slip through",
+    d: "Every lead tracked from first touch to close. Nothing forgotten, nothing dropped.",
   },
-  { n: "04", t: "CRO", d: "Fewer leaks between visit and checkout." },
+  {
+    n: "04",
+    t: "Carts get abandoned",
+    d: "Fewer leaks between visit and checkout, so more browsers actually buy.",
+  },
   {
     n: "05",
-    t: "WhatsApp Bots",
-    d: "Qualify and reply where customers actually message.",
+    t: "Customers wait too long",
+    d: "Instant, on-brand replies right where they already message you.",
   },
   {
     n: "06",
-    t: "WordPress",
-    d: "Custom plugins and gated systems, native, no bloat.",
+    t: "Work lives in your head",
+    d: "Information moves between your tools by itself — no copy-paste, no bottleneck on you.",
   },
   {
     n: "07",
-    t: "Video Systems",
-    d: "Editing + publishing whole videos with Claude Code — my newest pipeline.",
+    t: "Content never ships",
+    d: "Even your videos get cut and published on autopilot, so your feed never goes quiet.",
   },
 ];
 function Stack({ reduce }: { reduce: boolean }) {
@@ -924,12 +934,34 @@ function Stack({ reduce }: { reduce: boolean }) {
       style={{ background: C.surface, borderTop: `1px solid ${C.hairline}` }}
     >
       <div className="mx-auto max-w-[1200px] px-5 py-24 sm:px-6 sm:py-28">
-        <Reveal reduce={reduce} className="mb-12 flex items-center gap-3">
-          <Mono color={C.accent}>04 — The stack</Mono>
-          <div
-            style={{ height: 1, flex: 1, background: C.hairline }}
-            aria-hidden
-          />
+        <Reveal reduce={reduce} className="mb-12">
+          <Mono color={C.accent}>04 — Where it leaks</Mono>
+          <h2
+            className="mt-4"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontWeight: 500,
+              fontSize: "clamp(1.9rem,4vw,3rem)",
+              lineHeight: 1.04,
+              letterSpacing: "-0.026em",
+              color: C.ink,
+              maxWidth: "20ch",
+            }}
+          >
+            Where your business is leaking right now.
+          </h2>
+          <p
+            className="mt-4"
+            style={{
+              fontSize: "1.0625rem",
+              lineHeight: 1.6,
+              color: C.body,
+              maxWidth: "52ch",
+            }}
+          >
+            You feel these every week. I turn each one into a system that
+            quietly handles itself.
+          </p>
         </Reveal>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {TILES.map((tile, i) => (
@@ -1020,27 +1052,27 @@ const CASES: Case[] = [
     metricPrefix: "~",
     metricSuffix: " trips",
     metricNote: "each gated so a customer sees only what they booked.",
-    mech: "WordPress · Native CTM trip-auth",
+    mech: "Per-customer trip access",
     since: "Delivered · handed off with video docs",
     status: "DELIVERED",
   },
   {
     client: "Takycorp",
-    outcome: "Email bots running in production.",
+    outcome: "Inbound email, handled for them.",
     metricTo: 2,
     metricSuffix: " bots",
-    metricNote: "inbox triage + auto-reply, running 24/7.",
-    mech: "n8n · Email automation",
+    metricNote: "triage + auto-reply so no message waits.",
+    mech: "Inbox triage + auto-reply",
     since: "Live · in production",
     status: "LIVE",
   },
   {
     client: "Christelle",
-    outcome: "Care intake bots, live.",
+    outcome: "Care intake, handled for them.",
     staticMetric: "24/7",
     metricNote: "first-response handled around the clock.",
-    mech: "n8n · Care automation",
-    since: "Live · n8n care intake",
+    mech: "Care intake, automated",
+    since: "Live · care intake",
     status: "LIVE",
   },
 ];
@@ -1169,10 +1201,10 @@ function Proof({ reduce }: { reduce: boolean }) {
                 <p
                   style={{ color: C.ink, fontWeight: 600, fontSize: "1.05rem" }}
                 >
-                  Lahore dental practice — front-desk automation, shipped.
+                  Lahore dental practice — front desk that runs itself, shipped.
                 </p>
                 <Mono color={C.mute} className="!tracking-[0.06em]">
-                  WhatsApp + n8n · Front-desk
+                  Front desk, automated
                 </Mono>
               </div>
             </div>
@@ -1587,13 +1619,14 @@ function Convert({ reduce }: { reduce: boolean }) {
                 color: "#FFFFFF",
               }}
             >
-              Let&apos;s see if automation fits your business.
+              Let&apos;s find where your business is leaking.
             </h2>
             <p
               className="mt-5"
               style={{ fontSize: "1.1rem", lineHeight: 1.6, color: C.onDeep }}
             >
-              A 30-minute call — bring your messiest manual process.
+              A free 30-minute audit — bring your messiest manual process and
+              I&apos;ll show you exactly what to automate first.
             </p>
           </Reveal>
           <Reveal
@@ -1614,7 +1647,7 @@ function Convert({ reduce }: { reduce: boolean }) {
                 boxShadow: SHADOW.lg,
               }}
             >
-              Book a call →
+              Book a free audit →
             </Link>
           </Reveal>
           <Reveal reduce={reduce} delay={0.14} className="mt-8">
@@ -1799,7 +1832,7 @@ function MobileCTABar() {
           minHeight: 46,
         }}
       >
-        Book a call
+        Book a free audit
       </Link>
     </div>
   );
