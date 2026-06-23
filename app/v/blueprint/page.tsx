@@ -231,6 +231,53 @@ export default function Blueprint() {
         }
         .bp-tile:active { transform: scale(0.985); }
         .bp-cta:active { transform: scale(0.97); }
+        /* Trust cards: accent left-border + detail reveal on hover */
+        @media (hover:hover) and (pointer:fine){
+          .bp-trust-card { transition: transform .22s ease-out, box-shadow .22s ease-out, border-left-color .22s ease-out; border-left: 3px solid transparent; }
+          .bp-trust-card:hover { transform: translateY(-3px); box-shadow:${SHADOW.md}; border-left-color: ${C.accent}; }
+          .bp-trust-mech { opacity: 0; transform: translateY(4px); transition: opacity .2s ease-out, transform .2s ease-out; }
+          .bp-trust-card:hover .bp-trust-mech { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce){
+          .bp-trust-card { border-left: 3px solid transparent; }
+          .bp-trust-mech { opacity: 1; transform: none; }
+        }
+        /* Proof cards: accent ring glow on metric + view arrow fade */
+        @media (hover:hover) and (pointer:fine){
+          .bp-proof-card { transition: transform .22s ease-out, box-shadow .22s ease-out; }
+          .bp-proof-card:hover { transform: translateY(-4px) scale(1.015); box-shadow:${SHADOW.md}; }
+          .bp-proof-metric { transition: text-shadow .22s ease-out; }
+          .bp-proof-card:hover .bp-proof-metric { text-shadow: 0 0 28px rgba(17,126,115,0.22); }
+          .bp-proof-view { opacity: 0; transform: translateX(-4px); transition: opacity .18s ease-out, transform .18s ease-out; }
+          .bp-proof-card:hover .bp-proof-view { opacity: 1; transform: translateX(0); }
+        }
+        @media (prefers-reduced-motion: reduce){
+          .bp-proof-view { opacity: 1; transform: none; }
+        }
+        /* Stack tile: n-index accent on hover */
+        @media (hover:hover) and (pointer:fine){
+          .bp-stack-n { transition: color .18s ease-out; }
+          .bp-tile:hover .bp-stack-n { color: ${C.accent} !important; }
+        }
+        /* About process steps: bp-tile + accent left border */
+        @media (hover:hover) and (pointer:fine){
+          .bp-process-step { transition: transform .22s ease-out, box-shadow .22s ease-out, border-left-color .2s ease-out; border-left: 3px solid transparent; }
+          .bp-process-step:hover { transform: translateY(-3px); box-shadow:${SHADOW.md}; border-left-color: ${C.accent}; }
+        }
+        @media (prefers-reduced-motion: reduce){
+          .bp-process-step { border-left: 3px solid transparent; }
+        }
+        /* Gallery: scrim + caption reveal on hover */
+        @media (hover:hover) and (pointer:fine){
+          .bp-gallery-scrim { opacity: 0; transition: opacity .2s ease-out; background: linear-gradient(to top, rgba(14,27,26,0.72) 0%, transparent 55%); position:absolute; inset:0; display:flex; align-items:flex-end; padding:12px; pointer-events:none; }
+          .bp-tile:hover .bp-gallery-scrim { opacity: 1; }
+        }
+        @media (prefers-reduced-motion: reduce){
+          .bp-gallery-scrim { display: none; }
+        }
+        /* Node pulse animation for NodeGraph hover */
+        @keyframes bpNodePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.45;transform:scale(1.18)} }
+        @media (prefers-reduced-motion: reduce){ .bp-node-pulse { animation:none !important; } }
         .bp-nav-fb { display: none; }
         @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
           .bp-nav-fb { display: block; }
@@ -573,7 +620,7 @@ function Hero({ reduce }: { reduce: boolean }) {
               "Shipped in ~14 days",
               "Pays for itself",
               "4 systems in production",
-              "115 public repos",
+              "Top Rated on Fiverr",
             ].map((c) => (
               <span
                 key={c}
@@ -592,6 +639,24 @@ function Hero({ reduce }: { reduce: boolean }) {
                 {c}
               </span>
             ))}
+          </motion.div>
+          {/* Stat strip — approved numbers only (brand-messaging §7) */}
+          <motion.div
+            {...stagger(5)}
+            className="mt-5 flex flex-wrap items-center gap-1.5"
+            aria-label="By the numbers"
+          >
+            <span
+              className="font-mono"
+              style={{
+                color: C.pillInk,
+                fontSize: "0.7rem",
+                fontWeight: 500,
+                letterSpacing: "0.06em",
+              }}
+            >
+              180+ workflows · 40+ sites · 9 countries · since 2019
+            </span>
           </motion.div>
         </div>
 
@@ -614,9 +679,9 @@ function Hero({ reduce }: { reduce: boolean }) {
             <div className="relative" style={{ aspectRatio: "4/5" }}>
               <Image
                 src={IMG(
-                  "CAFE-WORK-2026-03-29-rooftop-cafe-laptop-mountain-clouds.jpg",
+                  "PORTRAIT-2026-05-18-arms-crossed-sunglasses-confident-table-pose.jpg",
                 )}
-                alt="Waseem Nasir working on a laptop at a rooftop cafe with a mountain view"
+                alt="Waseem Nasir — confident founder portrait, arms crossed in sunglasses"
                 fill
                 priority
                 sizes="(max-width:1024px) 90vw, 40vw"
@@ -653,20 +718,28 @@ function Hero({ reduce }: { reduce: boolean }) {
    TRUST — honest scale anchor; 4 real clients as a status row
    ────────────────────────────────────────────────────────────── */
 const CLIENTS = [
-  { name: "Takycorp", sub: "Inbox, auto-handled", status: "LIVE" as const },
+  {
+    name: "Takycorp",
+    sub: "Inbox, auto-handled",
+    mech: "n8n · Gmail triage · auto-reply",
+    status: "LIVE" as const,
+  },
   {
     name: "idea-viaggi / KODIASIMMO",
     sub: "Per-customer access",
+    mech: "WordPress · per-user trip gate",
     status: "DELIVERED" as const,
   },
   {
     name: "Christelle",
     sub: "Care intake, automated",
+    mech: "WhatsApp · intake flow · 24/7",
     status: "LIVE" as const,
   },
   {
     name: "Lahore dental practice",
     sub: "Front desk, automated",
+    mech: "Booking · reminders · auto-reply",
     status: "SHIPPED" as const,
   },
 ];
@@ -681,10 +754,35 @@ function Trust({ reduce }: { reduce: boolean }) {
       }}
     >
       <div className="mx-auto max-w-[1200px] px-5 py-16 sm:px-6 sm:py-20">
-        <Reveal reduce={reduce} className="mb-10 text-center">
+        <Reveal reduce={reduce} className="mb-10 flex flex-wrap items-center justify-between gap-4">
           <Mono color={C.mute}>
             Shipped &amp; live in production — travel · dental · care
           </Mono>
+          {/* Top Rated Seller credential — owner-confirmed, SkynetJoe LLC agency */}
+          <a
+            href="https://www.fiverr.com/agencies/skynetjoellc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bp-link inline-flex items-center gap-2"
+            style={{ color: C.accent, fontSize: "0.78rem", fontWeight: 600 }}
+          >
+            <span
+              style={{
+                background: C.accentTint,
+                border: `1px solid rgba(17,126,115,0.25)`,
+                borderRadius: 999,
+                padding: "0.3rem 0.75rem",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.66rem",
+                fontWeight: 500,
+                letterSpacing: "0.08em",
+                color: C.pillInk,
+                textTransform: "uppercase",
+              }}
+            >
+              Top Rated Seller · Fiverr
+            </span>
+          </a>
         </Reveal>
         <div
           className="grid grid-cols-2 gap-px overflow-hidden lg:grid-cols-4"
@@ -697,7 +795,7 @@ function Trust({ reduce }: { reduce: boolean }) {
           {CLIENTS.map((c, i) => (
             <Reveal as="div" reduce={reduce} delay={i * 0.06} key={c.name}>
               <div
-                className="flex h-full flex-col gap-3 px-6 py-7"
+                className="bp-trust-card flex h-full flex-col gap-3 px-6 py-7"
                 style={{ background: C.surface }}
               >
                 <div className="flex items-center justify-between gap-2">
@@ -715,6 +813,10 @@ function Trust({ reduce }: { reduce: boolean }) {
                 </div>
                 <Mono color={C.mute} className="!tracking-[0.06em]">
                   {c.sub}
+                </Mono>
+                {/* mech detail — revealed on hover (always visible at reduced-motion) */}
+                <Mono color={C.pillInk} className="bp-trust-mech !tracking-[0.05em]">
+                  {c.mech}
                 </Mono>
                 <div className="mt-1">
                   <StatusPill kind={c.status} />
@@ -735,10 +837,28 @@ function Trust({ reduce }: { reduce: boolean }) {
 function NodeGraph({
   nodes,
   kind,
+  reduce,
 }: {
   nodes: string[];
   kind: "flow" | "gate";
+  reduce: boolean;
 }) {
+  const [hovered, setHovered] = useState(false);
+  const [pulseIdx, setPulseIdx] = useState(-1);
+  useEffect(() => {
+    if (!hovered || reduce) {
+      setPulseIdx(-1);
+      return;
+    }
+    let idx = 0;
+    setPulseIdx(0);
+    const iv = setInterval(() => {
+      idx = (idx + 1) % nodes.length;
+      setPulseIdx(idx);
+    }, 280);
+    return () => clearInterval(iv);
+  }, [hovered, reduce, nodes.length]);
+
   return (
     <div
       className="relative overflow-hidden p-6 sm:p-8"
@@ -747,7 +867,10 @@ function NodeGraph({
         border: `1px solid ${C.hairline}`,
         background: C.card,
         boxShadow: SHADOW.md,
+        cursor: "default",
       }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { setHovered(false); setPulseIdx(-1); }}
     >
       <div className="mb-5 flex items-center justify-between">
         <Mono color={C.pillInk}>
@@ -760,43 +883,56 @@ function NodeGraph({
         />
       </div>
       <div className="flex flex-col gap-3">
-        {nodes.map((label, i) => (
-          <div key={label} className="flex items-center gap-3">
-            <span
-              className="font-mono"
-              style={{
-                color: C.mute,
-                fontSize: "0.6rem",
-                width: 22,
-                fontWeight: 500,
-              }}
-            >
-              {String(i + 1).padStart(2, "0")}
-            </span>
-            <div
-              className="flex flex-1 items-center justify-between rounded-xl px-4 py-3"
-              style={{
-                background: i === nodes.length - 1 ? C.accentTint : C.surface,
-                border: `1px solid ${i === nodes.length - 1 ? "rgba(17,126,115,0.25)" : C.hairline}`,
-              }}
-            >
+        {nodes.map((label, i) => {
+          const isLast = i === nodes.length - 1;
+          const isPulsing = pulseIdx === i;
+          return (
+            <div key={label} className="flex items-center gap-3">
               <span
-                style={{ color: C.ink, fontWeight: 500, fontSize: "0.92rem" }}
-              >
-                {label}
-              </span>
-              <span
+                className="font-mono"
                 style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: 999,
-                  background: i === nodes.length - 1 ? C.accent : C.hairline,
+                  color: isPulsing ? C.accent : C.mute,
+                  fontSize: "0.6rem",
+                  width: 22,
+                  fontWeight: 500,
+                  transition: reduce ? undefined : "color .18s ease-out",
                 }}
-                aria-hidden
-              />
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <div
+                className="flex flex-1 items-center justify-between rounded-xl px-4 py-3"
+                style={{
+                  background: isPulsing
+                    ? C.accentTint
+                    : isLast
+                      ? C.accentTint
+                      : C.surface,
+                  border: `1px solid ${isPulsing || isLast ? "rgba(17,126,115,0.25)" : C.hairline}`,
+                  transition: reduce ? undefined : "background .18s ease-out, border-color .18s ease-out",
+                }}
+              >
+                <span
+                  style={{ color: C.ink, fontWeight: 500, fontSize: "0.92rem" }}
+                >
+                  {label}
+                </span>
+                <span
+                  className={isPulsing && !reduce ? "bp-node-pulse" : ""}
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 999,
+                    background: isPulsing || isLast ? C.accent : C.hairline,
+                    transition: reduce ? undefined : "background .18s ease-out",
+                    animation: isPulsing && !reduce ? "bpNodePulse .56s ease-in-out" : undefined,
+                  }}
+                  aria-hidden
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -876,7 +1012,7 @@ function How({ reduce }: { reduce: boolean }) {
                 delay={0.08}
                 className={flip ? "lg:order-1" : ""}
               >
-                <NodeGraph nodes={row.nodes} kind={row.kind} />
+                <NodeGraph nodes={row.nodes} kind={row.kind} reduce={reduce} />
               </Reveal>
             </div>
           );
@@ -984,7 +1120,7 @@ function Stack({ reduce }: { reduce: boolean }) {
                   padding: 28,
                 }}
               >
-                <Mono color={tile.hero ? C.pillInk : C.mute}>{tile.n}</Mono>
+                <Mono color={tile.hero ? C.pillInk : C.mute} className="bp-stack-n">{tile.n}</Mono>
                 <h3
                   className="mt-4"
                   style={{
@@ -1115,7 +1251,7 @@ function Proof({ reduce }: { reduce: boolean }) {
               key={c.client}
             >
               <div
-                className="flex h-full flex-col"
+                className="bp-proof-card flex h-full flex-col"
                 style={{
                   borderRadius: 20,
                   border: `1px solid ${C.hairline}`,
@@ -1131,6 +1267,7 @@ function Proof({ reduce }: { reduce: boolean }) {
                   <StatusPill kind={c.status} />
                 </div>
                 <div
+                  className="bp-proof-metric"
                   style={{
                     fontFamily: "var(--font-display)",
                     fontWeight: 600,
@@ -1176,6 +1313,23 @@ function Proof({ reduce }: { reduce: boolean }) {
                     <Mono color={C.mute} className="!text-[0.62rem]">
                       {c.since}
                     </Mono>
+                  </div>
+                  {/* "View →" affordance — fades in on hover */}
+                  <div className="bp-proof-view mt-3">
+                    <a
+                      href={CTA}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono uppercase"
+                      style={{
+                        color: C.accent,
+                        fontSize: "0.66rem",
+                        fontWeight: 500,
+                        letterSpacing: "0.08em",
+                      }}
+                    >
+                      Want one like this? →
+                    </a>
                   </div>
                 </div>
               </div>
@@ -1353,9 +1507,9 @@ function About({ reduce }: { reduce: boolean }) {
             <div className="relative" style={{ aspectRatio: "4/5" }}>
               <Image
                 src={IMG(
-                  "PORTRAIT-2026-05-18-black-prince-coat-balcony-rail-sunglasses.jpg",
+                  "CAFE-WORK-2025-08-15-couch-laptop-brick-wall-cafe-candid.jpg",
                 )}
-                alt="Waseem Nasir — confident founder portrait, black coat and sunglasses on a balcony"
+                alt="Waseem Nasir working on a laptop on a cafe couch against an exposed-brick wall"
                 fill
                 sizes="(max-width:1024px) 90vw, 40vw"
                 loading="eager"
@@ -1368,8 +1522,7 @@ function About({ reduce }: { reduce: boolean }) {
               style={{ borderColor: C.hairline }}
             >
               <Mono color={C.pillInk} className="!tracking-[0.06em]">
-                Waseem Nasir · Founder, SkynetLabs · Built the systems on this
-                page
+                Waseem Nasir · Founder, SkynetLabs · 2000+ projects shipped
               </Mono>
             </figcaption>
           </figure>
@@ -1410,6 +1563,7 @@ function About({ reduce }: { reduce: boolean }) {
             ].map(([t, d]) => (
               <div
                 key={t}
+                className="bp-process-step"
                 style={{
                   borderRadius: 14,
                   border: `1px solid ${C.hairline}`,
@@ -1444,68 +1598,68 @@ function About({ reduce }: { reduce: boolean }) {
 const GITHUB = "https://github.com/waseemnasir2k26";
 const GALLERY: { src: string; alt: string }[] = [
   {
-    src: "CAFE-WORK-2026-03-30-dual-laptop-analytics-dashboard-coffee.jpg",
-    alt: "Waseem at a dual-laptop analytics dashboard",
+    src: "WORK-2025-06-10-coworking-desk-focused-phone-candid.jpg",
+    alt: "Waseem focused at a coworking desk, phone in hand",
   },
   {
-    src: "WORK-2025-08-06-night-coworking-team-laptops-selfie.jpg",
-    alt: "Late-night coworking session with the team",
-  },
-  {
-    src: "EVENT-2026-05-25-bali-cafe-coworking-group-meetup.jpg",
-    alt: "Bali founder coworking meetup",
-  },
-  {
-    src: "CAFE-WORK-2026-06-02-night-cafe-typing-backlit-keyboard-candid.jpg",
-    alt: "Typing on a backlit keyboard at a night cafe",
-  },
-  {
-    src: "TRAVEL-2025-05-31-nusa-penida-arms-spread-cliffs.jpg",
-    alt: "Arms spread on the cliffs of Nusa Penida",
+    src: "CAFE-WORK-2026-02-27-olive-track-jacket-coffee-laptop-tea-sign.jpg",
+    alt: "Working on a laptop over coffee at a cafe in an olive track jacket",
   },
   {
     src: "EVENT-expo-booth-navy-polo-chandelier-hall.jpg",
-    alt: "At an expo booth in a chandelier hall",
+    alt: "At an expo booth in a chandelier hall — networking proof",
   },
   {
-    src: "CAFE-WORK-2026-05-22-bali-terrace-typing-laptop-latte-sunglasses.jpg",
-    alt: "Working from a sunlit Bali terrace cafe",
+    src: "WORK-2026-05-24-rice-terrace-phone-powerbank-focus.jpg",
+    alt: "Working from a rice terrace, phone and power bank — nomad operator",
   },
   {
-    src: "TRAVEL-2026-03-27-motorbike-helmet-backpack-mountain-road.jpg",
-    alt: "On a motorbike on a mountain road",
+    src: "TRAVEL-2025-05-31-cliff-bucket-hat-crossbody-ocean.jpg",
+    alt: "On an ocean cliff in a bucket hat with a crossbody bag",
   },
   {
-    src: "LIFESTYLE-2026-06-09-acoustic-guitar-smile-white-cafe.jpg",
-    alt: "Playing acoustic guitar in a white cafe",
+    src: "PORTRAIT-restaurant-closeup-glasses-beige-shirt.jpg",
+    alt: "Close-up portrait in glasses and a beige shirt at a restaurant",
   },
   {
-    src: "WORK-2025-08-04-cafe-client-thumbs-up-smiles.jpg",
-    alt: "Thumbs up with a client at a cafe",
+    src: "CAFE-WORK-2026-06-01-rooftop-laptop-orange-juice-foreground.jpg",
+    alt: "Rooftop laptop session with fresh orange juice in the foreground",
   },
   {
-    src: "PORTRAIT-2026-05-18-window-seat-sunglasses-facing-camera-relaxed.jpg",
-    alt: "Relaxed window-seat portrait",
+    src: "TRAVEL-2026-03-27-tan-knit-sweater-mountain-ridge-portrait.jpg",
+    alt: "Mountain-ridge portrait in a tan knit sweater",
   },
   {
-    src: "CAFE-WORK-2026-06-01-rooftop-laptop-dragonfruit-smoothie-smile.jpg",
-    alt: "Rooftop laptop session with a dragonfruit smoothie",
+    src: "LIFESTYLE-2025-08-05-coffee-cup-raise-bamboo-cafe.jpg",
+    alt: "Raising a coffee cup at a bamboo cafe",
   },
   {
-    src: "TRAVEL-2026-03-27-khyber-pakhtunkhwa-welcome-arch-backpack.jpg",
-    alt: "At the Khyber Pakhtunkhwa welcome arch with a backpack",
+    src: "PORTRAIT-2026-05-24-rice-field-smile-palms-mountain.jpg",
+    alt: "Smiling in a rice field framed by palms and mountains",
   },
   {
-    src: "LIFESTYLE-2025-08-08-rattan-chair-headphones-pavilion-relaxed.jpg",
-    alt: "Relaxed in a rattan chair with headphones",
+    src: "PORTRAIT-stool-portrait-navy-polo-framed-art.jpg",
+    alt: "Seated portrait in a navy polo beside framed art",
   },
   {
-    src: "TRAVEL-2026-05-24-jungle-bridge-standing-sunglasses-front.jpg",
-    alt: "Standing on a jungle bridge",
+    src: "CAFE-WORK-2026-02-14-night-rooftop-cafe-phone-city-lights.jpg",
+    alt: "Night rooftop cafe, phone in hand with city lights behind",
   },
   {
-    src: "CAFE-WORK-2026-06-05-garden-cafe-blue-polo-smile-laptop.jpg",
-    alt: "Smiling over a laptop at a garden cafe",
+    src: "TRAVEL-2026-05-24-jungle-rail-lean-sunglasses-candid.jpg",
+    alt: "Leaning on a jungle rail in sunglasses, candid",
+  },
+  {
+    src: "LIFESTYLE-cafe-counter-espresso-machine-facing-camera.jpg",
+    alt: "Behind a cafe counter by the espresso machine, facing camera",
+  },
+  {
+    src: "TRAVEL-2025-05-17-beach-standing-smile-moody-sky.jpg",
+    alt: "Standing on a beach under a moody sky, smiling",
+  },
+  {
+    src: "CAFE-WORK-2026-06-05-garden-cafe-blue-polo-phone-focus.jpg",
+    alt: "Focused on a phone at a garden cafe in a blue polo",
   },
 ];
 function Gallery({ reduce }: { reduce: boolean }) {
@@ -1539,11 +1693,7 @@ function Gallery({ reduce }: { reduce: boolean }) {
               style={{ color: C.body, fontSize: "1.0625rem", maxWidth: "46ch" }}
             >
               Shipping production systems from wherever the work happens —
-              between Lahore and Bali, and{" "}
-              <strong style={{ color: C.ink, fontWeight: 600 }}>
-                115 public repositories
-              </strong>{" "}
-              of it is open on GitHub.
+              between Lahore and Bali.
             </p>
           </div>
           <Link
@@ -1587,10 +1737,25 @@ function Gallery({ reduce }: { reduce: boolean }) {
                   width={600}
                   height={750}
                   sizes="(max-width:640px) 45vw, (max-width:1024px) 30vw, 22vw"
-                  loading="eager"
+                  loading="lazy"
                   className="h-auto w-full"
                   style={{ display: "block", filter: "saturate(0.96)" }}
                 />
+                {/* hover scrim with caption — CSS-only, no JS */}
+                <div className="bp-gallery-scrim" aria-hidden>
+                  <span
+                    className="font-mono"
+                    style={{
+                      color: "rgba(234,244,241,0.92)",
+                      fontSize: "0.62rem",
+                      fontWeight: 500,
+                      letterSpacing: "0.06em",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {g.alt}
+                  </span>
+                </div>
               </figure>
             </Reveal>
           ))}

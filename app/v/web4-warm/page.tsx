@@ -53,6 +53,9 @@ function OrchestrationField({ reduce }: { reduce: boolean }) {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    // Alias as non-null so nested functions don't re-trigger narrowing complaints
+    const cvs: HTMLCanvasElement = canvas;
+    const cx: CanvasRenderingContext2D = ctx;
 
     let raf = 0;
     let w = 0;
@@ -68,11 +71,11 @@ function OrchestrationField({ reduce }: { reduce: boolean }) {
     const MAXD = 168;
 
     function resize() {
-      w = canvas.clientWidth;
-      h = canvas.clientHeight;
-      canvas.width = Math.floor(w * dpr);
-      canvas.height = Math.floor(h * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      w = cvs.clientWidth;
+      h = cvs.clientHeight;
+      cvs.width = Math.floor(w * dpr);
+      cvs.height = Math.floor(h * dpr);
+      cx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
     function init() {
@@ -112,7 +115,7 @@ function OrchestrationField({ reduce }: { reduce: boolean }) {
     }
 
     function render() {
-      ctx.clearRect(0, 0, w, h);
+      cx.clearRect(0, 0, w, h);
 
       // edges — faint oxblood, opacity by proximity
       for (let i = 0; i < nodes.length; i++) {
@@ -124,12 +127,12 @@ function OrchestrationField({ reduce }: { reduce: boolean }) {
           const d = Math.hypot(dx, dy);
           if (d < MAXD) {
             const o = (1 - d / MAXD) * 0.16;
-            ctx.strokeStyle = `rgba(90,26,26,${o.toFixed(3)})`;
-            ctx.lineWidth = 0.7;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
+            cx.strokeStyle = `rgba(90,26,26,${o.toFixed(3)})`;
+            cx.lineWidth = 0.7;
+            cx.beginPath();
+            cx.moveTo(a.x, a.y);
+            cx.lineTo(b.x, b.y);
+            cx.stroke();
           }
         }
       }
@@ -142,18 +145,18 @@ function OrchestrationField({ reduce }: { reduce: boolean }) {
         const x = a.x + (b.x - a.x) * p.t;
         const y = a.y + (b.y - a.y) * p.t;
         const fade = Math.sin(p.t * Math.PI); // fade in/out across the trip
-        ctx.beginPath();
-        ctx.arc(x, y, 2.1, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(176,125,78,${(0.7 * fade).toFixed(3)})`;
-        ctx.fill();
+        cx.beginPath();
+        cx.arc(x, y, 2.1, 0, Math.PI * 2);
+        cx.fillStyle = `rgba(176,125,78,${(0.7 * fade).toFixed(3)})`;
+        cx.fill();
       }
 
       // nodes — caramel
       for (const n of nodes) {
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(176,125,78,0.55)";
-        ctx.fill();
+        cx.beginPath();
+        cx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        cx.fillStyle = "rgba(176,125,78,0.55)";
+        cx.fill();
       }
     }
 
