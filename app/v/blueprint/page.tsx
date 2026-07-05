@@ -485,6 +485,7 @@ function Nav() {
             [
               ["#how", "Work"],
               ["#proof", "Proof"],
+              ["/blog", "Blog"],
               ["#about", "About"],
             ] as [string, string][]
           ).map(([href, label]) => (
@@ -754,7 +755,10 @@ function Trust({ reduce }: { reduce: boolean }) {
       }}
     >
       <div className="mx-auto max-w-[1200px] px-5 py-16 sm:px-6 sm:py-20">
-        <Reveal reduce={reduce} className="mb-10 flex flex-wrap items-center justify-between gap-4">
+        <Reveal
+          reduce={reduce}
+          className="mb-10 flex flex-wrap items-center justify-between gap-4"
+        >
           <Mono color={C.mute}>
             Shipped &amp; live in production — travel · dental · care
           </Mono>
@@ -815,7 +819,10 @@ function Trust({ reduce }: { reduce: boolean }) {
                   {c.sub}
                 </Mono>
                 {/* mech detail — revealed on hover (always visible at reduced-motion) */}
-                <Mono color={C.pillInk} className="bp-trust-mech !tracking-[0.05em]">
+                <Mono
+                  color={C.pillInk}
+                  className="bp-trust-mech !tracking-[0.05em]"
+                >
                   {c.mech}
                 </Mono>
                 <div className="mt-1">
@@ -870,7 +877,10 @@ function NodeGraph({
         cursor: "default",
       }}
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => { setHovered(false); setPulseIdx(-1); }}
+      onMouseLeave={() => {
+        setHovered(false);
+        setPulseIdx(-1);
+      }}
     >
       <div className="mb-5 flex items-center justify-between">
         <Mono color={C.pillInk}>
@@ -909,7 +919,9 @@ function NodeGraph({
                       ? C.accentTint
                       : C.surface,
                   border: `1px solid ${isPulsing || isLast ? "rgba(17,126,115,0.25)" : C.hairline}`,
-                  transition: reduce ? undefined : "background .18s ease-out, border-color .18s ease-out",
+                  transition: reduce
+                    ? undefined
+                    : "background .18s ease-out, border-color .18s ease-out",
                 }}
               >
                 <span
@@ -925,7 +937,10 @@ function NodeGraph({
                     borderRadius: 999,
                     background: isPulsing || isLast ? C.accent : C.hairline,
                     transition: reduce ? undefined : "background .18s ease-out",
-                    animation: isPulsing && !reduce ? "bpNodePulse .56s ease-in-out" : undefined,
+                    animation:
+                      isPulsing && !reduce
+                        ? "bpNodePulse .56s ease-in-out"
+                        : undefined,
                   }}
                   aria-hidden
                 />
@@ -1120,7 +1135,12 @@ function Stack({ reduce }: { reduce: boolean }) {
                   padding: 28,
                 }}
               >
-                <Mono color={tile.hero ? C.pillInk : C.mute} className="bp-stack-n">{tile.n}</Mono>
+                <Mono
+                  color={tile.hero ? C.pillInk : C.mute}
+                  className="bp-stack-n"
+                >
+                  {tile.n}
+                </Mono>
                 <h3
                   className="mt-4"
                   style={{
@@ -1381,7 +1401,7 @@ function Proof({ reduce }: { reduce: boolean }) {
 /* ──────────────────────────────────────────────────────────────
    NOW BUILDING — featured highlight: the video-editing-with-Claude-Code skill
    ────────────────────────────────────────────────────────────── */
-const VIDEO_LINK = "https://skynetjoe.com/edit-videos-with-claude";
+const VIDEO_LINK = "/blog/edited-10-travel-vlogs-in-one-night-with-claude-code";
 function NowBuilding({ reduce }: { reduce: boolean }) {
   return (
     <section
@@ -1458,14 +1478,12 @@ function NowBuilding({ reduce }: { reduce: boolean }) {
               >
                 My newest system: scripting, cutting, captioning, and publishing
                 short-form video straight from the terminal — the same
-                automation-first way I ship everything else. I packaged the
-                exact prompts and pipeline so you can run it too.
+                automation-first way I ship everything else. I recently cut and
+                rendered ten Ubud travel vlogs in a single overnight batch.
               </p>
             </div>
             <Link
               href={VIDEO_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
               className="bp-cta inline-flex shrink-0 items-center rounded-full font-semibold transition-opacity hover:opacity-90"
               style={{
                 background: C.accentTint,
@@ -1475,7 +1493,7 @@ function NowBuilding({ reduce }: { reduce: boolean }) {
                 boxShadow: SHADOW.md,
               }}
             >
-              See how it works →
+              Read how I did it →
             </Link>
           </div>
         </div>
@@ -1901,6 +1919,7 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
                   [
                     ["#how", "Work"],
                     ["#proof", "Proof"],
+                    ["/blog", "Blog"],
                     ["#about", "About"],
                   ],
                 ],
