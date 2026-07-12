@@ -1,0 +1,20 @@
+# Waseem Nasir
+
+> Personal site of Waseem Nasir — founder of SkynetLabs (skynetjoe.com), an AI automation studio. He builds n8n automations, AI agents, WordPress/Next.js sites, and video systems for service businesses, working from Bali (GMT+8) and Lahore.
+
+Waseem Nasir is the person; SkynetLabs is the company. For services, pricing, case studies, free tools, and bookings, the canonical business site is https://skynetjoe.com.
+
+## Pages
+
+- [Home](https://www.waseemnasir.com/): Who Waseem is, live client proof board, stack, gallery, and how to work with him.
+- [Blog](https://www.waseemnasir.com/blog): Field notes on running an automation agency with Claude Code from Bali.
+- [Mentorship](https://www.waseemnasir.com/mentorship): Private 1:1 Claude Code mentorship — learn to build and ship real software by vibe-coding, no CS degree needed.
+
+## Business
+
+- [SkynetLabs](https://skynetjoe.com): Services, pricing, 26 free tools, case studies.
+- [Book a call](https://skynetjoe.com/discovery-call): Free discovery call.
+
+## Notes
+
+This llms.txt follows the llmstxt.org draft specification. Last updated 2026-07-13. Maintained by Waseem Nasir.

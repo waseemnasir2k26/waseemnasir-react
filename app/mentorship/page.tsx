@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import MentorshipClient from "./MentorshipClient";
 
-const SITE = "https://waseemnasir.com";
+const SITE = "https://www.waseemnasir.com";
 
 export const metadata: Metadata = {
   title:
