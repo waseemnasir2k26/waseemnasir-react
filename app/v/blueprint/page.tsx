@@ -1679,6 +1679,54 @@ const GALLERY: { src: string; alt: string }[] = [
     src: "CAFE-WORK-2026-06-05-garden-cafe-blue-polo-phone-focus.jpg",
     alt: "Focused on a phone at a garden cafe in a blue polo",
   },
+  {
+    src: "BALI-2026-05-06-cafe-arch-working-side.jpg",
+    alt: "Working on a laptop under a stone arch cafe, side profile",
+  },
+  {
+    src: "PORTRAIT-2026-06-09-guitar-closeup-strumming-glasses.jpg",
+    alt: "Strumming a guitar, close-up in glasses — off the clock",
+  },
+  {
+    src: "TRAVEL-kuala-lumpur-street-crossbody-bag-portrait.jpg",
+    alt: "Street portrait in Kuala Lumpur with a crossbody bag",
+  },
+  {
+    src: "LIFESTYLE-2026-06-01-neon-gaming-cafe-headphones-candid.jpg",
+    alt: "Candid in headphones at a neon-lit gaming cafe",
+  },
+  {
+    src: "TRAVEL-2026-05-05-airport-lounge-armchair-phone-paintings.jpg",
+    alt: "Airport lounge armchair between flights, phone in hand",
+  },
+  {
+    src: "PORTRAIT-2026-05-24-river-gaze-profile-contemplative.jpg",
+    alt: "Contemplative river-side profile portrait",
+  },
+  {
+    src: "LIFESTYLE-2026-05-07-bali-cafe-thumbs-up-iced-latte.jpg",
+    alt: "Thumbs up over an iced latte at a Bali cafe",
+  },
+  {
+    src: "TRAVEL-thailand-straw-hat-pier-selfie.jpg",
+    alt: "Pier selfie in a straw hat in Thailand",
+  },
+  {
+    src: "LIFESTYLE-2026-03-29-photographing-valley-phone-knit-sweater.jpg",
+    alt: "Photographing a valley view, knit sweater",
+  },
+  {
+    src: "TRAVEL-night-valley-lights-balcony-selfie.jpg",
+    alt: "Balcony selfie over night valley lights",
+  },
+  {
+    src: "BALI-2026-05-07-veranda-phone-thinking.jpg",
+    alt: "Thinking through a build on a veranda, phone in hand",
+  },
+  {
+    src: "TRAVEL-castle-dusk-plaza-distant-stand.jpg",
+    alt: "Standing in a castle plaza at dusk",
+  },
 ];
 function Gallery({ reduce }: { reduce: boolean }) {
   return (
