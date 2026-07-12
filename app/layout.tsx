@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: "Waseem Nasir — AI automation that runs your business",
   description:
-    "I'm Waseem Nasir, founder of SkynetLabs. I find where your business leaks time and money, then build AI automation that plugs it — live for Takycorp, idea-viaggi & more. Book a free audit.",
+    "I'm Waseem Nasir, founder of SkynetLabs. I find where your business leaks time and money, then build AI automation that plugs it. Book a free audit.",
   keywords: [
     "Waseem Nasir",
     "SkynetLabs",

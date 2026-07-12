@@ -1,0 +1,10 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "waseemnasir.com" }],
+      "destination": "https://www.waseemnasir.com/$1",
+      "permanent": true
+    }
+  ]
+}
