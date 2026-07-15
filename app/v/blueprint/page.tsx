@@ -3,7 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useInView,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+} from "framer-motion";
 import {
   Bricolage_Grotesque,
   Hanken_Grotesk,
@@ -283,6 +290,10 @@ export default function Blueprint() {
           .bp-nav-fb { display: block; }
         }
         :focus-visible { outline: 2px solid ${C.accent}; outline-offset: 2px; border-radius: 4px; }
+        /* FAQ chevron: + rotates to × when open */
+        .bp-faq-chev { transition: transform .18s ease-out; display:inline-block; }
+        .bp-faq[open] .bp-faq-chev { transform: rotate(45deg); }
+        @media (prefers-reduced-motion: reduce){ .bp-faq-chev { transition:none; } }
       `}</style>
 
       <main
@@ -302,10 +313,27 @@ export default function Blueprint() {
         <Trust reduce={reduce} />
         <How reduce={reduce} />
         <Stack reduce={reduce} />
-        <Proof reduce={reduce} />
+        {/* Proof: pinned scrollytelling deck on desktop w/ motion; classic grid on
+            mobile + reduced-motion. id lives on the wrapper so #proof anchors work
+            in every mode without duplicate ids. */}
+        <div id="proof">
+          {reduce ? (
+            <Proof reduce={reduce} />
+          ) : (
+            <>
+              <div className="hidden lg:block">
+                <ProofPinned reduce={reduce} />
+              </div>
+              <div className="lg:hidden">
+                <Proof reduce={reduce} />
+              </div>
+            </>
+          )}
+        </div>
         <NowBuilding reduce={reduce} />
         <About reduce={reduce} />
         <Gallery reduce={reduce} />
+        <Faq reduce={reduce} />
         <Convert reduce={reduce} />
         <SiteFooter reduce={reduce} />
         <MobileCTABar />
@@ -1200,6 +1228,14 @@ type Case = {
   since: string;
   status: "LIVE" | "DELIVERED" | "SHIPPED";
 };
+/* ⛔ TESTIMONIALS — DO NOT INVENT (house rule: no-fake-claims).
+   Section ships ONLY when real, client-approved quotes land here.
+   Waseem to collect from: Takycorp (Nkento), Christelle, idea-viaggi/KODIASIMMO,
+   Lahore dental. Shape:
+   const TESTIMONIALS: { quote: string; name: string; role: string }[] = [];
+   When non-empty → render a "07.5 — In their words" strip between Proof and
+   NowBuilding (card row, same Reveal idiom). Until then: nothing renders. */
+
 const CASES: Case[] = [
   {
     client: "idea-viaggi / KODIASIMMO",
@@ -1232,10 +1268,275 @@ const CASES: Case[] = [
     status: "LIVE",
   },
 ];
+function DentalTile() {
+  return (
+    <div
+      className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center"
+      style={{
+        borderRadius: 20,
+        border: `1px solid ${C.hairline}`,
+        background: C.card,
+        boxShadow: SHADOW.sm,
+        padding: 28,
+      }}
+    >
+      <div className="flex items-center gap-4">
+        <StatusPill kind="SHIPPED" />
+        <div>
+          <p style={{ color: C.ink, fontWeight: 600, fontSize: "1.05rem" }}>
+            Lahore dental practice — front desk that runs itself, shipped.
+          </p>
+          <Mono color={C.mute} className="!tracking-[0.06em]">
+            Front desk, automated
+          </Mono>
+        </div>
+      </div>
+      <Link
+        href={CTA}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="bp-link shrink-0 font-semibold"
+        style={{ color: C.accent, fontSize: "0.92rem" }}
+      >
+        Want one like this? →
+      </Link>
+    </div>
+  );
+}
+
+/* Pinned scrollytelling deck — the ONE "wow" motion moment (REVAMP-PLAN §4/§5).
+   Desktop + motion-on only; mobile and reduced-motion get the classic grid.
+   HARD SEO rule: every case's text is always in the DOM — only opacity/transform animate. */
+function PinnedCase({
+  c,
+  i,
+  total,
+  progress,
+  active,
+  reduce,
+}: {
+  c: Case;
+  i: number;
+  total: number;
+  progress: ReturnType<typeof useScroll>["scrollYProgress"];
+  active: boolean;
+  reduce: boolean;
+}) {
+  const seg = 1 / total;
+  const start = i * seg;
+  const end = (i + 1) * seg;
+  const fade = Math.min(0.08, seg / 3);
+  const opacity = useTransform(
+    progress,
+    i === 0
+      ? [0, end - fade, end]
+      : i === total - 1
+        ? [start, start + fade, 1]
+        : [start, start + fade, end - fade, end],
+    i === 0 ? [1, 1, 0] : i === total - 1 ? [0, 1, 1] : [0, 1, 1, 0],
+  );
+  const y = useTransform(
+    progress,
+    [start, end],
+    i === 0 ? [0, -28] : [36, -28],
+  );
+  return (
+    <motion.div
+      className="absolute inset-0 flex items-center"
+      style={{
+        opacity,
+        y,
+        pointerEvents: active ? "auto" : "none",
+      }}
+      aria-hidden={!active}
+    >
+      <div className="mx-auto w-full max-w-[460px]">
+        <CaseCard c={c} reduce={reduce} />
+      </div>
+    </motion.div>
+  );
+}
+
+function ProofPinned({ reduce }: { reduce: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end end"],
+  });
+  const total = CASES.length;
+  const [idx, setIdx] = useState(0);
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    setIdx(Math.min(total - 1, Math.max(0, Math.floor(v * total))));
+  });
+  return (
+    <section
+      style={{ background: C.surface, borderTop: `1px solid ${C.hairline}` }}
+    >
+      {/* tall scroll runway drives the deck */}
+      <div ref={ref} style={{ height: `${total * 100 + 60}vh` }}>
+        <div className="sticky top-0 flex h-screen items-center">
+          <div className="mx-auto grid w-full max-w-[1200px] grid-cols-12 items-center gap-10 px-6">
+            {/* left — pinned heading + live index */}
+            <div className="col-span-5">
+              <Mono color={C.accent}>05 — Proof</Mono>
+              <h2
+                className="mt-4"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontWeight: 500,
+                  fontSize: "clamp(1.9rem,4vw,3rem)",
+                  lineHeight: 1.04,
+                  letterSpacing: "-0.026em",
+                  color: C.ink,
+                }}
+              >
+                Real systems, in production.
+              </h2>
+              <p className="mt-4">
+                <Mono color={C.mute}>Named clients · specific outcomes</Mono>
+              </p>
+              <div
+                className="mt-10 font-mono"
+                style={{
+                  color: C.accentDeep,
+                  fontSize: "0.8rem",
+                  fontWeight: 500,
+                  letterSpacing: "0.1em",
+                }}
+                aria-live="polite"
+              >
+                0{idx + 1} <span style={{ color: C.mute }}>/ 0{total}</span>
+              </div>
+              {/* progress ticks */}
+              <div className="mt-3 flex gap-2" aria-hidden>
+                {CASES.map((c, i) => (
+                  <div
+                    key={c.client}
+                    style={{
+                      height: 3,
+                      width: 34,
+                      borderRadius: 999,
+                      background: i <= idx ? C.accent : C.hairline,
+                      transition: "background .25s ease-out",
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+            {/* right — crossfading case deck */}
+            <div className="relative col-span-7" style={{ height: 480 }}>
+              {CASES.map((c, i) => (
+                <PinnedCase
+                  key={c.client}
+                  c={c}
+                  i={i}
+                  total={total}
+                  progress={scrollYProgress}
+                  active={i === idx}
+                  reduce={reduce}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* wide 4th tile lands after the deck */}
+      <div className="mx-auto max-w-[1200px] px-6 pb-24">
+        <Reveal reduce={reduce}>
+          <DentalTile />
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function CaseCard({ c, reduce }: { c: Case; reduce: boolean }) {
+  return (
+    <div
+      className="bp-proof-card flex h-full flex-col"
+      style={{
+        borderRadius: 20,
+        border: `1px solid ${C.hairline}`,
+        background: C.card,
+        boxShadow: SHADOW.md,
+        padding: 28,
+      }}
+    >
+      <div className="mb-5 flex items-start justify-between gap-3">
+        <Mono color={C.mute} className="!tracking-[0.06em]">
+          {c.client}
+        </Mono>
+        <StatusPill kind={c.status} />
+      </div>
+      <div
+        className="bp-proof-metric"
+        style={{
+          fontFamily: "var(--font-display)",
+          fontWeight: 600,
+          fontSize: "clamp(2.5rem,5vw,3.5rem)",
+          lineHeight: 1,
+          letterSpacing: "-0.03em",
+          color: C.accentDeep,
+        }}
+      >
+        {c.staticMetric ?? (
+          <>
+            {c.metricPrefix ?? ""}
+            <CountUp
+              to={c.metricTo ?? 0}
+              suffix={c.metricSuffix ?? ""}
+              reduce={reduce}
+            />
+          </>
+        )}
+      </div>
+      <p className="mt-2" style={{ color: C.body, fontSize: "0.95rem" }}>
+        {c.metricNote}
+      </p>
+      <p
+        className="mt-4"
+        style={{
+          color: C.ink,
+          fontWeight: 600,
+          fontSize: "1.02rem",
+          lineHeight: 1.3,
+        }}
+      >
+        {c.outcome}
+      </p>
+      <div className="mt-auto pt-6">
+        <Mono color={C.pillInk} className="!tracking-[0.06em]">
+          {c.mech}
+        </Mono>
+        <div className="mt-2">
+          <Mono color={C.mute} className="!text-[0.62rem]">
+            {c.since}
+          </Mono>
+        </div>
+        {/* "View →" affordance — fades in on hover */}
+        <div className="bp-proof-view mt-3">
+          <a
+            href={CTA}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono uppercase"
+            style={{
+              color: C.accent,
+              fontSize: "0.66rem",
+              fontWeight: 500,
+              letterSpacing: "0.08em",
+            }}
+          >
+            Want one like this? →
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
 function Proof({ reduce }: { reduce: boolean }) {
   return (
     <section
-      id="proof"
       style={{ background: C.surface, borderTop: `1px solid ${C.hairline}` }}
     >
       <div className="mx-auto max-w-[1200px] px-5 py-24 sm:px-6 sm:py-28">
@@ -1270,128 +1571,14 @@ function Proof({ reduce }: { reduce: boolean }) {
               delay={i * 0.06}
               key={c.client}
             >
-              <div
-                className="bp-proof-card flex h-full flex-col"
-                style={{
-                  borderRadius: 20,
-                  border: `1px solid ${C.hairline}`,
-                  background: C.card,
-                  boxShadow: SHADOW.md,
-                  padding: 28,
-                }}
-              >
-                <div className="mb-5 flex items-start justify-between gap-3">
-                  <Mono color={C.mute} className="!tracking-[0.06em]">
-                    {c.client}
-                  </Mono>
-                  <StatusPill kind={c.status} />
-                </div>
-                <div
-                  className="bp-proof-metric"
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 600,
-                    fontSize: "clamp(2.5rem,5vw,3.5rem)",
-                    lineHeight: 1,
-                    letterSpacing: "-0.03em",
-                    color: C.accentDeep,
-                  }}
-                >
-                  {c.staticMetric ?? (
-                    <>
-                      {c.metricPrefix ?? ""}
-                      <CountUp
-                        to={c.metricTo ?? 0}
-                        suffix={c.metricSuffix ?? ""}
-                        reduce={reduce}
-                      />
-                    </>
-                  )}
-                </div>
-                <p
-                  className="mt-2"
-                  style={{ color: C.body, fontSize: "0.95rem" }}
-                >
-                  {c.metricNote}
-                </p>
-                <p
-                  className="mt-4"
-                  style={{
-                    color: C.ink,
-                    fontWeight: 600,
-                    fontSize: "1.02rem",
-                    lineHeight: 1.3,
-                  }}
-                >
-                  {c.outcome}
-                </p>
-                <div className="mt-auto pt-6">
-                  <Mono color={C.pillInk} className="!tracking-[0.06em]">
-                    {c.mech}
-                  </Mono>
-                  <div className="mt-2">
-                    <Mono color={C.mute} className="!text-[0.62rem]">
-                      {c.since}
-                    </Mono>
-                  </div>
-                  {/* "View →" affordance — fades in on hover */}
-                  <div className="bp-proof-view mt-3">
-                    <a
-                      href={CTA}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-mono uppercase"
-                      style={{
-                        color: C.accent,
-                        fontSize: "0.66rem",
-                        fontWeight: 500,
-                        letterSpacing: "0.08em",
-                      }}
-                    >
-                      Want one like this? →
-                    </a>
-                  </div>
-                </div>
-              </div>
+              <CaseCard c={c} reduce={reduce} />
             </Reveal>
           ))}
         </div>
 
         {/* wide 4th tile */}
         <Reveal reduce={reduce} delay={0.1} className="mt-4">
-          <div
-            className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center"
-            style={{
-              borderRadius: 20,
-              border: `1px solid ${C.hairline}`,
-              background: C.card,
-              boxShadow: SHADOW.sm,
-              padding: 28,
-            }}
-          >
-            <div className="flex items-center gap-4">
-              <StatusPill kind="SHIPPED" />
-              <div>
-                <p
-                  style={{ color: C.ink, fontWeight: 600, fontSize: "1.05rem" }}
-                >
-                  Lahore dental practice — front desk that runs itself, shipped.
-                </p>
-                <Mono color={C.mute} className="!tracking-[0.06em]">
-                  Front desk, automated
-                </Mono>
-              </div>
-            </div>
-            <Link
-              href={CTA}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bp-link shrink-0 font-semibold"
-              style={{ color: C.accent, fontSize: "0.92rem" }}
-            >
-              Want one like this? →
-            </Link>
-          </div>
+          <DentalTile />
         </Reveal>
       </div>
     </section>
@@ -1834,6 +2021,114 @@ function Gallery({ reduce }: { reduce: boolean }) {
 /* ──────────────────────────────────────────────────────────────
    CONVERT — the single ink-jade depth band
    ────────────────────────────────────────────────────────────── */
+/* ──────────────────────────────────────────────────────────────
+   FAQ — question-shaped headings, answers in DOM (AEO), native
+   <details> for zero-JS a11y. FAQPage JSON-LD mirrors visible text
+   EXACTLY (REVAMP-PLAN §6.6 — schema must match what users see).
+   ────────────────────────────────────────────────────────────── */
+const FAQS = [
+  {
+    q: "How much does a build like this cost?",
+    a: "Every system is scoped as a fixed-price project after the free audit — you know the exact number before any work starts, and the audit itself costs nothing. No retainers required, no hourly surprises.",
+  },
+  {
+    q: "How fast will it be live?",
+    a: "Most systems ship in about 14 days. Bigger builds are split into stages, so something useful is running for you inside the first two weeks.",
+  },
+  {
+    q: "Do I need to understand AI or code?",
+    a: "No. You get a working system plus plain-language video documentation — the same handoff idea-viaggi's team uses to run their trip portal without me.",
+  },
+  {
+    q: "What tools do you build on?",
+    a: "n8n for workflows, GoHighLevel for CRM and follow-up, WordPress and Next.js for sites, and Claude or GPT where language understanding is needed. All standard tools, all owned by you — no proprietary black box.",
+  },
+  {
+    q: "What actually happens on the free audit call?",
+    a: "Thirty minutes. You bring your messiest manual process; I map where it leaks time and money. You leave with a one-page automation map whether we work together or not.",
+  },
+  {
+    q: "What happens after handoff if something breaks?",
+    a: "Every build ships with documentation and a video walkthrough, and ongoing support is available if you want it. The systems for Takycorp and Christelle have been running in production since they shipped.",
+  },
+];
+function Faq({ reduce }: { reduce: boolean }) {
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQS.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+  return (
+    <section
+      id="faq"
+      className="mx-auto max-w-[1200px] px-5 py-24 sm:px-6 sm:py-28"
+    >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
+      <Reveal reduce={reduce} className="mb-12 flex items-center gap-3">
+        <Mono color={C.accent}>08 — Questions</Mono>
+        <div
+          style={{ height: 1, flex: 1, background: C.hairline }}
+          aria-hidden
+        />
+      </Reveal>
+      <div className="mx-auto grid max-w-[820px] grid-cols-1 gap-3">
+        {FAQS.map((f, i) => (
+          <Reveal as="div" reduce={reduce} delay={i * 0.04} key={f.q}>
+            <details
+              className="bp-faq group"
+              style={{
+                borderRadius: 16,
+                border: `1px solid ${C.hairline}`,
+                background: C.card,
+                boxShadow: SHADOW.sm,
+              }}
+            >
+              <summary
+                className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 [&::-webkit-details-marker]:hidden"
+                style={{
+                  color: C.ink,
+                  fontWeight: 600,
+                  fontSize: "1.02rem",
+                  lineHeight: 1.35,
+                }}
+              >
+                <h3 style={{ fontSize: "inherit", fontWeight: "inherit" }}>
+                  {f.q}
+                </h3>
+                <span
+                  className="bp-faq-chev shrink-0 font-mono"
+                  style={{ color: C.accent, fontSize: "0.9rem" }}
+                  aria-hidden
+                >
+                  +
+                </span>
+              </summary>
+              <p
+                className="px-6 pb-6"
+                style={{
+                  color: C.body,
+                  fontSize: "0.98rem",
+                  lineHeight: 1.62,
+                  maxWidth: "62ch",
+                }}
+              >
+                {f.a}
+              </p>
+            </details>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function Convert({ reduce }: { reduce: boolean }) {
   return (
     <section id="convert" style={{ background: C.accentDeep }}>
@@ -1880,6 +2175,45 @@ function Convert({ reduce }: { reduce: boolean }) {
             >
               Book a free audit →
             </Link>
+          </Reveal>
+          {/* what-happens-next strip — kills call anxiety (REVAMP-PLAN §4.6) */}
+          <Reveal reduce={reduce} delay={0.12} className="mt-10">
+            <ol className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-0">
+              {[
+                "30-min audit call",
+                "1-page map + fixed quote",
+                "Live in ~14 days",
+              ].map((step, i) => (
+                <li key={step} className="flex items-center">
+                  <span
+                    className="font-mono uppercase"
+                    style={{
+                      color: C.onDeep,
+                      fontSize: "0.7rem",
+                      fontWeight: 500,
+                      letterSpacing: "0.08em",
+                      border: "1px solid rgba(234,244,241,0.28)",
+                      borderRadius: 999,
+                      padding: "0.45rem 0.9rem",
+                    }}
+                  >
+                    <span style={{ color: "rgba(234,244,241,0.6)" }}>
+                      {i + 1}.{" "}
+                    </span>
+                    {step}
+                  </span>
+                  {i < 2 && (
+                    <span
+                      className="mx-2 hidden sm:inline"
+                      style={{ color: "rgba(234,244,241,0.45)" }}
+                      aria-hidden
+                    >
+                      →
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ol>
           </Reveal>
           <Reveal reduce={reduce} delay={0.14} className="mt-8">
             <span
