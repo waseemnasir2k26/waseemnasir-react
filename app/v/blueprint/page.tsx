@@ -110,7 +110,11 @@ function Mono({
   );
 }
 
-function StatusPill({ kind }: { kind: "LIVE" | "DELIVERED" | "SHIPPED" }) {
+function StatusPill({
+  kind,
+}: {
+  kind: "LIVE" | "DELIVERED" | "SHIPPED" | "INTERNAL";
+}) {
   const dot = kind === "LIVE" ? C.live : C.accent;
   return (
     <span
@@ -775,6 +779,30 @@ const CLIENTS = [
     mech: "Booking · reminders · auto-reply",
     status: "SHIPPED" as const,
   },
+  {
+    name: "Takycorp · ops",
+    sub: "Ops dashboard, real-time",
+    mech: "Next.js · live metrics · alerts",
+    status: "LIVE" as const,
+  },
+  {
+    name: "SkynetLabs · voice",
+    sub: "Calls answered by AI",
+    mech: "Vapi · GHL · lead follow-up calls",
+    status: "INTERNAL" as const,
+  },
+  {
+    name: "SkynetLabs · studio",
+    sub: "Video editing, run by AI",
+    mech: "Claude Code · ffmpeg · auto-captions",
+    status: "INTERNAL" as const,
+  },
+  {
+    name: "SkynetLabs · publish",
+    sub: "Social posting, automated",
+    mech: "n8n · 13 accounts · one-click fan-out",
+    status: "INTERNAL" as const,
+  },
 ];
 function Trust({ reduce }: { reduce: boolean }) {
   return (
@@ -792,7 +820,8 @@ function Trust({ reduce }: { reduce: boolean }) {
           className="mb-10 flex flex-wrap items-center justify-between gap-4"
         >
           <Mono color={C.mute}>
-            Shipped &amp; live in production — travel · dental · care
+            Shipped &amp; live in production — travel · dental · care · ops ·
+            voice · video
           </Mono>
           {/* Top Rated Seller credential — owner-confirmed, SkynetJoe LLC agency */}
           <a
