@@ -294,6 +294,8 @@ export default function Blueprint() {
         .bp-faq-chev { transition: transform .18s ease-out; display:inline-block; }
         .bp-faq[open] .bp-faq-chev { transform: rotate(45deg); }
         @media (prefers-reduced-motion: reduce){ .bp-faq-chev { transition:none; } }
+        /* Pinned deck: in-card CTA always visible (no hover gate mid-scrollytelling) */
+        .bp-pin-deck .bp-proof-view { opacity: 1; transform: none; }
       `}</style>
 
       <main
@@ -618,21 +620,23 @@ function Hero({ reduce }: { reduce: boolean }) {
             {...stagger(3)}
             className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4"
           >
-            <Link
-              href={CTA}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bp-cta inline-flex items-center rounded-full font-semibold transition-opacity hover:opacity-90"
-              style={{
-                background: C.accent,
-                color: "#fff",
-                fontSize: "0.95rem",
-                padding: "0.8rem 1.6rem",
-                boxShadow: SHADOW.md,
-              }}
-            >
-              Book a free audit
-            </Link>
+            <Magnet reduce={reduce}>
+              <Link
+                href={CTA}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bp-cta inline-flex items-center rounded-full font-semibold transition-opacity hover:opacity-90"
+                style={{
+                  background: C.accent,
+                  color: "#fff",
+                  fontSize: "0.95rem",
+                  padding: "0.8rem 1.6rem",
+                  boxShadow: SHADOW.md,
+                }}
+              >
+                Book a free audit
+              </Link>
+            </Magnet>
             <a
               href="#proof"
               className="bp-link font-semibold"
@@ -1251,9 +1255,10 @@ const CASES: Case[] = [
   {
     client: "Takycorp",
     outcome: "Inbound email, handled for them.",
-    metricTo: 2,
-    metricSuffix: " bots",
-    metricNote: "triage + auto-reply so no message waits.",
+    /* reframed from "2 bots" (weak authority at display size) to the outcome
+       the site already claims ("no message waits") — same fact, no new metric */
+    staticMetric: "0",
+    metricNote: "messages left waiting — triage + auto-reply runs the inbox.",
     mech: "Inbox triage + auto-reply",
     since: "Live · in production",
     status: "LIVE",
@@ -1268,6 +1273,43 @@ const CASES: Case[] = [
     status: "LIVE",
   },
 ];
+/* Magnetic hover — plan §5 USE list. Desktop fine-pointer only, reduce-gated,
+   transform-only (CWV-safe). Subtle pull, spring-back on leave. */
+function Magnet({
+  children,
+  reduce,
+}: {
+  children: React.ReactNode;
+  reduce: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  return (
+    <div
+      ref={ref}
+      className="inline-block"
+      style={{
+        transition: "transform .3s cubic-bezier(0.16,1,0.3,1)",
+        willChange: "transform",
+      }}
+      onPointerMove={(e) => {
+        if (reduce || e.pointerType !== "mouse") return;
+        const el = ref.current;
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width / 2);
+        const dy = e.clientY - (r.top + r.height / 2);
+        el.style.transform = `translate(${dx * 0.18}px, ${dy * 0.28}px)`;
+      }}
+      onPointerLeave={() => {
+        const el = ref.current;
+        if (el) el.style.transform = "translate(0,0)";
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 function DentalTile() {
   return (
     <div
@@ -1434,9 +1476,18 @@ function PinnedCase({
         pointerEvents: active ? "auto" : "none",
       }}
       aria-hidden={!active}
+      /* inert: kill keyboard focus into invisible cards (WCAG 4.1.2) —
+         pointer-events alone does not block Tab */
+      ref={(el) => {
+        if (el) el.inert = !active;
+      }}
     >
       <div className="mx-auto w-full max-w-[460px]">
-        <CaseCard c={c} reduce={reduce} />
+        {/* key on active: re-arms CountUp so the metric counts up when THIS
+            card becomes the visible one, not while hidden at pin-start */}
+        <div key={active ? "active" : "idle"}>
+          <CaseCard c={c} reduce={reduce} />
+        </div>
       </div>
     </motion.div>
   );
@@ -1508,8 +1559,12 @@ function ProofPinned({ reduce }: { reduce: boolean }) {
                 ))}
               </div>
             </div>
-            {/* right — crossfading case deck */}
-            <div className="relative col-span-7" style={{ height: 480 }}>
+            {/* right — crossfading case deck (bp-pin-deck: CTA link always visible
+                here — hover-reveal makes no sense mid-scrollytelling) */}
+            <div
+              className="bp-pin-deck relative col-span-7"
+              style={{ height: 480 }}
+            >
               {CASES.map((c, i) => (
                 <PinnedCase
                   key={c.client}
@@ -2063,6 +2118,20 @@ function Faq({ reduce }: { reduce: boolean }) {
       acceptedAnswer: { "@type": "Answer", text: f.a },
     })),
   };
+  /* Service entity (REVAMP-PLAN §6.6) — no pricing/offers until Waseem sets floor */
+  const serviceLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "AI automation systems for service businesses & stores",
+    serviceType: "Business process automation",
+    provider: {
+      "@type": "Person",
+      name: "Waseem Nasir",
+      url: "https://www.waseemnasir.com",
+    },
+    areaServed: "Worldwide",
+    url: "https://www.waseemnasir.com",
+  };
   return (
     <section
       id="faq"
@@ -2071,6 +2140,10 @@ function Faq({ reduce }: { reduce: boolean }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceLd) }}
       />
       <Reveal reduce={reduce} className="mb-12 flex items-center gap-3">
         <Mono color={C.accent}>08 — Questions</Mono>
@@ -2161,21 +2234,23 @@ function Convert({ reduce }: { reduce: boolean }) {
             delay={0.08}
             className="mt-9 flex justify-center"
           >
-            <Link
-              href={CTA}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bp-cta inline-flex items-center rounded-full font-semibold transition-opacity hover:opacity-90"
-              style={{
-                background: C.accentTint,
-                color: C.accentDeep,
-                fontSize: "1rem",
-                padding: "0.9rem 1.9rem",
-                boxShadow: SHADOW.lg,
-              }}
-            >
-              Book a free audit →
-            </Link>
+            <Magnet reduce={reduce}>
+              <Link
+                href={CTA}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bp-cta inline-flex items-center rounded-full font-semibold transition-opacity hover:opacity-90"
+                style={{
+                  background: C.accentTint,
+                  color: C.accentDeep,
+                  fontSize: "1rem",
+                  padding: "0.9rem 1.9rem",
+                  boxShadow: SHADOW.lg,
+                }}
+              >
+                Book a free audit →
+              </Link>
+            </Magnet>
           </Reveal>
           {/* what-happens-next strip — kills call anxiety (REVAMP-PLAN §4.6) */}
           <Reveal reduce={reduce} delay={0.12} className="mt-10">
