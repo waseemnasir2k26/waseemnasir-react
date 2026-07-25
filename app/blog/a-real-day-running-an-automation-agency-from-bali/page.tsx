@@ -240,7 +240,7 @@ export default function StoryPost() {
 
             <P>
               The rest of the middle is ordinary and I&apos;ve made peace with
-              that. The logistics operator&apos;s email triage — the system that reads their
+              that. The insurance retainer client&apos;s email triage — the system that reads their
               inbox, sorts it, and drafts replies — needed a new rule for a case
               it hadn&apos;t seen. A Lahore dental practice&apos;s front-desk
               flow needed a reminder message reworded. None of it is a headline.

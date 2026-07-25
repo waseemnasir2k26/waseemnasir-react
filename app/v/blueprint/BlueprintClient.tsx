@@ -626,7 +626,7 @@ function Hero({ reduce }: { reduce: boolean }) {
             Leads ghost. Follow-ups slip. Your team drowns in repetitive ops.
             I&apos;m Waseem Nasir, founder of SkynetLabs — I find exactly where
             your business bleeds time and money, then build the systems that
-            stop it. Already running for a logistics operator, idea-viaggi, and
+            stop it. Already running for an insurance retainer client, idea-viaggi, and
             Christelle — plus a dental-practice front desk built as a demo.
           </motion.p>
           <motion.div
@@ -765,7 +765,7 @@ function Hero({ reduce }: { reduce: boolean }) {
    ────────────────────────────────────────────────────────────── */
 const CLIENTS = [
   {
-    name: "Logistics operator",
+    name: "Insurance retainer client",
     sub: "Inbox, auto-handled",
     mech: "n8n · Gmail triage · auto-reply",
     status: "LIVE" as const,
@@ -789,7 +789,7 @@ const CLIENTS = [
     status: "DEMO" as const,
   },
   {
-    name: "Logistics operator · ops",
+    name: "Insurance client · ops",
     sub: "Ops dashboard, real-time",
     mech: "Next.js · live metrics · alerts",
     status: "LIVE" as const,
@@ -1025,7 +1025,7 @@ function NodeGraph({
 const ROWS = [
   {
     h: "Every lead answered before it goes cold.",
-    p: "Inbound emails and messages get read, sorted, and replied to the moment they land — so nothing waits on a human. Running live for a logistics operator's inbox and Christelle's care intake.",
+    p: "Inbound emails and messages get read, sorted, and replied to the moment they land — so nothing waits on a human. Running live for an insurance retainer client's inbox and Christelle's care intake.",
     nodes: [
       "New email / message",
       "Read + classify",
@@ -1294,7 +1294,7 @@ const CASES: Case[] = [
     // Named client anonymised: this operator asked not to be mentioned, and the
     // internal record of which company it is currently contradicts itself. Role
     // + sector only until Waseem confirms. Do not restore the company name.
-    client: "Logistics operator",
+    client: "Insurance retainer client",
     outcome: "Inbound email, handled for them.",
     /* reframed from "2 bots" (weak authority at display size) to the outcome
        the site already claims ("no message waits") — same fact, no new metric */
@@ -2147,7 +2147,7 @@ const FAQS = [
   },
   {
     q: "What happens after handoff if something breaks?",
-    a: "Every build ships with documentation and a video walkthrough, and ongoing support is available if you want it. The systems for the logistics operator and Christelle have been running in production since they shipped.",
+    a: "Every build ships with documentation and a video walkthrough, and ongoing support is available if you want it. The systems for the insurance retainer client and Christelle have been running in production since they shipped.",
   },
 ];
 function Faq({ reduce }: { reduce: boolean }) {

@@ -8,7 +8,9 @@ export const metadata: Metadata = {
   description:
     "The terms that apply to the 1:1 Claude Code mentorship and to using waseemnasir.com — what is delivered, scheduling, payment, cancellation, and who owns what.",
   alternates: { canonical: `${SITE}/terms` },
-  robots: { index: true, follow: true },
+  // noindex until the [NEEDS WASEEM] fields are answered -- see the note in
+  // app/privacy/page.tsx. Flip both to index once the gaps are filled.
+  robots: { index: false, follow: true },
 };
 
 export default function TermsPage() {
@@ -120,8 +122,8 @@ export default function TermsPage() {
       <p>
         Either of us may end the arrangement if the other behaves abusively or
         makes the work impossible. If the mentorship is ended for that reason,
-        unused sessions are refunded on the basis set out in the refund policy
-        above.
+        unused sessions are refunded on whatever basis the cancellation section
+        above ends up stating.
       </p>
 
       <h2>Limits</h2>

@@ -8,7 +8,10 @@ export const metadata: Metadata = {
   description:
     "What data waseemnasir.com collects, why, how long it is kept, who processes it, and how to ask for a copy or deletion.",
   alternates: { canonical: `${SITE}/privacy` },
-  robots: { index: true, follow: true },
+  // noindex until the [NEEDS WASEEM] fields are answered. The page is linked
+  // and reachable for anyone who wants it, but a half-finished legal notice
+  // should not be the thing a search engine surfaces about this business.
+  robots: { index: false, follow: true },
 };
 
 export default function PrivacyPage() {

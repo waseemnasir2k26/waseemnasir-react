@@ -23,18 +23,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.9,
     },
-    {
-      url: `${SITE}/privacy`,
-      lastModified: new Date("2026-07-25"),
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${SITE}/terms`,
-      lastModified: new Date("2026-07-25"),
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
+    // /privacy and /terms are deliberately absent: both are noindex until their
+    // [NEEDS WASEEM] fields are answered, and advertising a noindex URL in a
+    // sitemap is a contradictory signal. Add them back when they go index.
     ...POSTS.map((p) => ({
       url: `${SITE}/blog/${p.slug}`,
       lastModified: new Date(p.date),

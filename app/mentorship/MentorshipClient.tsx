@@ -959,6 +959,23 @@ export default function MentorshipClient() {
               >
                 skynetjoe.com
               </a>
+              {/* The terms and privacy notice describe this mentorship, so the
+                  page selling it has to link them. Previously they were only
+                  reachable from the homepage and blog footers. */}
+              <a
+                href="/terms"
+                className="hover:underline focus-visible:outline-none focus-visible:ring-2 rounded"
+                style={{ color: MUTED }}
+              >
+                Terms
+              </a>
+              <a
+                href="/privacy"
+                className="hover:underline focus-visible:outline-none focus-visible:ring-2 rounded"
+                style={{ color: MUTED }}
+              >
+                Privacy
+              </a>
             </div>
           </div>
         </footer>
