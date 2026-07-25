@@ -2474,9 +2474,37 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
           <Mono color={C.pillInk}>
             Built by the person who answers your call
           </Mono>
-          <Mono color={C.mute} className="!tracking-[0.06em]">
-            © 2026 Waseem Nasir
-          </Mono>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <a
+              href="/privacy"
+              style={{
+                fontFamily: "var(--font-mono, ui-monospace), monospace",
+                fontSize: 11,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: C.mute,
+                textDecoration: "none",
+              }}
+            >
+              Privacy
+            </a>
+            <a
+              href="/terms"
+              style={{
+                fontFamily: "var(--font-mono, ui-monospace), monospace",
+                fontSize: 11,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: C.mute,
+                textDecoration: "none",
+              }}
+            >
+              Terms
+            </a>
+            <Mono color={C.mute} className="!tracking-[0.06em]">
+              © 2026 Waseem Nasir
+            </Mono>
+          </div>
         </div>
       </div>
     </footer>
