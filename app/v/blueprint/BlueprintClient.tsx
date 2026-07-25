@@ -626,8 +626,8 @@ function Hero({ reduce }: { reduce: boolean }) {
             Leads ghost. Follow-ups slip. Your team drowns in repetitive ops.
             I&apos;m Waseem Nasir, founder of SkynetLabs — I find exactly where
             your business bleeds time and money, then build the systems that
-            stop it. Already running for Takycorp, idea-viaggi, and Christelle —
-            plus a dental-practice front desk built as a demo.
+            stop it. Already running for a logistics operator, idea-viaggi, and
+            Christelle — plus a dental-practice front desk built as a demo.
           </motion.p>
           <motion.div
             {...stagger(3)}
@@ -765,7 +765,7 @@ function Hero({ reduce }: { reduce: boolean }) {
    ────────────────────────────────────────────────────────────── */
 const CLIENTS = [
   {
-    name: "Takycorp",
+    name: "Logistics operator",
     sub: "Inbox, auto-handled",
     mech: "n8n · Gmail triage · auto-reply",
     status: "LIVE" as const,
@@ -789,7 +789,7 @@ const CLIENTS = [
     status: "DEMO" as const,
   },
   {
-    name: "Takycorp · ops",
+    name: "Logistics operator · ops",
     sub: "Ops dashboard, real-time",
     mech: "Next.js · live metrics · alerts",
     status: "LIVE" as const,
@@ -1025,7 +1025,7 @@ function NodeGraph({
 const ROWS = [
   {
     h: "Every lead answered before it goes cold.",
-    p: "Inbound emails and messages get read, sorted, and replied to the moment they land — so nothing waits on a human. Running live for Takycorp's inbox and Christelle's care intake.",
+    p: "Inbound emails and messages get read, sorted, and replied to the moment they land — so nothing waits on a human. Running live for a logistics operator's inbox and Christelle's care intake.",
     nodes: [
       "New email / message",
       "Read + classify",
@@ -1291,7 +1291,10 @@ const CASES: Case[] = [
     status: "DELIVERED",
   },
   {
-    client: "Takycorp",
+    // Named client anonymised: this operator asked not to be mentioned, and the
+    // internal record of which company it is currently contradicts itself. Role
+    // + sector only until Waseem confirms. Do not restore the company name.
+    client: "Logistics operator",
     outcome: "Inbound email, handled for them.",
     /* reframed from "2 bots" (weak authority at display size) to the outcome
        the site already claims ("no message waits") — same fact, no new metric */
@@ -2144,7 +2147,7 @@ const FAQS = [
   },
   {
     q: "What happens after handoff if something breaks?",
-    a: "Every build ships with documentation and a video walkthrough, and ongoing support is available if you want it. The systems for Takycorp and Christelle have been running in production since they shipped.",
+    a: "Every build ships with documentation and a video walkthrough, and ongoing support is available if you want it. The systems for the logistics operator and Christelle have been running in production since they shipped.",
   },
 ];
 function Faq({ reduce }: { reduce: boolean }) {

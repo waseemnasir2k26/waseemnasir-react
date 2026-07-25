@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Waseem Nasir — AI automation that runs your business",
     description:
-      "I find where your business leaks time and money, then build AI automation that plugs it. Live for Takycorp, idea-viaggi & more. Book a free audit.",
+      "I find where your business leaks time and money, then build AI automation that plugs it. Live for a logistics operator, idea-viaggi & more. Book a free audit.",
     url: SITE,
     siteName: "Waseem Nasir",
     type: "website",
