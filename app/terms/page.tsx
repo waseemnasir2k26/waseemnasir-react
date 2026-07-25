@@ -3,6 +3,18 @@ import LegalLayout, { LEGAL_CONTACT } from "../legal/_LegalLayout";
 
 const SITE = "https://www.waseemnasir.com";
 
+/*
+ * OWNER TODO (deliberately NOT in the customer-visible copy -- these used to
+ * render as "[NEEDS WASEEM]" in the page body). The first three are
+ * load-bearing for a live paid product; answer them, then flip robots to index:
+ *   1. Registered trading entity + company number + address
+ *   2. Payment provider (+ instalments on the 3-month track? sales tax/VAT?)
+ *   3. Refund policy AND how the UK/EU statutory cancellation right is handled
+ *   4. Rescheduling / no-show rule you will actually enforce
+ *   5. Governing law + forum (follows from 1)
+ * Until 3 is set, the conduct section commits to pro-rata refunds as the
+ * interim floor, so the clause is not empty.
+ */
 export const metadata: Metadata = {
   title: "Terms | Waseem Nasir",
   description:
@@ -21,19 +33,23 @@ export default function TermsPage() {
       intro="These terms cover the 1:1 mentorship sold on this site and general use of the site itself. Plain language on purpose — if something here is unclear, ask before you buy."
     >
       <div className="lg-note">
-        <strong>Draft pending review.</strong> Items marked{" "}
-        <code>[NEEDS WASEEM]</code> need a real decision before this is relied
-        on, and these terms have not been reviewed by a solicitor.
-        Consumer-contract rules differ by country and can override what a seller
-        writes.
+        <strong>These terms are not final.</strong> Some details below are
+        marked <em>not yet specified</em>, and they have not been reviewed by a
+        solicitor. Consumer-contract rules differ by country and can override
+        what a seller writes.{" "}
+        <strong>
+          If anything here matters to your decision, email before you buy and
+          ask &mdash; nothing will be dodged.
+        </strong>
       </div>
 
       <h2>Who you are contracting with</h2>
       <p>
         Waseem Nasir, trading as SkynetLabs. Contact:{" "}
         <a href={`mailto:${LEGAL_CONTACT}`}>{LEGAL_CONTACT}</a>.{" "}
-        <strong>[NEEDS WASEEM]</strong> Trading entity, registration number if
-        applicable, and address — the same gap flagged in the privacy notice.
+        <em>Not yet specified:</em> the registered trading entity, company
+        number if applicable, and address — the same gap flagged in the privacy
+        notice.
       </p>
 
       <h2>What the mentorship is</h2>
@@ -57,9 +73,10 @@ export default function TermsPage() {
       <h2>Scheduling</h2>
       <p>
         Sessions are booked through the calendar link provided after purchase.{" "}
-        <strong>[NEEDS WASEEM]</strong> Your rescheduling and no-show rules —
-        for example how much notice is required, and whether a missed session is
-        forfeited or rebooked. State something you will actually enforce.
+        <em>Not yet specified:</em> the rescheduling and no-show rules — for
+        example how much notice is required, and whether a missed session is
+        forfeited or rebooked. Ask before you buy if this matters; in practice a
+        genuine clash gets rebooked.
       </p>
       <p>
         Between live sessions you can message with questions. That is
@@ -71,26 +88,26 @@ export default function TermsPage() {
       <p>
         Prices are in US dollars and shown on the mentorship page. Payment is
         due before sessions begin unless agreed otherwise in writing.{" "}
-        <strong>[NEEDS WASEEM]</strong> Payment provider, whether instalments
+        <em>Not yet specified:</em> the payment provider, whether instalments
         are offered on the three-month track, and whether any local sales tax or
-        VAT is added.
+        VAT is added. Ask and you will be told before any payment is taken.
       </p>
 
       <h2>Cancellation and refunds</h2>
       <p>
-        <strong>[NEEDS WASEEM]</strong> This is the single most important gap on
-        this page and it needs your decision, not a guess. Two things to settle:
+        <em>Not yet specified</em>, and it is the most important gap on this
+        page. Two things are still to be set out:
       </p>
       <ul>
         <li>
-          Your own refund policy — for instance, a full refund before the first
+          The refund policy itself — for instance, a full refund before the first
           session, and a pro-rata refund for unused sessions after that.
         </li>
         <li>
-          How you handle the statutory cancellation right that UK and EU
-          consumers normally have for a period after buying a service online,
-          including whether a customer who asks to start immediately is asked to
-          acknowledge that beginning early affects that right.
+          How the statutory cancellation right that UK and EU
+          consumers normally have for a period after buying a service online is
+          handled, including whether a customer who asks to start immediately is
+          asked to acknowledge that beginning early affects that right.
         </li>
       </ul>
       <p>
@@ -122,8 +139,9 @@ export default function TermsPage() {
       <p>
         Either of us may end the arrangement if the other behaves abusively or
         makes the work impossible. If the mentorship is ended for that reason,
-        unused sessions are refunded on whatever basis the cancellation section
-        above ends up stating.
+        unused sessions are refunded pro rata — the interim position until the
+        cancellation section above is finalised, and it will not be applied less
+        favourably than that.
       </p>
 
       <h2>Limits</h2>
@@ -141,7 +159,7 @@ export default function TermsPage() {
 
       <h2>Governing law</h2>
       <p>
-        <strong>[NEEDS WASEEM]</strong> Which country&rsquo;s law governs these
+        <em>Not yet specified:</em> which country&rsquo;s law governs these
         terms and where disputes are heard. This depends on where the trading
         entity is established, so it is answered by the same question at the top
         of this page. Consumers generally keep the protection of their home

@@ -10,3 +10,6 @@ out
 
 # critic scratch (screenshots, capture scripts)
 .critic/
+
+# Next.js incremental TS build cache — dirties the tree on every build
+tsconfig.tsbuildinfo

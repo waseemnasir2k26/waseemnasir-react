@@ -3,6 +3,14 @@ import LegalLayout, { LEGAL_CONTACT } from "../legal/_LegalLayout";
 
 const SITE = "https://www.waseemnasir.com";
 
+/*
+ * OWNER TODO (kept out of the customer-visible copy on purpose -- these used to
+ * render as "[NEEDS WASEEM]" in the page body, which put notes addressed to
+ * Waseem in front of buyers). Answer these, then flip robots to index:
+ *   1. Registered trading entity + company number + country + postal address
+ *   2. Payment provider for the mentorship
+ *   3. Data retention period + applicable tax jurisdiction
+ */
 export const metadata: Metadata = {
   title: "Privacy Notice | Waseem Nasir",
   description:
@@ -22,9 +30,9 @@ export default function PrivacyPage() {
       intro="This page explains what happens to your information when you use this site, book a call, or buy mentorship. It is written to be read, not to be survived."
     >
       <div className="lg-note">
-        <strong>Draft pending review.</strong> Items marked{" "}
-        <code>[NEEDS WASEEM]</code> need a real answer before this is relied on,
-        and this notice has not been reviewed by a solicitor. It describes
+        <strong>This notice is not final.</strong> Some details below are marked{" "}
+        <em>not yet specified</em>, and it has not been reviewed by a solicitor. It
+        describes
         actual current practice on the site rather than claiming compliance with
         any particular regime.
       </div>
@@ -36,10 +44,10 @@ export default function PrivacyPage() {
         Contact: <a href={`mailto:${LEGAL_CONTACT}`}>{LEGAL_CONTACT}</a>.
       </p>
       <p>
-        <strong>[NEEDS WASEEM]</strong> Legal trading entity (sole trader or
-        limited company), company registration number if applicable, the country
+        <em>Not yet specified:</em> the registered trading entity (sole trader or
+        limited company), company number if applicable, the country
         of establishment, and a postal or registered address. A privacy notice
-        is normally expected to state these, and none of them are invented here.
+        is normally expected to state these. Rather than invent them they are left open — ask by email and they will be confirmed to you directly.
       </p>
 
       <h2>What is collected, and when</h2>
@@ -56,7 +64,7 @@ export default function PrivacyPage() {
       <p>
         If you buy a mentorship package, the information needed to deliver and
         bill for it is processed — typically your name, email address and
-        payment confirmation. <strong>[NEEDS WASEEM]</strong> Which payment
+        payment confirmation. <em>Not yet specified:</em> which payment
         provider handles the transaction. Card details are handled by that
         provider and are never stored on this site.
       </p>
@@ -104,7 +112,7 @@ export default function PrivacyPage() {
           in a mailbox and, for client work, a customer-relationship tool.
         </li>
         <li>
-          <strong>[NEEDS WASEEM]</strong> Payment provider.
+          <em>Not yet specified:</em> the payment provider.
         </li>
       </ul>
       <p>
@@ -118,8 +126,8 @@ export default function PrivacyPage() {
         Enquiries that do not turn into work are kept while there is a live
         conversation and then cleared. Client and mentorship records are kept
         for as long as needed to deliver the work and then for the period tax
-        rules require. <strong>[NEEDS WASEEM]</strong> Confirm the retention
-        period you want stated, and the applicable tax jurisdiction.
+        rules require. <em>Not yet specified:</em> the exact retention
+        period and the applicable tax jurisdiction.
       </p>
 
       <h2>Your rights</h2>
