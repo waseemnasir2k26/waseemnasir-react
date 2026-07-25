@@ -113,9 +113,9 @@ function Mono({
 function StatusPill({
   kind,
 }: {
-  kind: "LIVE" | "DELIVERED" | "SHIPPED" | "INTERNAL";
+  kind: "LIVE" | "DELIVERED" | "SHIPPED" | "INTERNAL" | "DEMO";
 }) {
-  const dot = kind === "LIVE" ? C.live : C.accent;
+  const dot = kind === "LIVE" ? C.live : kind === "DEMO" ? C.mute : C.accent;
   return (
     <span
       className="inline-flex items-center gap-2 rounded-full px-3 py-1"
@@ -617,8 +617,8 @@ function Hero({ reduce }: { reduce: boolean }) {
             Leads ghost. Follow-ups slip. Your team drowns in repetitive ops.
             I&apos;m Waseem Nasir, founder of SkynetLabs — I find exactly where
             your business bleeds time and money, then build the systems that
-            stop it. Already running for Takycorp, idea-viaggi, Christelle, and
-            a Lahore dental practice.
+            stop it. Already running for Takycorp, idea-viaggi, and Christelle —
+            plus a dental-practice front desk built as a demo.
           </motion.p>
           <motion.div
             {...stagger(3)}
@@ -656,7 +656,7 @@ function Hero({ reduce }: { reduce: boolean }) {
             {[
               "Shipped in ~14 days",
               "Pays for itself",
-              "4 systems in production",
+              "4 client systems in production",
               "Top Rated on Fiverr",
             ].map((c) => (
               <span
@@ -774,10 +774,10 @@ const CLIENTS = [
     status: "LIVE" as const,
   },
   {
-    name: "Lahore dental practice",
+    name: "Dental practice (demo build)",
     sub: "Front desk, automated",
     mech: "Booking · reminders · auto-reply",
-    status: "SHIPPED" as const,
+    status: "DEMO" as const,
   },
   {
     name: "Takycorp · ops",
@@ -1352,10 +1352,10 @@ function DentalTile() {
       }}
     >
       <div className="flex items-center gap-4">
-        <StatusPill kind="SHIPPED" />
+        <StatusPill kind="DEMO" />
         <div>
           <p style={{ color: C.ink, fontWeight: 600, fontSize: "1.05rem" }}>
-            Lahore dental practice — front desk that runs itself, shipped.
+            Dental-practice front desk — a demo build, not a paid client.
           </p>
           <Mono color={C.mute} className="!tracking-[0.06em]">
             Front desk, automated
@@ -1812,7 +1812,8 @@ function About({ reduce }: { reduce: boolean }) {
               style={{ borderColor: C.hairline }}
             >
               <Mono color={C.pillInk} className="!tracking-[0.06em]">
-                Waseem Nasir · Founder, SkynetLabs · 2000+ projects shipped
+                Waseem Nasir · Founder, SkynetLabs · 180+ workflows shipped
+                since 2019
               </Mono>
             </figcaption>
           </figure>
@@ -2048,7 +2049,7 @@ function Gallery({ reduce }: { reduce: boolean }) {
               boxShadow: SHADOW.sm,
             }}
           >
-            115 repos on GitHub →
+            Public repos on GitHub →
           </Link>
         </Reveal>
 
