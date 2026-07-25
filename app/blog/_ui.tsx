@@ -111,8 +111,15 @@ export function TagPill({ children }: { children: React.ReactNode }) {
    the other variants) + CSS-only hover affordances.
    ============================================================ */
 function ScopeStyle() {
+  // dangerouslySetInnerHTML (not JSX text children) — <style> is a raw-text HTML
+  // element the browser never entity-decodes, but React's SSR serializer HTML-escapes
+  // plain text children (e.g. the quotes in content:"") uniformly regardless of tag.
+  // That mismatch (server: `content:&quot;&quot;`, client: `content:""`) is what was
+  // triggering React hydration errors #418/#423/#425 on every page this rendered.
   return (
-    <style>{`
+    <style
+      dangerouslySetInnerHTML={{
+        __html: `
       html, body { background: ${C.canvas} !important; color-scheme: light !important; }
       .blog-root { font-synthesis: none; }
       .bp-link { position: relative; }
@@ -127,7 +134,9 @@ function ScopeStyle() {
         .bp-postcard-arrow { transition: transform .18s ease-out; display:inline-block; }
       }
       :focus-visible { outline: 2px solid ${C.accent}; outline-offset: 2px; border-radius: 4px; }
-    `}</style>
+    `,
+      }}
+    />
   );
 }
 
@@ -284,6 +293,13 @@ function SiteFooter() {
                   ["https://youtube.com/@skynetlabs", "YouTube"],
                   ["https://github.com/waseemnasir2k26", "GitHub"],
                   ["https://skynetjoe.com", "skynetjoe.com"],
+                ],
+              ],
+              [
+                "Legal",
+                [
+                  ["/privacy", "Privacy Policy"],
+                  ["/terms", "Terms"],
                 ],
               ],
             ].map(([title, links]) => (

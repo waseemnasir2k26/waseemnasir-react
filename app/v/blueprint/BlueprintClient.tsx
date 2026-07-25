@@ -225,8 +225,15 @@ export default function Blueprint() {
   const reduce = !!useReducedMotion();
   return (
     <>
-      {/* Scope the document to the light canvas (global body is dark for other variants) */}
-      <style>{`
+      {/* Scope the document to the light canvas (global body is dark for other variants).
+          dangerouslySetInnerHTML (not JSX text children) — <style> is a raw-text HTML
+          element the browser never entity-decodes, but React's SSR serializer HTML-escapes
+          plain text children (e.g. the quotes in content:"") uniformly regardless of tag.
+          That mismatch (server: `content:&quot;&quot;`, client: `content:""`) is exactly
+          what triggered React error #418/#425/#423 here. */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         html, body { background: ${C.canvas} !important; color-scheme: light !important; }
         .bp-root { font-synthesis: none; }
         @keyframes bpPulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
@@ -300,7 +307,9 @@ export default function Blueprint() {
         @media (prefers-reduced-motion: reduce){ .bp-faq-chev { transition:none; } }
         /* Pinned deck: in-card CTA always visible (no hover gate mid-scrollytelling) */
         .bp-pin-deck .bp-proof-view { opacity: 1; transform: none; }
-      `}</style>
+      `,
+        }}
+      />
 
       <main
         id="main-content"
@@ -820,8 +829,8 @@ function Trust({ reduce }: { reduce: boolean }) {
           className="mb-10 flex flex-wrap items-center justify-between gap-4"
         >
           <Mono color={C.mute}>
-            Shipped &amp; live in production — travel · dental · care · ops ·
-            voice · video
+            Shipped &amp; live in production — travel · care · ops · voice ·
+            video · plus one demo build
           </Mono>
           {/* Top Rated Seller credential — owner-confirmed, SkynetJoe LLC agency */}
           <a
@@ -2420,6 +2429,13 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
                     ["https://youtube.com/@skynetlabs", "YouTube"],
                     ["https://github.com/waseemnasir2k26", "GitHub"],
                     ["https://skynetjoe.com", "skynetjoe.com"],
+                  ],
+                ],
+                [
+                  "Legal",
+                  [
+                    ["/privacy", "Privacy Policy"],
+                    ["/terms", "Terms"],
                   ],
                 ],
               ].map(([title, links]) => (
