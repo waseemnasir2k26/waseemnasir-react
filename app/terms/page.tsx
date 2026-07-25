@@ -88,9 +88,10 @@ export default function TermsPage() {
       <p>
         Prices are in US dollars and shown on the mentorship page. Payment is
         due before sessions begin unless agreed otherwise in writing.{" "}
-        <em>Not yet specified:</em> the payment provider, whether instalments
-        are offered on the three-month track, and whether any local sales tax or
-        VAT is added. Ask and you will be told before any payment is taken.
+        Payment plans are available on the three-month track, as stated on the
+        mentorship page. <em>Not yet specified:</em> the payment provider and
+        whether any local sales tax or VAT is added. Ask and you will be told
+        before any payment is taken.
       </p>
 
       <h2>Cancellation and refunds</h2>
