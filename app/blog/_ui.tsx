@@ -289,7 +289,7 @@ function SiteFooter() {
                 [
                   [CTA, "Book a free audit"],
                   ["https://www.linkedin.com/in/waseemnasir2k26", "LinkedIn"],
-                  ["https://x.com/skynetlabs", "X (Twitter)"],
+                  ["https://x.com/Skynetjoe1", "X (Twitter)"],
                   ["https://youtube.com/@skynetlabs", "YouTube"],
                   ["https://github.com/waseemnasir2k26", "GitHub"],
                   ["https://skynetjoe.com", "skynetjoe.com"],

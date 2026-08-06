@@ -532,6 +532,7 @@ function Nav() {
               ["/inbox-ops", "Inbox Ops"],
               ["/blog", "Blog"],
               ["#about", "About"],
+              ["/book", "Book"],
             ] as [string, string][]
           ).map(([href, label]) => (
             <a
@@ -667,9 +668,7 @@ function Hero({ reduce }: { reduce: boolean }) {
           >
             {[
               "Shipped in ~14 days",
-              "Pays for itself",
               "3 client systems in production + 1 demo",
-              "Top Rated on Fiverr",
             ].map((c) => (
               <span
                 key={c}
@@ -835,7 +834,7 @@ function Trust({ reduce }: { reduce: boolean }) {
             Shipped &amp; live in production — travel · care · ops · voice ·
             video · plus one demo build
           </Mono>
-          {/* Top Rated Seller credential — owner-confirmed, SkynetJoe LLC agency */}
+          {/* Fiverr agency link — status badge removed, unverified as of 2026-08-06 */}
           <a
             href="https://www.fiverr.com/agencies/skynetjoellc"
             target="_blank"
@@ -857,7 +856,7 @@ function Trust({ reduce }: { reduce: boolean }) {
                 textTransform: "uppercase",
               }}
             >
-              Top Rated Seller · Fiverr
+              Fiverr Agency
             </span>
           </a>
         </Reveal>
@@ -1827,8 +1826,8 @@ function About({ reduce }: { reduce: boolean }) {
               style={{ borderColor: C.hairline }}
             >
               <Mono color={C.pillInk} className="!tracking-[0.06em]">
-                Waseem Nasir · Founder, SkynetLabs · 180+ workflows shipped
-                since 2019
+                Waseem Nasir · Founder, SkynetLabs · 180+ workflows built since
+                2019
               </Mono>
             </figcaption>
           </figure>
@@ -2426,6 +2425,7 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
                     ["/inbox-ops", "Inbox Ops"],
                     ["/blog", "Blog"],
                     ["#about", "About"],
+                    ["/book", "Book"],
                   ],
                 ],
                 [
@@ -2433,7 +2433,7 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
                   [
                     [CTA, "Book a free audit"],
                     ["https://www.linkedin.com/in/waseemnasir2k26", "LinkedIn"],
-                    ["https://x.com/skynetlabs", "X (Twitter)"],
+                    ["https://x.com/Skynetjoe1", "X (Twitter)"],
                     ["https://youtube.com/@skynetlabs", "YouTube"],
                     ["https://github.com/waseemnasir2k26", "GitHub"],
                     ["https://skynetjoe.com", "skynetjoe.com"],

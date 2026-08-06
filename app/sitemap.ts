@@ -29,6 +29,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.9,
     },
+    {
+      url: `${SITE}/book`,
+      lastModified: new Date("2026-08-06"),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
     // /privacy and /terms are deliberately absent: both are noindex until their
     // [NEEDS WASEEM] fields are answered, and advertising a noindex URL in a
     // sitemap is a contradictory signal. Add them back when they go index.

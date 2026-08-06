@@ -76,7 +76,7 @@ const jsonLd = {
   email: "mailto:waseem@skynetjoe.com",
   sameAs: [
     "https://www.linkedin.com/in/waseemnasir2k26",
-    "https://x.com/skynetlabs",
+    "https://x.com/Skynetjoe1",
     "https://youtube.com/@skynetlabs",
     "https://github.com/waseemnasir2k26",
     "https://skynetjoe.com",
