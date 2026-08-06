@@ -528,6 +528,8 @@ function Nav() {
             [
               ["#how", "Work"],
               ["#proof", "Proof"],
+              ["/mentorship", "Mentorship"],
+              ["/inbox-ops", "Inbox Ops"],
               ["/blog", "Blog"],
               ["#about", "About"],
             ] as [string, string][]
@@ -626,8 +628,9 @@ function Hero({ reduce }: { reduce: boolean }) {
             Leads ghost. Follow-ups slip. Your team drowns in repetitive ops.
             I&apos;m Waseem Nasir, founder of SkynetLabs — I find exactly where
             your business bleeds time and money, then build the systems that
-            stop it. Already running for an insurance retainer client, idea-viaggi, and
-            Christelle — plus a dental-practice front desk built as a demo.
+            stop it. Already running for an insurance retainer client,
+            idea-viaggi, and Christelle — plus a dental-practice front desk
+            built as a demo.
           </motion.p>
           <motion.div
             {...stagger(3)}
@@ -665,7 +668,7 @@ function Hero({ reduce }: { reduce: boolean }) {
             {[
               "Shipped in ~14 days",
               "Pays for itself",
-              "4 client systems in production",
+              "3 client systems in production + 1 demo",
               "Top Rated on Fiverr",
             ].map((c) => (
               <span
@@ -2419,6 +2422,8 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
                   [
                     ["#how", "Work"],
                     ["#proof", "Proof"],
+                    ["/mentorship", "Mentorship"],
+                    ["/inbox-ops", "Inbox Ops"],
                     ["/blog", "Blog"],
                     ["#about", "About"],
                   ],
