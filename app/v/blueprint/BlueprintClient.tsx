@@ -507,7 +507,7 @@ function AnnouncementBar({ onDismiss }: { onDismiss: () => void }) {
       }}
     >
       <span style={{ fontSize: "0.82rem", fontWeight: 500 }}>
-        I host on Hostinger — you get up to 20% off.
+        My servers run on Hostinger — get up to 20% off.
       </span>
       <a
         href="https://www.hostinger.com?REFERRALCODE=skynetlabs"
@@ -524,6 +524,16 @@ function AnnouncementBar({ onDismiss }: { onDismiss: () => void }) {
       >
         Grab my link →
       </a>
+      <span
+        className="block w-full font-mono sm:hidden"
+        style={{
+          color: "rgba(234,244,241,0.62)",
+          fontSize: "0.62rem",
+          letterSpacing: "0.02em",
+        }}
+      >
+        Referral link · I may earn a commission
+      </span>
       <span
         className="hidden font-mono sm:inline"
         style={{
@@ -701,7 +711,7 @@ function Hero({ reduce }: { reduce: boolean }) {
     <section
       id="hero"
       className="relative w-full overflow-hidden"
-      style={{ paddingTop: "var(--nav-h, 64px)" }}
+      style={{ paddingTop: "var(--nav-h, 108px)" }}
     >
       {/* single, restrained light wash confined to upper-right — not a neon gradient */}
       <div
