@@ -221,8 +221,28 @@ function Reveal({
 /* ============================================================
    PAGE
    ============================================================ */
+const HOSTINGER_PROMO_KEY = "wn-hostinger-promo-v1";
+
 export default function Blueprint() {
   const reduce = !!useReducedMotion();
+  const [bannerOpen, setBannerOpen] = useState(true);
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(HOSTINGER_PROMO_KEY) === "dismissed") {
+        setBannerOpen(false);
+      }
+    } catch {
+      /* localStorage unavailable (private mode, etc.) — keep banner visible */
+    }
+  }, []);
+  const dismissBanner = () => {
+    setBannerOpen(false);
+    try {
+      localStorage.setItem(HOSTINGER_PROMO_KEY, "dismissed");
+    } catch {
+      /* ignore — dismissal just won't persist across visits */
+    }
+  };
   return (
     <>
       {/* Scope the document to the light canvas (global body is dark for other variants).
@@ -323,7 +343,7 @@ export default function Blueprint() {
         }}
       >
         <NodeRibbon reduce={reduce} />
-        <Nav />
+        <Nav bannerOpen={bannerOpen} onDismissBanner={dismissBanner} />
         <Hero reduce={reduce} />
         <Trust reduce={reduce} />
         <How reduce={reduce} />
@@ -469,21 +489,117 @@ function NodeRibbon({ reduce }: { reduce: boolean }) {
 }
 
 /* ──────────────────────────────────────────────────────────────
+   ANNOUNCEMENT BAR — Hostinger referral promo; first child of the
+   fixed header so the header grows downward and --nav-h (set in Nav,
+   measured off the header's real height) stays the single source of
+   truth for every top-anchored offset below it.
+   ────────────────────────────────────────────────────────────── */
+function AnnouncementBar({ onDismiss }: { onDismiss: () => void }) {
+  return (
+    <div
+      role="region"
+      aria-label="Announcement"
+      className="relative flex w-full flex-wrap items-center justify-center gap-x-3 gap-y-1 px-11 py-2 text-center sm:flex-nowrap"
+      style={{
+        background: C.accentDeep,
+        color: C.onDeep,
+        minHeight: 40,
+      }}
+    >
+      <span style={{ fontSize: "0.82rem", fontWeight: 500 }}>
+        I host on Hostinger — you get up to 20% off.
+      </span>
+      <a
+        href="https://www.hostinger.com?REFERRALCODE=skynetlabs"
+        target="_blank"
+        rel="sponsored noopener"
+        className="inline-flex items-center gap-1 rounded-full font-semibold transition-opacity hover:opacity-90"
+        style={{
+          background: C.accent,
+          color: "#fff",
+          fontSize: "0.78rem",
+          padding: "0.3rem 0.75rem",
+          whiteSpace: "nowrap",
+        }}
+      >
+        Grab my link →
+      </a>
+      <span
+        className="hidden font-mono sm:inline"
+        style={{
+          color: "rgba(234,244,241,0.62)",
+          fontSize: "0.66rem",
+          letterSpacing: "0.02em",
+        }}
+      >
+        Referral link — I may earn a commission at no extra cost to you.
+      </span>
+      <button
+        type="button"
+        onClick={onDismiss}
+        aria-label="Dismiss announcement"
+        className="absolute right-2 top-1/2 flex items-center justify-center rounded-full transition-opacity hover:opacity-70"
+        style={{
+          width: 28,
+          height: 28,
+          transform: "translateY(-50%)",
+          color: C.onDeep,
+        }}
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+          <path
+            d="M1 1L13 13M13 1L1 13"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────
    NAV — only glass surface; opaque fallback; CTA always present
    ────────────────────────────────────────────────────────────── */
-function Nav() {
+function Nav({
+  bannerOpen,
+  onDismissBanner,
+}: {
+  bannerOpen: boolean;
+  onDismissBanner: () => void;
+}) {
   const [scrolled, setScrolled] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+  // --nav-h drives every top-anchored offset that needs to clear the fixed
+  // header (hero paddingTop today; any future one can just read the var).
+  // Measured off the header's real rendered height so it stays correct
+  // whether the banner is on/off or wraps to two lines on narrow screens.
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const setVar = () => {
+      document.documentElement.style.setProperty(
+        "--nav-h",
+        `${el.offsetHeight}px`,
+      );
+    };
+    setVar();
+    const ro = new ResizeObserver(setVar);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [bannerOpen]);
   return (
     <header
+      ref={headerRef}
       className="fixed inset-x-0 top-0 z-40"
       style={{
-        height: 64,
         background: "rgba(251,252,253,0.72)",
         backdropFilter: "blur(16px) saturate(170%)",
         WebkitBackdropFilter: "blur(16px) saturate(170%)",
@@ -492,13 +608,17 @@ function Nav() {
         transition: "border-color .25s, box-shadow .25s",
       }}
     >
+      {bannerOpen && <AnnouncementBar onDismiss={onDismissBanner} />}
       {/* opaque fallback — shown ONLY where backdrop-filter is unsupported (see bp-nav-fb CSS) */}
       <div
         aria-hidden
         className="bp-nav-fb absolute inset-0 -z-10"
         style={{ background: C.canvas }}
       />
-      <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between px-5 sm:px-6">
+      <div
+        className="mx-auto flex max-w-[1200px] items-center justify-between px-5 sm:px-6"
+        style={{ height: 64 }}
+      >
         <a href="#hero" className="flex flex-col leading-none">
           <span
             style={{
@@ -581,7 +701,7 @@ function Hero({ reduce }: { reduce: boolean }) {
     <section
       id="hero"
       className="relative w-full overflow-hidden"
-      style={{ paddingTop: 64 }}
+      style={{ paddingTop: "var(--nav-h, 64px)" }}
     >
       {/* single, restrained light wash confined to upper-right — not a neon gradient */}
       <div
@@ -627,11 +747,8 @@ function Hero({ reduce }: { reduce: boolean }) {
             }}
           >
             Leads ghost. Follow-ups slip. Your team drowns in repetitive ops.
-            I&apos;m Waseem Nasir, founder of SkynetLabs — I find exactly where
-            your business bleeds time and money, then build the systems that
-            stop it. Already running for an insurance retainer client,
-            idea-viaggi, and Christelle — plus a dental-practice front desk
-            built as a demo.
+            I&apos;m Waseem Nasir, founder of SkynetLabs — I find where your
+            business bleeds time and money, then build the systems that stop it.
           </motion.p>
           <motion.div
             {...stagger(3)}
@@ -1826,8 +1943,8 @@ function About({ reduce }: { reduce: boolean }) {
               style={{ borderColor: C.hairline }}
             >
               <Mono color={C.pillInk} className="!tracking-[0.06em]">
-                Waseem Nasir · Founder, SkynetLabs · 180+ workflows built
-                since 2019
+                Waseem Nasir · Founder, SkynetLabs · 180+ workflows built since
+                2019
               </Mono>
             </figcaption>
           </figure>
