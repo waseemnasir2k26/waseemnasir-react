@@ -118,6 +118,13 @@ export default function MeridianClient() {
         dangerouslySetInnerHTML={{
           __html: `
         html, body { background: ${C.skyDark} !important; color-scheme: dark !important; }
+        /* This route has its own clock-strip day nav (ClockStrip below) —
+           the global layout-mounted ScrollProgress rail (components/
+           ScrollProgress.tsx, z-[60], fixed top-0) would otherwise render
+           a second, unrelated accent-gradient sliver pinned above this
+           route's own header. Scoped to this route's injected stylesheet
+           only — the shared component itself is untouched. */
+        .z-\\[60\\] { display: none !important; }
         .meridian-root { font-synthesis: none; }
         .meridian-cta:active { transform: scale(0.97); }
         .meridian-link { position: relative; }

@@ -58,18 +58,39 @@ function mulberry32(seed: number) {
    against the single uDayness uniform. No per-instance JS work at
    render time — only one uniform write per frame for the whole mesh.
    ============================================================ */
-function makeIgnitionMaterial(dimHex: string, brightHex: string) {
+/* Optional near-camera fade + brightness cap: used by the stack-district
+   landmark towers (round-2 fix, 08-20 re-audit) so a camera beat that
+   passes close to a tower never renders it as a blown-out, near-clipped
+   full-viewport slab — the tower fades toward transparent as the camera
+   gets within `fadeEnd` units and is fully gone by `fadeStart` units,
+   and its lit color is capped below pure uBright so it never reads as a
+   flat, oversaturated fill even at full ignition. */
+function makeIgnitionMaterial(
+  dimHex: string,
+  brightHex: string,
+  opts?: {
+    nearFade?: { fadeStart: number; fadeEnd: number };
+    brightCap?: number;
+  },
+) {
   const uDim = new THREE.Color(dimHex);
   const uBright = new THREE.Color(brightHex);
+  const nearFade = opts?.nearFade;
+  const brightCap = opts?.brightCap ?? 1;
   return new THREE.ShaderMaterial({
+    transparent: !!nearFade,
     uniforms: {
       uDayness: { value: 0 },
       uDim: { value: uDim },
       uBright: { value: uBright },
+      uBrightCap: { value: brightCap },
+      uFadeStart: { value: nearFade?.fadeStart ?? 0 },
+      uFadeEnd: { value: nearFade?.fadeEnd ?? 0 },
     },
     vertexShader: /* glsl */ `
       attribute float aThreshold;
       varying float vLit;
+      varying float vCamDist;
       uniform float uDayness;
       void main() {
         vLit = smoothstep(aThreshold - 0.05, aThreshold + 0.05, uDayness);
@@ -77,16 +98,26 @@ function makeIgnitionMaterial(dimHex: string, brightHex: string) {
         #ifdef USE_INSTANCING
           transformed = (instanceMatrix * vec4(transformed, 1.0)).xyz;
         #endif
+        vec4 worldPos = modelMatrix * vec4(transformed, 1.0);
+        vCamDist = distance(worldPos.xyz, cameraPosition);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
       }
     `,
     fragmentShader: /* glsl */ `
       uniform vec3 uDim;
       uniform vec3 uBright;
+      uniform float uBrightCap;
+      uniform float uFadeStart;
+      uniform float uFadeEnd;
       varying float vLit;
+      varying float vCamDist;
       void main() {
-        vec3 col = mix(uDim, uBright, vLit);
-        gl_FragColor = vec4(col, 1.0);
+        vec3 col = mix(uDim, uBright * uBrightCap, vLit);
+        float fade = 1.0;
+        if (uFadeEnd > uFadeStart) {
+          fade = smoothstep(uFadeStart, uFadeEnd, vCamDist);
+        }
+        gl_FragColor = vec4(col, fade);
       }
     `,
   });
@@ -102,7 +133,13 @@ function makeMaterials() {
   });
   const window_ = makeIgnitionMaterial(C.inkJade, C.jadeBright);
   const lamp = makeIgnitionMaterial("#0A2622", C.jadeBright);
-  const landmark = makeIgnitionMaterial(C.inkJade, C.jadeBright);
+  // Landmark towers get near-camera fade + a brightness cap (round-2 fix,
+  // 08-20 re-audit): the only ignition surfaces large/tall enough for a
+  // close camera pass to read as a blown-out full-viewport slab.
+  const landmark = makeIgnitionMaterial(C.inkJade, C.jadeBright, {
+    nearFade: { fadeStart: 2.2, fadeEnd: 5 },
+    brightCap: 0.82,
+  });
   const billboard = makeIgnitionMaterial(C.inkJade, C.jadeBright);
   const ground = new THREE.MeshStandardMaterial({
     color: C.ground,
@@ -263,10 +300,22 @@ export function buildCityGrid(mats: Mats): SceneObject {
   ground.position.set(0, 0, -14);
   group.add(ground);
 
+  // Ground never reads as a flat neon field: it starts at the C.ground
+  // dusk teal and folds into C.skyDark by the time DUSK begins (30%),
+  // matching the sky/fog ramp so the horizon and the street never seam,
+  // and so a close/low camera angle never catches a bright flat plane.
+  const groundLit = new THREE.Color(C.ground);
+  const groundNight = new THREE.Color(C.skyDark);
+  const groundScratch = new THREE.Color();
+
   return {
     group,
-    update: (_dt, _elapsed, dayness) =>
-      setIgnitionUniform(mats.window_, dayness),
+    update: (_dt, _elapsed, dayness) => {
+      setIgnitionUniform(mats.window_, dayness);
+      const t01 = THREE.MathUtils.clamp(dayness / 0.3, 0, 1);
+      groundScratch.copy(groundLit).lerp(groundNight, t01);
+      (mats.ground as THREE.MeshStandardMaterial).color.copy(groundScratch);
+    },
     dispose: t.dispose,
   };
 }

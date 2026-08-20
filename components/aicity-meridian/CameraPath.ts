@@ -11,16 +11,42 @@ import * as THREE from "three";
    just re-plays the same spline in reverse (uDayness derives
    everything, including which way is "forward").
    ============================================================ */
+/* Altitude notes (fix for the 08-20 screenshot audit): the original
+   waypoints 1-5 sat at y 1.4-4.2 — at/below the ~1.2-5.2 unit rooftop
+   band of the city-grid + stack towers, so mid-flight the camera was
+   effectively INSIDE the skyline: giant near-clipped building/ground
+   faces filled the frame and overlapped the HTML card layer, and the
+   final approach flew the camera straight through the interconnect
+   bridge arcs (see buildInterconnect). Every waypoint below now keeps
+   at least ~1.5 units of clearance over the tallest nearby geometry
+   (city grid max h=4.6, stack towers max h=5.2, bridge apex ~4.2) so
+   towers/bridges always read as a skyline/arcs *below and ahead* of
+   the camera, never as walls it flies through. x stays inside the
+   ±1.1 clear flight corridor (see buildCityGrid) at every waypoint. */
+/* Round-2 fix (08-20 re-audit, 30% "stack district" beat): waypoint 1
+   still sat only ~6-9 units in front of the 5.2-tall landmark towers
+   (z=4 vs towers at z -2.5..-5) at a fairly low y=7.6 — close enough
+   that the towers filled the whole viewport as blown-out near-camera
+   slabs and crossed the HTML card. Because this is a Catmull-Rom
+   spline (not a straight line between waypoints), the camera's actual
+   sampled position at t=0.3 sits well short of waypoint 1 itself
+   (verified numerically + via a live in-browser camera dump, not just
+   projected on paper) — pulling the waypoint back much further, to
+   z=30, y=34, was needed so the spline's t=0.3 sample (verified
+   pos ~[0, 22, 13.7], look ~[-0.3, 1.7, -7]) keeps the towers small
+   and confined to a dim mid-distance skyline glimpsed through the
+   translucent glass card (matching the GOLDEN hero's own city-behind-
+   card treatment), not a wall the camera sits inside of. */
 export const WAYPOINTS: {
   pos: [number, number, number];
   look: [number, number, number];
 }[] = [
   { pos: [0, 9, 14], look: [0, 1.6, 0] }, // GOLDEN — high approach, sun still up
-  { pos: [3.2, 3.4, 2.2], look: [0, 1.4, -4] }, // SUNSET — stack district ignites
-  { pos: [-2.4, 1.8, -6.5], look: [-1, 1.1, -10.5] }, // DUSK — proof plaza, streetlamps
-  { pos: [1.8, 1.4, -14], look: [-0.3, 1, -18.5] }, // NIGHTFALL — work boulevard billboards
-  { pos: [-1, 2.6, -19.5], look: [0.6, 1.2, -24.5] }, // DEEP NIGHT — bridges arc between districts
-  { pos: [0, 4.2, -28], look: [0, 0.5, -34] }, // MIDNIGHT — widest pull-back, the dock
+  { pos: [0.9, 34, 30], look: [0, 1, -3] }, // SUNSET — stack district ignites, seen as a mid-distance skyline, well clear of the card above the fold
+  { pos: [-0.8, 6.8, -5.5], look: [-0.6, 2.4, -11.5] }, // DUSK — proof plaza, streetlamps, from above
+  { pos: [0.7, 6.2, -12.5], look: [-0.2, 2.2, -18] }, // NIGHTFALL — work boulevard billboards below
+  { pos: [-0.6, 6.6, -19], look: [0.4, 2.6, -24.5] }, // DEEP NIGHT — bridge arcs pass well underneath
+  { pos: [0, 7.8, -29], look: [0, 2, -36] }, // MIDNIGHT — widest pull-back, full grid + bridges + dock beacon
 ];
 
 export function buildCameraCurves() {

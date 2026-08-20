@@ -132,6 +132,13 @@ export default function AltitudeClient() {
         dangerouslySetInnerHTML={{
           __html: `
         html, body { background: ${C.skyDark} !important; color-scheme: dark !important; }
+        /* This route has its own Altimeter Rail nav — the global
+           layout-mounted ScrollProgress rail (components/ScrollProgress.tsx,
+           z-[60], fixed top-0) would otherwise render a second, unrelated
+           accent-gradient sliver pinned above this route's own header.
+           Scoped to this route's injected stylesheet only — the shared
+           component itself is untouched. */
+        .z-\\[60\\] { display: none !important; }
         .altitude-root { font-synthesis: none; }
         .altitude-cta:active { transform: scale(0.97); }
         .altitude-link { position: relative; }
@@ -385,7 +392,7 @@ function PinnedTrack({
           total={total}
           progress={progress}
         >
-          {sceneContent(s.id, surveyed)}
+          {sceneContent(s.id, surveyed, true)}
         </PinnedScene>
       ))}
     </div>
@@ -481,7 +488,9 @@ function StaticTrack({ reduce }: { reduce: boolean }) {
           data-scene={s.id}
           className="elevation-watch mx-auto max-w-[1200px] px-5 py-20 sm:px-6 sm:py-24"
         >
-          <RevealBlock reduce={reduce}>{sceneContent(s.id, [])}</RevealBlock>
+          <RevealBlock reduce={reduce}>
+            {sceneContent(s.id, [], false)}
+          </RevealBlock>
         </section>
       ))}
     </div>
@@ -638,10 +647,10 @@ function DistrictHeader({ survey }: { survey: string }) {
 /* ============================================================
    SCENE CONTENT — identical copy in both modes.
    ============================================================ */
-function sceneContent(id: SceneId, surveyed: SceneId[]) {
+function sceneContent(id: SceneId, surveyed: SceneId[], is3D: boolean) {
   switch (id) {
     case "sky":
-      return <SkyScene />;
+      return <SkyScene is3D={is3D} />;
     case "punch":
       return <PunchScene />;
     case "signal":
@@ -659,10 +668,13 @@ function sceneContent(id: SceneId, surveyed: SceneId[]) {
   }
 }
 
-function SkyScene() {
+function SkyScene({ is3D }: { is3D: boolean }) {
   return (
     <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
-      <div className="lg:col-span-7" style={{ paddingTop: "4.5rem" }}>
+      <div
+        className={is3D ? "lg:col-span-12" : "lg:col-span-7"}
+        style={{ paddingTop: "4.5rem" }}
+      >
         <Scrim className="px-6 py-7 sm:px-8 sm:py-9">
           <Mono color={C.jadeBright}>AI automation that pays for itself</Mono>
           <h1
@@ -720,9 +732,11 @@ function SkyScene() {
           </div>
         </Scrim>
       </div>
-      <div className="lg:col-span-5">
-        <CloudIllustration />
-      </div>
+      {!is3D && (
+        <div className="lg:col-span-5">
+          <CloudIllustration />
+        </div>
+      )}
     </div>
   );
 }

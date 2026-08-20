@@ -105,6 +105,17 @@ export function buildClouds(): SceneObject {
   const geo = new THREE.PlaneGeometry(26, 26, 1, 1);
   t.geometries.push(geo);
 
+  // Depth fix (08-20 screenshot audit): a single flat plane with
+  // opacity-only alpha reads as a "washed grey smear" — no sense of a
+  // deck you're falling through. Two changes give it real depth: (1)
+  // the fragment shader now mixes toward a darker, desaturated
+  // "shadowed" tone in the low-noise valleys (uColorDeep) instead of a
+  // flat uColor everywhere, so the deck has visible volume/undulation
+  // instead of a uniform grey wash; (2) three co-planar layers at
+  // different heights/scales/opacities (near/mid/far) reused from the
+  // SAME geometry+material via distinct Mesh instances (zero extra
+  // shader compiles) stack a soft parallax gradient as the camera
+  // falls through, instead of one paper-thin sheet.
   const mat = new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
@@ -113,6 +124,8 @@ export function buildClouds(): SceneObject {
       uTime: { value: 0 },
       uFade: { value: 1 },
       uColor: { value: new THREE.Color(C.paper) },
+      uColorDeep: { value: new THREE.Color("#5E7A78") },
+      uLayerAlpha: { value: 1 },
     },
     vertexShader: /* glsl */ `
       varying vec2 vUv;
@@ -126,6 +139,8 @@ export function buildClouds(): SceneObject {
       uniform float uTime;
       uniform float uFade;
       uniform vec3 uColor;
+      uniform vec3 uColorDeep;
+      uniform float uLayerAlpha;
       float hash(vec2 p) { return fract(sin(dot(p, vec2(41.3, 289.1))) * 43758.5453); }
       float noise(vec2 p) {
         vec2 i = floor(p);
@@ -150,18 +165,34 @@ export function buildClouds(): SceneObject {
       void main() {
         vec2 uv = vUv * 3.0 + vec2(uTime * 0.02, uTime * 0.008);
         float n = fbm(uv);
-        float alpha = smoothstep(0.32, 0.78, n) * uFade;
-        gl_FragColor = vec4(uColor, alpha * 0.88);
+        // Radial falloff toward the plane's own edges reads as a cloud
+        // deck thinning at its horizon rather than a hard-edged card.
+        float edge = 1.0 - smoothstep(0.32, 0.5, distance(vUv, vec2(0.5)));
+        float alpha = smoothstep(0.3, 0.8, n) * uFade * uLayerAlpha * edge;
+        vec3 col = mix(uColorDeep, uColor, smoothstep(0.15, 0.95, n));
+        gl_FragColor = vec4(col, alpha * 0.88);
       }
     `,
   });
   t.materials.push(mat);
 
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.rotation.x = -Math.PI / 2;
-  mesh.position.set(0, 8.9, 3.5);
   const group = new THREE.Group();
-  group.add(mesh);
+  // near/mid/far layers: closer to camera = brighter + larger; farther =
+  // dimmer + smaller, sitting slightly lower — a cheap parallax stack
+  // instead of one flat sheet.
+  const layers = [
+    { y: 9.4, z: 5.2, scale: 1.15, alpha: 1.0 },
+    { y: 8.9, z: 3.2, scale: 1.0, alpha: 0.7 },
+    { y: 8.3, z: 1.0, scale: 0.82, alpha: 0.45 },
+  ];
+  const meshes = layers.map((l) => {
+    const m = new THREE.Mesh(geo, mat);
+    m.rotation.x = -Math.PI / 2;
+    m.position.set(0, l.y, l.z);
+    m.scale.setScalar(l.scale);
+    group.add(m);
+    return m;
+  });
 
   return {
     group,
@@ -170,7 +201,20 @@ export function buildClouds(): SceneObject {
       // Fully visible above 2%, punches through and is gone by ~19%.
       const fade = THREE.MathUtils.clamp(1 - (progress - 0.02) / 0.17, 0, 1);
       mat.uniforms.uFade.value = fade;
-      mesh.visible = fade > 0.005;
+      const visible = fade > 0.005;
+      // Per-layer alpha is baked at build time (see `layers` above); the
+      // shared material only carries the shared uFade/uTime — draw each
+      // layer's own alpha via its own material instance would triple the
+      // shader compiles, so instead each mesh gets a tiny per-draw alpha
+      // multiplier by toggling uLayerAlpha immediately before its draw
+      // call (three.js renders meshes sharing a material sequentially,
+      // uniform writes between draws are honoured).
+      meshes.forEach((m, i) => {
+        m.visible = visible;
+        m.onBeforeRender = () => {
+          mat.uniforms.uLayerAlpha.value = layers[i].alpha;
+        };
+      });
     },
     dispose: t.dispose,
   };
@@ -239,9 +283,19 @@ export function buildDescentDistricts(mats: Mats): SceneObject {
   );
   const dummy = new THREE.Object3D();
   const towerBaseScaleY = (r: TowerRec) => r.h * 0.85; // dark, pre-wake massing
+  // Fix (08-20 screenshot audit): towers used to be written at full
+  // pre-wake massing height from the very first frame, so Signal
+  // Heights' towers (closest district, z=-1.8) sat there from progress
+  // 0 — visible in the SKY hero beat with no ground/horizon nearby to
+  // anchor them, reading as a disconnected floating panel. Every tower
+  // now starts fully collapsed (matches the windows' zero-scale init
+  // below) and only rises into its dark pre-wake massing during a short
+  // lead-in window right before its district's threshold (see
+  // `appearLead` in update()), then continues into the existing
+  // elapsed-based wake animation once that threshold is crossed.
   towers.forEach((r, i) => {
-    dummy.position.set(r.x, towerBaseScaleY(r) / 2, r.z);
-    dummy.scale.set(1.1, towerBaseScaleY(r), 1.1);
+    dummy.position.set(r.x, 0, r.z);
+    dummy.scale.set(1.1, 0.0001, 1.1);
     dummy.updateMatrix();
     towerMesh.setMatrixAt(i, dummy.matrix);
   });
@@ -292,6 +346,12 @@ export function buildDescentDistricts(mats: Mats): SceneObject {
 
   const activated = [false, false, false, false];
   const wakeStart = [0, 0, 0, 0];
+  // How far (in scroll-progress units) before a district's threshold its
+  // towers start rising from fully collapsed to their dark pre-wake
+  // massing — keeps every district invisible until it's actually about
+  // to be relevant, instead of visible for the whole preceding descent.
+  const APPEAR_LEAD = 0.06;
+  const appearSettled = [false, false, false, false];
 
   const writeWindow = (i: number, w: WindowRec, on: boolean) => {
     if (on) {
@@ -323,7 +383,31 @@ export function buildDescentDistricts(mats: Mats): SceneObject {
           activated[di] = true;
           wakeStart[di] = elapsed;
         }
-        if (!activated[di]) return;
+        if (!activated[di]) {
+          // Pre-wake lead-in: rise from fully collapsed to dark massing
+          // only inside the short window right before this district's
+          // threshold — stays invisible (and cheap: no writes at all)
+          // for the rest of the descent above it.
+          const appearStart = threshold - APPEAR_LEAD;
+          if (progress < appearStart) return;
+          if (appearSettled[di]) return; // already at full pre-wake massing, no threshold crossing yet
+          const preT = THREE.MathUtils.clamp(
+            (progress - appearStart) / APPEAR_LEAD,
+            0,
+            1,
+          );
+          towers.forEach((r, i) => {
+            if (r.districtIndex !== di) return;
+            const scaleY = Math.max(0.0001, towerBaseScaleY(r) * preT);
+            dummy.position.set(r.x, scaleY / 2, r.z);
+            dummy.scale.set(1.1, scaleY, 1.1);
+            dummy.updateMatrix();
+            towerMesh.setMatrixAt(i, dummy.matrix);
+            anyTowerDirty = true;
+          });
+          if (preT >= 1) appearSettled[di] = true;
+          return;
+        }
         const t01 = THREE.MathUtils.clamp(
           (elapsed - wakeStart[di]) / WAKE_DURATION,
           0,
