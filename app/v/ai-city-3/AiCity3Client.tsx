@@ -98,7 +98,16 @@ export default function AiCity3Client() {
   const [mode, setMode] = useState<Mode>("static");
   const [canvasFailed, setCanvasFailed] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<SignalGridCanvasHandle>(null);
+  // NOTE: SignalGridCanvas is loaded via next/dynamic (React.lazy under
+  // the hood, see node_modules/next/dist/shared/lib/loadable.shared-runtime.js
+  // in this Next 16 build). That wrapper's own forwardRef intercepts any
+  // `ref` prop to expose ONLY `{ retry }` (its own useImperativeHandle) and
+  // never forwards it to the loaded component — canvasRef.current would
+  // resolve to `{ retry }`, so `canvasRef.current?.setFocus(id)` would
+  // throw (setFocus is not a function), not silently no-op. Bridge the
+  // imperative API through a stable callback prop instead, set once the
+  // real component mounts and calls back with its handle.
+  const canvasApiRef = useRef<SignalGridCanvasHandle | null>(null);
 
   useLayoutEffect(() => {
     const forcedStatic = new URLSearchParams(window.location.search).has(
@@ -122,8 +131,15 @@ export default function AiCity3Client() {
     offset: ["start start", "end end"],
   });
 
+  const handleCanvasReady = useCallback(
+    (api: SignalGridCanvasHandle | null) => {
+      canvasApiRef.current = api;
+    },
+    [],
+  );
+
   const setFocus = useCallback((id: string | null) => {
-    canvasRef.current?.setFocus(id);
+    canvasApiRef.current?.setFocus(id);
   }, []);
 
   return (
@@ -162,9 +178,9 @@ export default function AiCity3Client() {
       >
         {is3D && (
           <SignalGridCanvas
-            ref={canvasRef}
             progress={scrollYProgress}
             onContextLost={() => setCanvasFailed(true)}
+            onReady={handleCanvasReady}
           />
         )}
 
@@ -299,16 +315,31 @@ function PinnedScene({
     [start, end],
     i === 0 ? [0, -24] : [24, -24],
   );
-  const active = progress.get() >= start - fade && progress.get() < end + fade;
+
+  // Live-subscribed activity gate: `progress` is a scroll-driven
+  // MotionValue, so `active` must be recomputed on every scroll tick
+  // (not once at mount, where progress.get() is ~0 and every non-hero
+  // scene would be permanently `inert` — dead CTAs/links for the life
+  // of the page). Written straight to the DOM node, no React re-render.
+  const sectionRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const applyActive = (p: number) => {
+      const el = sectionRef.current;
+      if (!el) return;
+      el.inert = !(p >= start - fade && p < end + fade);
+    };
+    applyActive(progress.get());
+    const unsub = progress.on("change", applyActive);
+    return unsub;
+  }, [progress, start, end, fade]);
+
   return (
     <motion.section
       id={id}
       aria-label={id}
       className="absolute inset-0 flex items-center"
       style={{ opacity, y, pointerEvents: "none" }}
-      ref={(el: HTMLElement | null) => {
-        if (el) el.inert = !active;
-      }}
+      ref={sectionRef}
     >
       <div
         className="mx-auto w-full max-w-[1200px] px-5 sm:px-6"

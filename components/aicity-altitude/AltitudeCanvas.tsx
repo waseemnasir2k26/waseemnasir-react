@@ -133,7 +133,20 @@ export default function AltitudeCanvas({
       if (now - frameSampleStart > 2000) {
         const avgFrameMs =
           (now - frameSampleStart) / Math.max(1, frameSampleCount);
-        if (!degraded && avgFrameMs > 22) degraded = true;
+        if (!degraded && avgFrameMs > 22) {
+          // Clouds' fade/visibility is a pure function of `p`, recomputed
+          // every frame — freezing mid-transition (update simply skipped
+          // from here on) would strand whatever opacity/visible state it
+          // last had, regardless of how far the user keeps scrolling.
+          // Snap it once to its clean end-of-life state (progress=1 ->
+          // fade 0, mesh hidden) before the degrade ladder starts
+          // skipping its update entirely. Bridges don't need this: their
+          // geometry never depends on `p`, only their pulse shader's
+          // uTime, so freezing them just stops the pulse animation in
+          // place — the documented, intended "packet frozen mid-span".
+          objects[0].update(0, elapsed, 1);
+          degraded = true;
+        }
         frameSampleStart = now;
         frameSampleCount = 0;
       }

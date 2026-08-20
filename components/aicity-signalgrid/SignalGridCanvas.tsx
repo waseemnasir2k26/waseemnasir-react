@@ -58,8 +58,16 @@ const SignalGridCanvas = forwardRef<
   {
     progress: MotionValue<number>;
     onContextLost: () => void;
+    // Imperative-bridge escape hatch: next/dynamic in this Next 16 build
+    // wraps the loaded component in its OWN forwardRef (see
+    // loadable.shared-runtime.js) which intercepts any `ref` passed
+    // through dynamic() and never forwards it here — `ref`/
+    // useImperativeHandle above are kept as a no-op-safe fallback for a
+    // direct (non-dynamic) render, but the caller should use `onReady`
+    // to receive the real handle.
+    onReady?: (api: SignalGridCanvasHandle | null) => void;
   }
->(function SignalGridCanvas({ progress, onContextLost }, ref) {
+>(function SignalGridCanvas({ progress, onContextLost, onReady }, ref) {
   const mountRef = useRef<HTMLDivElement>(null);
   const keyboardFocusRef = useRef<string | null>(null);
   const setFocusFn = useRef<(id: string | null) => void>(() => {});
@@ -67,6 +75,12 @@ const SignalGridCanvas = forwardRef<
   useImperativeHandle(ref, () => ({
     setFocus: (id) => setFocusFn.current(id),
   }));
+
+  useEffect(() => {
+    onReady?.({ setFocus: (id) => setFocusFn.current(id) });
+    return () => onReady?.(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -155,6 +169,9 @@ const SignalGridCanvas = forwardRef<
     mount.appendChild(tooltip);
 
     const projected = new THREE.Vector3();
+    // Scratch vector reused every hover frame — getCenter() would
+    // otherwise allocate a new Vector3 per call while hovering.
+    const boxCenterScratch = new THREE.Vector3();
     function updateTooltip() {
       if (!activeId) {
         tooltip.style.opacity = "0";
@@ -162,7 +179,7 @@ const SignalGridCanvas = forwardRef<
       }
       const node = boxes.find((b) => b.id === activeId);
       if (!node) return;
-      const c = node.box.getCenter(new THREE.Vector3());
+      const c = node.box.getCenter(boxCenterScratch);
       c.y = node.box.max.y;
       projected.copy(c).project(camera);
       const x = (projected.x * 0.5 + 0.5) * window.innerWidth;

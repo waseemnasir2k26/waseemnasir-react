@@ -83,12 +83,17 @@ export default function MeridianCanvas({
 
     const mats = makeMaterials();
     const dockBuild = buildDock(mats);
+    // Mutable governor ref shared with buildInterconnect — flipping
+    // packetsReduced actually halves the drawn/animated packet
+    // instances (see buildInterconnect in SceneObjects.ts), not just a
+    // cosmetic dataset flag.
+    const packetGovernor = { packetsReduced: false };
     const objects: SceneObject[] = [
       buildCityGrid(mats),
       buildStackDistrict(mats),
       buildProofPlaza(mats),
       buildWorksBoulevard(mats),
-      buildInterconnect(mats),
+      buildInterconnect(mats, packetGovernor),
       buildSun(mats),
       dockBuild.scene,
     ];
@@ -116,17 +121,9 @@ export default function MeridianCanvas({
     let raf = 0;
     let last = performance.now();
     const clockStart = performance.now();
-    let visible = !document.hidden;
-
-    const onVisibility = () => {
-      visible = !document.hidden;
-      if (visible) last = performance.now();
-    };
-    document.addEventListener("visibilitychange", onVisibility);
 
     const tick = () => {
       raf = requestAnimationFrame(tick);
-      if (!visible) return;
       const now = performance.now();
       const dt = Math.min((now - last) / 1000, 0.05);
       const frameMs = now - last;
@@ -138,7 +135,8 @@ export default function MeridianCanvas({
       if (frameTimes.length === 60) {
         const avg = frameTimes.reduce((a, b) => a + b, 0) / 60;
         if (avg > 22 && !packetsHalved) {
-          packetsHalved = true; // logged via dataset, no UI
+          packetsHalved = true;
+          packetGovernor.packetsReduced = true; // real instance-count cut
           mount.dataset.governor = "packets-reduced";
         }
         if (avg > 26 && !dprLowered) {
@@ -193,6 +191,20 @@ export default function MeridianCanvas({
       camera.updateProjectionMatrix();
     };
     window.addEventListener("resize", onResize);
+
+    // Stop the rAF loop entirely while the tab is hidden (mirrors
+    // AltitudeCanvas) instead of scheduling-then-early-returning every
+    // frame, which kept the loop alive (and the browser's hidden-tab
+    // throttling still ticking it) for no work done.
+    const onVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(raf);
+      } else {
+        last = performance.now();
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
 
     const canvasEl = renderer.domElement;
     canvasEl.addEventListener("webglcontextlost", onContextLost, {

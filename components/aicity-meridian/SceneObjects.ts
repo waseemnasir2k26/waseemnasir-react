@@ -456,7 +456,14 @@ export function buildWorksBoulevard(mats: Mats): SceneObject {
    bridges cannot exist before deep night: connections ARE the
    automation, invisible during the manual day.
    ============================================================ */
-export function buildInterconnect(mats: Mats): SceneObject {
+export function buildInterconnect(
+  mats: Mats,
+  // Mutable governor ref, set by MeridianCanvas's frame-budget monitor.
+  // When packetsReduced flips true, half the packet instances stop
+  // advancing and are scaled to 0 (hidden) — a real instance-count
+  // reduction, not just a cosmetic dataset flag.
+  governor?: { packetsReduced: boolean },
+): SceneObject {
   const t = trackDisposables();
   const group = new THREE.Group();
 
@@ -529,6 +536,10 @@ export function buildInterconnect(mats: Mats): SceneObject {
 
   group.add(packets);
 
+  // Tracks which odd-indexed instances have already been zero-scaled so
+  // the hide write happens once per reduction, not every frame.
+  let culledApplied = false;
+
   return {
     group,
     update: (dt, _elapsed, dayness) => {
@@ -539,15 +550,33 @@ export function buildInterconnect(mats: Mats): SceneObject {
       (mats.bridge as THREE.MeshBasicMaterial).opacity = gate * 0.06;
       (mats.packet as THREE.MeshBasicMaterial).opacity = gate;
 
+      const reduced = governor?.packetsReduced ?? false;
+
       if (gate > 0.001) {
+        let changed = false;
         states.forEach((s, i) => {
+          // Governor "packets-reduced" tier: every other packet stops
+          // advancing and is hidden (scale 0) — a real halving of the
+          // instances actually animated/drawn each frame, not cosmetic.
+          if (reduced && i % 2 === 1) {
+            if (!culledApplied) {
+              dummy.position.set(0, 0, 0);
+              dummy.scale.setScalar(0);
+              dummy.updateMatrix();
+              packets.setMatrixAt(i, dummy.matrix);
+              changed = true;
+            }
+            return;
+          }
           s.phase = (s.phase + dt * s.speed) % 1;
           samplePoint(s.arc, s.phase, dummy.position);
           dummy.scale.setScalar(gate);
           dummy.updateMatrix();
           packets.setMatrixAt(i, dummy.matrix);
+          changed = true;
         });
-        packets.instanceMatrix.needsUpdate = true;
+        if (reduced) culledApplied = true;
+        if (changed) packets.instanceMatrix.needsUpdate = true;
       }
     },
     dispose: t.dispose,
