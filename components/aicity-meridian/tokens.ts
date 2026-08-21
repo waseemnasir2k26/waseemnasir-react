@@ -39,11 +39,27 @@ export const DUSK = {
 
 export const CTA_URL = "https://skynetjoe.com/discovery-call";
 
-/* H1 + subhead — verbatim, mirrored from components/skyline/tokens.ts
-   (source of truth: live homepage Hero). Must stay identical. */
-export const H1 =
-  "Every hour your team works by hand, your business leaks money.";
+/* H1 + subhead.
+
+   DELIBERATE DIVERGENCE from the homepage mirror (2026-08-21, Waseem's
+   call): this preview tests the harder replacement pitch instead of the
+   softer "leaks money" framing. The homepage strings are kept verbatim
+   below as H1_HOMEPAGE / SUB_HOMEPAGE so promotion or rollback is a
+   one-line swap, and so the parity rule is visible rather than lost.
+
+   TRUTH NOTE — this is a first-party claim about SkynetLabs' OWN offer
+   ("here is what we build"), which the positioning canon explicitly
+   sanctions. It is NOT a claim that any named client cut headcount;
+   no such outcome has been delivered, so none is stated. Do not add
+   a client name, a headcount, or a saving figure to these strings. */
+export const H1 = "Stop paying people to do what a system should do.";
 export const SUB =
+  "Intake, follow-up, scheduling, reporting, publishing — the repeatable work sitting behind a 30-to-50 person back office can run as one AI system that learns from every job it handles. I'm Waseem Nasir, founder of SkynetLabs. I find where your business bleeds hours, then build the system that takes them back. You keep the people who actually think.";
+
+/** Live-homepage strings, kept verbatim for promotion/rollback parity. */
+export const H1_HOMEPAGE =
+  "Every hour your team works by hand, your business leaks money.";
+export const SUB_HOMEPAGE =
   "Leads ghost. Follow-ups slip. Your team drowns in repetitive ops. I'm Waseem Nasir, founder of SkynetLabs — I find where your business bleeds time and money, then build the systems that stop it.";
 export const CTA_LABEL = "Book a free audit";
 

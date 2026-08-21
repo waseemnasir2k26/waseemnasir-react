@@ -327,30 +327,40 @@ export function buildCityGrid(mats: Mats): SceneObject {
    a unit per tower, staggered left-to-right, entirely within the
    14-30% SUNSET band ("stack district wakes").
    ============================================================ */
+/* Tower layout is exported so the name-plate layer (aicity-core/
+   CityLabels) can hang each DISTRICT name on the exact building it
+   belongs to. Single source of truth — geometry and labels read the
+   same array, so they can never drift apart. Index matches DISTRICT. */
+export const STACK_LAYOUT: { x: number; z: number; h: number }[] = [
+  { x: -3.4, z: -2.5, h: 3.2 },
+  { x: -1.6, z: -4.2, h: 4.6 },
+  { x: 0.6, z: -3.0, h: 3.8 },
+  { x: 2.4, z: -5.0, h: 5.2 },
+  { x: 3.8, z: -3.4, h: 4.0 },
+];
+
+/** Ignition threshold for tower `i` — also when its name-plate appears. */
+export const stackThreshold = (i: number) =>
+  0.16 + (i / DISTRICT.length) * 0.12;
+
 export function buildStackDistrict(mats: Mats): SceneObject {
   const t = trackDisposables();
   const group = new THREE.Group();
   const geo = new THREE.BoxGeometry(1, 1, 1);
   t.geometries.push(geo);
   const towers = new THREE.InstancedMesh(geo, mats.landmark, DISTRICT.length);
-  const heights = [3.2, 4.6, 3.8, 5.2, 4.0];
-  const positions: [number, number][] = [
-    [-3.4, -2.5],
-    [-1.6, -4.2],
-    [0.6, -3.0],
-    [2.4, -5.0],
-    [3.8, -3.4],
-  ];
   const dummy = new THREE.Object3D();
   const thresholds = new Float32Array(DISTRICT.length);
   DISTRICT.forEach((_d, i) => {
-    const h = heights[i] ?? 4;
-    const [x, z] = positions[i] ?? [0, -4];
+    const slot = STACK_LAYOUT[i] ?? { x: 0, z: -4, h: 4 };
+    const h = slot.h;
+    const x = slot.x;
+    const z = slot.z;
     dummy.position.set(x, h / 2, z);
     dummy.scale.set(0.9, h, 0.9);
     dummy.updateMatrix();
     towers.setMatrixAt(i, dummy.matrix);
-    thresholds[i] = 0.16 + (i / DISTRICT.length) * 0.12; // staggered across the sunset band
+    thresholds[i] = stackThreshold(i); // staggered across the sunset band
   });
   towers.instanceMatrix.needsUpdate = true;
   towers.geometry.setAttribute(

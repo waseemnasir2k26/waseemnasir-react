@@ -27,11 +27,25 @@ export const C = {
 
 export const CTA_URL = "https://skynetjoe.com/discovery-call";
 
-/* H1 + subhead — verbatim from the live homepage / components/skyline/tokens.ts.
-   Must stay identical across every /v/ variant. */
-export const H1 =
-  "Every hour your team works by hand, your business leaks money.";
+/* H1 + subhead.
+
+   DELIBERATE DIVERGENCE from the homepage mirror (2026-08-21, Waseem's
+   call) — same divergence as /v/ai-city, written for THIS concept's
+   descent thesis (you fall past the departments one by one). Homepage
+   strings preserved below for promotion/rollback parity.
+
+   TRUTH NOTE — first-party claim about SkynetLabs' own offer, which the
+   positioning canon sanctions. NOT a claim that a named client removed
+   staff; no such outcome exists, so none is stated. Never attach a
+   client name, headcount, or saving figure to these strings. */
+export const H1 = "Every floor of this city used to be somebody's job.";
 export const SUB =
+  "Intake. Follow-up. Scheduling. Reporting. Publishing. Fall past each one and watch it run without a person in the seat — one AI system, wired end to end, getting sharper every job it handles. I'm Waseem Nasir, founder of SkynetLabs. I replace whole roles with systems, not another hire.";
+
+/** Live-homepage strings, kept verbatim for promotion/rollback parity. */
+export const H1_HOMEPAGE =
+  "Every hour your team works by hand, your business leaks money.";
+export const SUB_HOMEPAGE =
   "Leads ghost. Follow-ups slip. Your team drowns in repetitive ops. I'm Waseem Nasir, founder of SkynetLabs — I find where your business bleeds time and money, then build the systems that stop it.";
 export const CTA_LABEL = "Book a free audit";
 

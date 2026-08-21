@@ -235,7 +235,7 @@ export function buildClouds(): SceneObject {
 
 // Progress thresholds = the start of each district's altitude band,
 // taken straight from the approved scroll choreography (16/34/52/68%).
-const DISTRICT_THRESHOLDS = [0.16, 0.34, 0.52, 0.68] as const;
+export const DISTRICT_THRESHOLDS = [0.16, 0.34, 0.52, 0.68] as const;
 const WAKE_DURATION = 0.5; // seconds
 
 type TowerRec = {
@@ -253,7 +253,12 @@ type WindowRec = {
   districtIndex: number;
 };
 
-export function buildDescentDistricts(mats: Mats): SceneObject {
+/** Where a district's name-plate hangs, in world space. Index = district. */
+export type LandmarkAnchor = { x: number; y: number; z: number };
+
+export function buildDescentDistricts(
+  mats: Mats,
+): SceneObject & { landmarkAnchors: LandmarkAnchor[] } {
   const t = trackDisposables();
   const group = new THREE.Group();
   const rand = mulberry32(2400);
@@ -373,8 +378,29 @@ export function buildDescentDistricts(mats: Mats): SceneObject {
     towerMesh.setMatrixAt(i, dummy.matrix);
   };
 
+  // Each district's name-plate hangs off its TALLEST tower — the one
+  // that reads as the district's landmark from the descent corridor.
+  // Derived from the same seeded `towers` array the geometry uses, so
+  // the plate can never end up over a building that isn't there.
+  const landmarkAnchors: LandmarkAnchor[] = DISTRICTS.map((_d, di) => {
+    // Tall AND near the corridor centre. Height alone picks the outer
+    // towers (x = +/-3.2), which sit at the screen edge on a camera that
+    // falls straight down the middle — the sign then flies off-frame.
+    // Penalising |x| keeps the plate inside the descent view.
+    const score = (r: TowerRec) => r.h - Math.abs(r.x) * 0.8;
+    let best: TowerRec | null = null;
+    for (const r of towers) {
+      if (r.districtIndex !== di) continue;
+      if (!best || score(r) > score(best)) best = r;
+    }
+    const r = best ?? { x: 0, z: districtZ[di] ?? 0, h: 3, districtIndex: di };
+    // +0.5 clears the roofline; the tower's final (woken) height is r.h.
+    return { x: r.x, y: r.h + 0.5, z: r.z };
+  });
+
   return {
     group,
+    landmarkAnchors,
     update: (_dt, elapsed, progress) => {
       let anyDirty = false;
       let anyTowerDirty = false;
