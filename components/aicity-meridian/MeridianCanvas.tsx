@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import type { MotionValue } from "framer-motion";
-import { C, DUSK } from "./tokens";
+import { C, DUSK, DISTRICT } from "./tokens";
 import { buildCameraCurves, damp3 } from "./CameraPath";
 import {
   makeMaterials,
@@ -13,8 +13,11 @@ import {
   buildInterconnect,
   buildSun,
   buildDock,
+  STACK_LAYOUT,
+  stackThreshold,
   type SceneObject,
 } from "./SceneObjects";
+import { createCitySignage } from "../aicity-core/CitySignage";
 
 /* ============================================================
    MERIDIAN CANVAS — plain three.js, mounted imperatively in a
@@ -99,6 +102,48 @@ export default function MeridianCanvas({
     ];
     objects.forEach((o) => scene.add(o.group));
 
+    // ── Building signage. Mounted on the STACK DISTRICT group itself
+    // (objects[1]) rather than the scene, so every sign inherits the
+    // district's slow drift and stays welded to its tower. Each sign
+    // sits proud of the +Z facade in the upper third of the building
+    // and lights on the same threshold that ignites that tower, so a
+    // name never arrives before the building it belongs to. ──
+    const signage = createCitySignage(
+      DISTRICT.map((d, i) => {
+        const slot = STACK_LAYOUT[i] ?? { x: 0, z: -4, h: 4 };
+        const SIGN_W = 2.2;
+        const TOWER_HALF = 0.45; // towers are scaled 0.9 in x/z
+        // A sign wide enough to read is wider than the tower carrying
+        // it, so a centred plate runs straight into the neighbouring
+        // tower (verified: Switchboard and Projection House were both
+        // half-eaten at 2.5 centred). Hang each sign OUTBOARD — left of
+        // the corridor extends left, right extends right — so the
+        // overhang always falls into open air, never into a neighbour.
+        const outboard =
+          (slot.x < 0 ? -1 : 1) * (SIGN_W / 2 - TOWER_HALF) * 0.9;
+        return {
+          id: d.id,
+          name: d.name,
+          sub: d.service,
+          // Near the roofline (0.88) so the sign clears the shorter
+          // city-grid blocks standing in front of the district, and
+          // and standing well proud of the +Z facade (tower front is at
+          // z + 0.45) so the plate reads as a mounted marquee and never
+          // loses letters to its own tower body at a glancing angle.
+          position: new THREE.Vector3(
+            slot.x + outboard,
+            slot.h * 0.88,
+            slot.z + 1.15,
+          ),
+          width: SIGN_W,
+          height: 0.6,
+          appearAt: stackThreshold(i),
+        };
+      }),
+      { color: C.ink, accent: C.jadeBright },
+    );
+    objects[1].group.add(signage.group);
+
     const { posCurve, lookCurve } = buildCameraCurves();
     const targetPos = new THREE.Vector3();
     const targetLook = new THREE.Vector3();
@@ -181,6 +226,9 @@ export default function MeridianCanvas({
       ambient.intensity = 0.18 + dayness * 0.2;
 
       objects.forEach((o) => o.update(dt, elapsed, dayness));
+      // After the camera is final for this frame, before the draw — the
+      // plates project off the same matrix the render uses.
+      signage.update(dayness);
       renderer.render(scene, camera);
     };
     raf = requestAnimationFrame(tick);
@@ -216,6 +264,7 @@ export default function MeridianCanvas({
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
       canvasEl.removeEventListener("webglcontextlost", onContextLost);
+      signage.dispose();
       objects.forEach((o) => {
         o.dispose();
         scene.remove(o.group);

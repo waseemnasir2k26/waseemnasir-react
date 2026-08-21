@@ -64,3 +64,13 @@ Top 3 become `/v/ai-city`, `/v/ai-city-2`, `/v/ai-city-3` on BOTH sites (noindex
 - DEPLOYED: waseemnasir-8b495oj9m aliased to www. 3 routes 200+noindex, homepage clean. wn side COMPLETE.
 - Known minor (accepted): Altitude 30-90% bright bridge beam near cards (pre-existing, in-concept); proof-plaza beacon always-on glow.
 - sj /v9-11: committed cb3c606 + clean deploy branch deploy/ai-city-v9-11 + ZIP staged. ⛔ BLOCKED: Hostinger MCP disconnected — /mcp reconnect, then hosting_deployJsApplication + cold boot + served greps.
+
+
+## SJ DEPLOYED (2026-08-21)
+- Waseem gave B5 GO ("deploy all things"). skynetjoe /v9 /v10 /v11 LIVE.
+- Build `01a0241f-7284-7151-88b3-bfcdcec8aba8` (node 20, next, npm), archive deploy-ai-city-v9-11.zip, commit cb3c606 / branch deploy/ai-city-v9-11.
+- Pre-flight: `git diff --stat 36d2998 deploy/ai-city-v9-11` = 22 files, 6981 insertions, ADDITIONS ONLY (divergence trap clear). ZIP = 1085 entries, 0 node_modules, 0 .next.
+- GOTCHA: first deployJsApplication call died "Pre-upload request failed: socket hang up" on the 126MB archive; straight retry worked but exceeded the 120s MCP window and finished as a background task. Retry, do not re-cut the ZIP.
+- Served-HTML verification: /v9 /v10 /v11 = 200 + noindex x2 each · homepage 200, 0 noindex, 217,895 bytes BEFORE and AFTER (byte-identical), title + canonical unchanged · sitemap.xml 0 hits for v9/v10/v11 · /v2-/v8 still 200.
+- STILL OWED: runtime scroll/gstack pass on the sj trio (inert flips + packets governor code-verified only). Waseem B4 verdicts on all 19 preview routes. Promotion decision. Losers -> proxy.ts BLOCKED_IN_PROD.
+- Board: Desktop\VARIANT-REVIEW-BOARD.html (all 19 routes, verdict buttons, copy-all).

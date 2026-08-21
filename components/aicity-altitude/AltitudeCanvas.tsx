@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import type { MotionValue } from "framer-motion";
-import { C } from "./tokens";
+import { C, DISTRICTS } from "./tokens";
 import { buildCameraCurves, damp3 } from "./CameraPath";
 import {
   makeMaterials,
@@ -10,8 +10,10 @@ import {
   buildDescentDistricts,
   buildBridges,
   buildTouchdown,
+  DISTRICT_THRESHOLDS,
   type SceneObject,
 } from "./SceneObjects";
+import { createCitySignage } from "../aicity-core/CitySignage";
 
 /* ============================================================
    ALTITUDE CANVAS — plain three.js, mounted imperatively in a
@@ -67,13 +69,59 @@ export default function AltitudeCanvas({
     scene.add(ambient, sky, glow);
 
     const mats = makeMaterials();
+    const districts = buildDescentDistricts(mats);
     const objects: SceneObject[] = [
       buildClouds(),
-      buildDescentDistricts(mats),
+      districts,
       buildBridges(),
       buildTouchdown(mats),
     ];
     objects.forEach((o) => scene.add(o.group));
+
+    // ── District signage, bolted to each district's tallest tower.
+    // Parented to the district group (not the scene) so the signs are
+    // part of the city: occluded by towers in front, fogged with the
+    // facade behind, shrinking with real perspective as you fall past.
+    // Lights just AFTER its DISTRICT_THRESHOLD so the tower has already
+    // risen out of the deck — a sign never hangs in empty air. ──
+    const signage = createCitySignage(
+      DISTRICTS.map((d, i) => {
+        const a = districts.landmarkAnchors[i] ?? { x: 0, y: 3, z: 0 };
+        const threshold = DISTRICT_THRESHOLDS[i] ?? 0.2;
+        const SIGN_W = 1.5;
+        const TOWER_HALF = 0.55; // towers are 1.1 wide
+        // INBOARD here, unlike /v/ai-city. Meridian looks at the
+        // district from outside, so its plates hang outward into open
+        // air. This camera falls straight down the corridor with the
+        // towers close on both sides, so an outward-hung plate lands at
+        // the frame edge (verified: The Portal Gate was clipped off the
+        // top-right corner). Hanging it INTO the corridor instead puts
+        // it in front of the falling camera, the way a street sign
+        // projects over the street rather than away from it.
+        const inboard = (a.x < 0 ? 1 : -1) * (SIGN_W / 2 - TOWER_HALF) * 0.9;
+        return {
+          id: d.id,
+          name: d.landmark,
+          // The district NAME would just echo the landmark name on the
+          // plate ("PIPELINE ROW HQ / PIPELINE ROW"). Take the service
+          // clause off the front of the pitch instead — the pitches are
+          // written as "<service>: <promise>" (or "<service> — <promise>"),
+          // so the head of the string is the discipline the building runs.
+          sub: d.pitch.split(/[:—]/)[0].trim(),
+          // `a.y` is roof + 0.5; sit the plate about a storey below the
+          // roofline (not just under it) so it enters the frame of a
+          // camera that is looking down and forward as it falls, and
+          // stand the plate well proud of the front face (z + 0.55) so
+          // it reads as mounted signage from a falling camera.
+          position: new THREE.Vector3(a.x + inboard, a.y - 1.7, a.z + 0.72),
+          width: SIGN_W,
+          height: 0.4,
+          appearAt: threshold + 0.03,
+        };
+      }),
+      { color: C.ink, accent: C.jadeBright },
+    );
+    districts.group.add(signage.group);
 
     const { posCurve, lookCurve } = buildCameraCurves();
     const targetPos = new THREE.Vector3();
@@ -127,6 +175,10 @@ export default function AltitudeCanvas({
         objects[1].update(dt, elapsed, p); // districts (content, not decoration)
         objects[3].update(dt, elapsed, p); // touchdown door
       }
+      // Plates project off the same camera matrix the draw uses. They
+      // are content (district names), so they keep updating even when
+      // the perf governor has degraded the decorative layers.
+      signage.update(p);
       renderer.render(scene, camera);
 
       frameSampleCount++;
@@ -180,6 +232,7 @@ export default function AltitudeCanvas({
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
       canvasEl.removeEventListener("webglcontextlost", onContextLost);
+      signage.dispose();
       objects.forEach((o) => {
         o.dispose();
         scene.remove(o.group);
