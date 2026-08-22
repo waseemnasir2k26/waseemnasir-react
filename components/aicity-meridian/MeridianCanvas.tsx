@@ -18,6 +18,12 @@ import {
   type SceneObject,
 } from "./SceneObjects";
 import { createCitySignage } from "../aicity-core/CitySignage";
+import {
+  applyFilmicRenderer,
+  applyEnvResponse,
+  createSkyEnvironment,
+  createPostChain,
+} from "../aicity-core/Realism";
 
 /* ============================================================
    MERIDIAN CANVAS — plain three.js, mounted imperatively in a
@@ -61,6 +67,10 @@ export default function MeridianCanvas({
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     renderer.setPixelRatio(dpr);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    // Filmic response BEFORE anything reads a colour. Without it
+    // every emissive above 1.0 clips flat to white and the dusk
+    // palette has no highlight shoulder to roll off into.
+    applyFilmicRenderer(renderer, 0.98);
     mount.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
@@ -84,7 +94,41 @@ export default function MeridianCanvas({
     glow.position.set(0, 4, -4);
     scene.add(ambient, sunLight, moon, glow);
 
+    // ── Image-based lighting, generated on the GPU at mount. Three
+    // probes across the cycle (golden hour / dusk / night), baked
+    // once each and swapped at the nearest stop — the sky and fog
+    // already lerp continuously above this, so the stepping
+    // underneath is invisible in motion. No .hdr, no network.
+    const skyEnv = createSkyEnvironment(renderer, [
+      {
+        at: 0.0,
+        sky: DUSK.duskA,
+        ground: C.inkJade,
+        sun: "#F3D9B8",
+        sunIntensity: 1.0,
+      },
+      {
+        at: 0.35,
+        sky: DUSK.duskC,
+        ground: C.inkJade,
+        sun: "#C9885E",
+        sunIntensity: 0.55,
+      },
+      {
+        at: 1.0,
+        sky: C.skyDark,
+        ground: C.inkJade,
+        sun: C.jadeBright,
+        sunIntensity: 0.22,
+      },
+    ]);
+    scene.environment = skyEnv.get(0);
+    let envStop = 0;
+
     const mats = makeMaterials();
+    // metalness 0.25 with no environment to reflect was only ever
+    // darkening these surfaces. Now it has something to catch.
+    applyEnvResponse(mats, 0.45);
     const dockBuild = buildDock(mats);
     // Mutable governor ref shared with buildInterconnect — flipping
     // packetsReduced actually halves the drawn/animated packet
@@ -162,6 +206,23 @@ export default function MeridianCanvas({
     const frameTimes: number[] = [];
     let packetsHalved = false;
     let dprLowered = false;
+    let postReduced = false;
+
+    // ── Photographic post chain. Bloom is what makes an emissive
+    // window read as a light source rather than a bright rectangle,
+    // and it only works honestly on top of the filmic curve set
+    // above — bloom without tone mapping just smears clipped white.
+    const post = createPostChain(renderer, scene, camera, {
+      // Threshold sits high on purpose: the sun disc and the window
+      // emissives are the only things that should bleed. Drop it and
+      // the whole dusk sky starts glowing, which reads as fog on the
+      // lens rather than light in the scene.
+      bloomStrength: 0.3,
+      bloomRadius: 0.5,
+      bloomThreshold: 0.88,
+      grain: 0.026,
+      vignette: 0.88,
+    });
 
     let raf = 0;
     let last = performance.now();
@@ -179,6 +240,14 @@ export default function MeridianCanvas({
       if (frameTimes.length > 60) frameTimes.shift();
       if (frameTimes.length === 60) {
         const avg = frameTimes.reduce((a, b) => a + b, 0) / 60;
+        // Decoration sheds before content, and the composer sheds
+        // before the decoration — bloom is the most expensive thing
+        // on screen and the least load-bearing.
+        if (avg > 20 && !postReduced) {
+          postReduced = true;
+          post.setQuality("reduced");
+          mount.dataset.governor = "post-reduced";
+        }
         if (avg > 22 && !packetsHalved) {
           packetsHalved = true;
           packetGovernor.packetsReduced = true; // real instance-count cut
@@ -225,11 +294,21 @@ export default function MeridianCanvas({
         0.18 * THREE.MathUtils.clamp((dayness - 0.4) / 0.3, 0, 1);
       ambient.intensity = 0.18 + dayness * 0.2;
 
+      // Swap the baked probe at the nearest stop. Comparing the
+      // texture identity rather than the scalar means this assigns
+      // at most twice across the whole scroll, not every frame.
+      const nextEnv = skyEnv.get(dayness);
+      if (nextEnv !== scene.environment) {
+        scene.environment = nextEnv;
+        envStop = dayness;
+      }
+      void envStop;
+
       objects.forEach((o) => o.update(dt, elapsed, dayness));
       // After the camera is final for this frame, before the draw — the
       // plates project off the same matrix the render uses.
       signage.update(dayness);
-      renderer.render(scene, camera);
+      post.render(dt);
     };
     raf = requestAnimationFrame(tick);
 
@@ -237,6 +316,11 @@ export default function MeridianCanvas({
       renderer.setSize(window.innerWidth, window.innerHeight);
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
+      // The composer keeps its own render targets. Resizing the
+      // renderer alone leaves every pass sampling at the old size,
+      // which shows up as a misregistered, soft frame after a
+      // window resize or a device-rotation.
+      post.setSize(window.innerWidth, window.innerHeight);
     };
     window.addEventListener("resize", onResize);
 
@@ -265,6 +349,9 @@ export default function MeridianCanvas({
       document.removeEventListener("visibilitychange", onVisibility);
       canvasEl.removeEventListener("webglcontextlost", onContextLost);
       signage.dispose();
+      post.dispose();
+      skyEnv.dispose();
+      scene.environment = null;
       objects.forEach((o) => {
         o.dispose();
         scene.remove(o.group);
