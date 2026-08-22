@@ -14,6 +14,12 @@ import {
   type SceneObject,
 } from "./SceneObjects";
 import { createCitySignage } from "../aicity-core/CitySignage";
+import {
+  applyFilmicRenderer,
+  applyEnvResponse,
+  createSkyEnvironment,
+  createPostChain,
+} from "../aicity-core/Realism";
 
 /* ============================================================
    ALTITUDE CANVAS — plain three.js, mounted imperatively in a
@@ -45,6 +51,14 @@ export default function AltitudeCanvas({
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     renderer.setPixelRatio(dpr);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    // Filmic response BEFORE anything reads a colour. Without it every
+    // emissive above 1.0 clips flat to white — the documented root cause
+    // of the bright-bridge-beam artefact at cards 30-90%: window
+    // emissiveIntensity 1.6 had no shoulder to roll off into. Exposure
+    // sits a touch below Meridian's 0.98 because Altitude's windows are
+    // brighter to start with (1.6 vs Meridian's) and this is a tighter,
+    // denser corridor where a hot highlight reads worse.
+    applyFilmicRenderer(renderer, 0.86);
     mount.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
@@ -68,7 +82,42 @@ export default function AltitudeCanvas({
     glow.position.set(0, 3, -6);
     scene.add(ambient, sky, glow);
 
+    // ── Image-based lighting, generated on the GPU at mount. Unlike
+    // Meridian's day->night arc, Altitude's stops trace a DESCENT: high
+    // altitude reads bright and hazy (cloud-deck paper white), street
+    // level reads dark and dense (jade night). `p` (scroll progress) is
+    // used directly as the stop key, same as Meridian keys off `dayness`
+    // — no reinterpretation needed, descent IS the master scalar here.
+    // No .hdr, no network — three probe scenes baked once each.
+    const skyEnv = createSkyEnvironment(renderer, [
+      {
+        at: 0.0,
+        sky: C.paper,
+        ground: C.ground,
+        sun: C.paper,
+        sunIntensity: 1.0,
+      },
+      {
+        at: 0.5,
+        sky: C.jade,
+        ground: C.ground,
+        sun: C.jadeBright,
+        sunIntensity: 0.5,
+      },
+      {
+        at: 1.0,
+        sky: C.skyDark,
+        ground: C.ground,
+        sun: C.jadeBright,
+        sunIntensity: 0.18,
+      },
+    ]);
+    scene.environment = skyEnv.get(0);
+
     const mats = makeMaterials();
+    // metalness 0.25 (building) with no environment to reflect was only
+    // ever darkening that surface — now it has something to catch.
+    applyEnvResponse(mats, 0.45);
     const districts = buildDescentDistricts(mats);
     const objects: SceneObject[] = [
       buildClouds(),
@@ -139,6 +188,22 @@ export default function AltitudeCanvas({
     let frameSampleStart = performance.now();
     let frameSampleCount = 0;
     let degraded = false;
+    let postReduced = false;
+
+    // ── Photographic post chain. Bloom is what makes a window emissive
+    // read as a light source rather than a bright rectangle, and it only
+    // works honestly on top of the filmic curve applied above — bloom
+    // without tone mapping just smears clipped white. Threshold sits
+    // high on purpose (0.88, matching Meridian): only the sun disc and
+    // the window emissives should bleed. Drop it and the cloud deck
+    // itself starts glowing, which reads as a dirty lens.
+    const post = createPostChain(renderer, scene, camera, {
+      bloomStrength: 0.3,
+      bloomRadius: 0.5,
+      bloomThreshold: 0.88,
+      grain: 0.026,
+      vignette: 0.88,
+    });
 
     const tick = () => {
       raf = requestAnimationFrame(tick);
@@ -166,6 +231,14 @@ export default function AltitudeCanvas({
         scene.fog.far = THREE.MathUtils.lerp(46, 34, p);
       }
 
+      // Swap the baked probe at the nearest stop. Comparing texture
+      // identity rather than the scalar means this assigns at most twice
+      // across the whole descent, not every frame.
+      const nextEnv = skyEnv.get(p);
+      if (nextEnv !== scene.environment) {
+        scene.environment = nextEnv;
+      }
+
       if (!degraded) {
         objects.forEach((o) => o.update(dt, elapsed, p));
       } else {
@@ -179,12 +252,19 @@ export default function AltitudeCanvas({
       // are content (district names), so they keep updating even when
       // the perf governor has degraded the decorative layers.
       signage.update(p);
-      renderer.render(scene, camera);
+      post.render(dt);
 
       frameSampleCount++;
       if (now - frameSampleStart > 2000) {
         const avgFrameMs =
           (now - frameSampleStart) / Math.max(1, frameSampleCount);
+        // Post sheds FIRST, before any content degrades — bloom is the
+        // most expensive thing on screen and the least load-bearing.
+        if (!postReduced && avgFrameMs > 20) {
+          postReduced = true;
+          post.setQuality("reduced");
+          mount.dataset.governor = "post-reduced";
+        }
         if (!degraded && avgFrameMs > 22) {
           // Clouds' fade/visibility is a pure function of `p`, recomputed
           // every frame — freezing mid-transition (update simply skipped
@@ -209,6 +289,10 @@ export default function AltitudeCanvas({
       renderer.setSize(window.innerWidth, window.innerHeight);
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
+      // The composer keeps its own render targets. Resizing the renderer
+      // alone leaves every pass sampling at the old size, which shows up
+      // as a misregistered, soft frame after a resize/rotation.
+      post.setSize(window.innerWidth, window.innerHeight);
     };
     window.addEventListener("resize", onResize);
 
@@ -233,6 +317,9 @@ export default function AltitudeCanvas({
       document.removeEventListener("visibilitychange", onVisibility);
       canvasEl.removeEventListener("webglcontextlost", onContextLost);
       signage.dispose();
+      post.dispose();
+      skyEnv.dispose();
+      scene.environment = null;
       objects.forEach((o) => {
         o.dispose();
         scene.remove(o.group);
