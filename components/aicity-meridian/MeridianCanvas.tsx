@@ -13,6 +13,7 @@ import {
   buildInterconnect,
   buildSun,
   buildDock,
+  disposeFacade,
   STACK_LAYOUT,
   stackThreshold,
   type SceneObject,
@@ -357,6 +358,8 @@ export default function MeridianCanvas({
         scene.remove(o.group);
       });
       Object.values(mats).forEach((m) => m.dispose());
+      // After the materials that reference them, never before.
+      disposeFacade();
       renderer.dispose();
       if (canvasEl.parentElement) canvasEl.parentElement.removeChild(canvasEl);
       // eslint-disable-next-line react-hooks/exhaustive-deps

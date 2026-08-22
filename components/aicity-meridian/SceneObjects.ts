@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
+import { createFacadeMaps, createRoofscape } from "../aicity-core/Facade";
 import { C, DUSK, DISTRICT, WORK } from "./tokens";
 
 /* ============================================================
@@ -123,9 +125,27 @@ function makeIgnitionMaterial(
   });
 }
 
+/** Shared across every building surface — built once, disposed with the grid. */
+let facade: ReturnType<typeof createFacadeMaps> | null = null;
+
 function makeMaterials() {
+  // Drawn at runtime into a canvas: floor slabs, mullions, per-bay
+  // glass variation and rain grime. One flat colour across a few
+  // hundred instanced slabs is what made these read as a demo; no
+  // amount of tone mapping on top of a flat surface fixes that.
+  facade = createFacadeMaps({
+    base: C.inkJade,
+    seam: C.jade,
+    floors: 11,
+    bays: 5,
+  });
+  facade.map.repeat.set(1, 1.6);
+  facade.roughnessMap.repeat.set(1, 1.6);
+
   const building = new THREE.MeshStandardMaterial({
     color: C.inkJade,
+    map: facade.map,
+    roughnessMap: facade.roughnessMap,
     metalness: 0.25,
     roughness: 0.75,
     emissive: new THREE.Color(C.jade),
@@ -224,7 +244,11 @@ export function buildCityGrid(mats: Mats): SceneObject {
     }
   }
 
-  const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+  // A hard 90-degree edge is the tell that a shape came out of a
+  // primitive constructor. A small bevel gives every vertical
+  // corner a highlight to catch the low sun on, which is what the
+  // eye actually uses to judge that a surface is real.
+  const boxGeo = new RoundedBoxGeometry(1, 1, 1, 1, 0.04);
   t.geometries.push(boxGeo);
   const buildings = new THREE.InstancedMesh(
     boxGeo,
@@ -232,14 +256,27 @@ export function buildCityGrid(mats: Mats): SceneObject {
     slots.length,
   );
   const dummy = new THREE.Object3D();
+  const footprints: { x: number; z: number; h: number; w: number; d: number }[] =
+    [];
   slots.forEach((s, i) => {
+    const w = 1.5 + (i % 3) * 0.15;
+    const d = 1.5 + ((i + 1) % 3) * 0.12;
     dummy.position.set(s.x, s.h / 2, s.z);
-    dummy.scale.set(1.5 + (i % 3) * 0.15, s.h, 1.5 + ((i + 1) % 3) * 0.12);
+    dummy.scale.set(w, s.h, d);
     dummy.updateMatrix();
     buildings.setMatrixAt(i, dummy.matrix);
+    footprints.push({ x: s.x, z: s.z, h: s.h, w, d });
   });
   buildings.instanceMatrix.needsUpdate = true;
   group.add(buildings);
+
+  // Roofscape: masts and plant housings. A skyline is read as a
+  // silhouette against the sky long before any surface detail
+  // registers, and a field of boxes all ending on one clean
+  // horizontal line is the most artificial thing in the frame.
+  // Two draw calls against a budget of about a dozen.
+  const roofscape = createRoofscape(footprints, mats.building, rand);
+  group.add(roofscape.group);
 
   const winGeo = new THREE.BoxGeometry(0.16, 0.22, 0.05);
   t.geometries.push(winGeo);
@@ -316,8 +353,25 @@ export function buildCityGrid(mats: Mats): SceneObject {
       groundScratch.copy(groundLit).lerp(groundNight, t01);
       (mats.ground as THREE.MeshStandardMaterial).color.copy(groundScratch);
     },
-    dispose: t.dispose,
+    dispose: () => {
+      // The roofscape owns two geometries the shared tracker never
+      // saw, because they are created inside createRoofscape.
+      roofscape.dispose();
+      t.dispose();
+    },
   };
+}
+
+/**
+ * Releases the shared facade canvases. Call from the canvas teardown
+ * AFTER every scene object has been disposed — the building material
+ * references these textures, and the material bag is disposed last.
+ * Without this the two CanvasTextures survive every remount, which is
+ * invisible until a few route navigations in.
+ */
+export function disposeFacade() {
+  facade?.dispose();
+  facade = null;
 }
 
 /* ============================================================
