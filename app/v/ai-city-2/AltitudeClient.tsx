@@ -602,17 +602,31 @@ function Mono({
 }
 
 /* ── translucent night scrim + the "lit doorframe" motif: a 2px
-   jadeBright left border, per the Section Treatment spec ── */
+   jadeBright left border, per the Section Treatment spec ──
+
+   `clearRail` gives the card left clearance past the fixed
+   Altimeter Rail (AltimeterRailLive, fixed left-4, ~186px wide,
+   lg+ only) — without it the rail's HUD + nav pills sit directly on
+   top of this card's headline/body copy at 1280-1440px widths,
+   since the card's own centered max-w-[1200px] container starts
+   well inside the rail's footprint. Only applied in 3D/pinned mode
+   (the rail doesn't exist in static mode) and only on scenes whose
+   card starts near the left edge — the touchdown dock card is
+   already centered clear of the rail and does not opt in. Margin
+   (not padding) so the block shrinks to fit rather than overflowing
+   its grid/flex cell. */
 function Scrim({
   children,
   className = "",
+  clearRail = false,
 }: {
   children: React.ReactNode;
   className?: string;
+  clearRail?: boolean;
 }) {
   return (
     <div
-      className={className}
+      className={`${className} ${clearRail ? "lg:ml-[15.5rem]" : ""}`}
       style={{
         background: "rgba(3,17,15,0.62)",
         backdropFilter: "blur(10px)",
@@ -652,15 +666,15 @@ function sceneContent(id: SceneId, surveyed: SceneId[], is3D: boolean) {
     case "sky":
       return <SkyScene is3D={is3D} />;
     case "punch":
-      return <PunchScene />;
+      return <PunchScene is3D={is3D} />;
     case "signal":
-      return <SignalScene />;
+      return <SignalScene is3D={is3D} />;
     case "pipeline":
-      return <PipelineScene />;
+      return <PipelineScene is3D={is3D} />;
     case "portal":
-      return <PortalScene />;
+      return <PortalScene is3D={is3D} />;
     case "broadcast":
-      return <BroadcastScene />;
+      return <BroadcastScene is3D={is3D} />;
     case "touchdown":
       return <TouchdownScene surveyed={surveyed} />;
     default:
@@ -675,7 +689,7 @@ function SkyScene({ is3D }: { is3D: boolean }) {
         className={is3D ? "lg:col-span-12" : "lg:col-span-7"}
         style={{ paddingTop: "4.5rem" }}
       >
-        <Scrim className="px-6 py-7 sm:px-8 sm:py-9">
+        <Scrim className="px-6 py-7 sm:px-8 sm:py-9" clearRail={is3D}>
           <Mono color={C.jadeBright}>AI automation that pays for itself</Mono>
           <h1
             className="mt-5"
@@ -803,9 +817,9 @@ function CloudIllustration() {
   );
 }
 
-function PunchScene() {
+function PunchScene({ is3D }: { is3D: boolean }) {
   return (
-    <Scrim className="px-6 py-8 sm:px-8 sm:py-10">
+    <Scrim className="px-6 py-8 sm:px-8 sm:py-10" clearRail={is3D}>
       <DistrictHeader survey="CLOUD PUNCH · ALT 2100–1700M" />
       <h2
         className="mt-4"
@@ -830,10 +844,10 @@ function PunchScene() {
   );
 }
 
-function SignalScene() {
+function SignalScene({ is3D }: { is3D: boolean }) {
   const d = DISTRICTS[0];
   return (
-    <Scrim className="px-6 py-8 sm:px-8 sm:py-10">
+    <Scrim className="px-6 py-8 sm:px-8 sm:py-10" clearRail={is3D}>
       <DistrictHeader survey={d.survey} />
       <h2
         className="mt-4"
@@ -886,10 +900,10 @@ function SignalScene() {
   );
 }
 
-function PipelineScene() {
+function PipelineScene({ is3D }: { is3D: boolean }) {
   const d = DISTRICTS[1];
   return (
-    <Scrim className="px-6 py-8 sm:px-8 sm:py-10">
+    <Scrim className="px-6 py-8 sm:px-8 sm:py-10" clearRail={is3D}>
       <DistrictHeader survey={d.survey} />
       <h2
         className="mt-4"
@@ -918,11 +932,11 @@ function PipelineScene() {
   );
 }
 
-function PortalScene() {
+function PortalScene({ is3D }: { is3D: boolean }) {
   const d = DISTRICTS[2];
   const w = WORK[0];
   return (
-    <Scrim className="px-6 py-8 sm:px-8 sm:py-10">
+    <Scrim className="px-6 py-8 sm:px-8 sm:py-10" clearRail={is3D}>
       <DistrictHeader survey={d.survey} />
       <h2
         className="mt-4"
@@ -983,10 +997,10 @@ function PortalScene() {
   );
 }
 
-function BroadcastScene() {
+function BroadcastScene({ is3D }: { is3D: boolean }) {
   const d = DISTRICTS[3];
   return (
-    <Scrim className="px-6 py-8 sm:px-8 sm:py-10">
+    <Scrim className="px-6 py-8 sm:px-8 sm:py-10" clearRail={is3D}>
       <DistrictHeader survey={d.survey} />
       <h2
         className="mt-4"

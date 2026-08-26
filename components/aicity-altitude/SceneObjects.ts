@@ -123,8 +123,17 @@ export function buildClouds(): SceneObject {
     uniforms: {
       uTime: { value: 0 },
       uFade: { value: 1 },
-      uColor: { value: new THREE.Color(C.paper) },
-      uColorDeep: { value: new THREE.Color("#5E7A78") },
+      // Was raw C.paper (near-white #FBFCFD) — this plane sits directly
+      // in the hero camera's view and dominates the frame during the
+      // "SKY" beat, so a literal near-white/gray colour here (not the
+      // scene fog, not the background) was the single biggest
+      // contributor to the reported "flat washed-out gray" defect.
+      // Blended toward the brand jade so the cloud deck reads as pale
+      // dusk haze on-palette, not a neutral gray card. uColorDeep pushed
+      // more saturated (was a fairly neutral #5E7A78) for real contrast
+      // between the noise's lit crests and shadowed valleys.
+      uColor: { value: new THREE.Color("#9DCAC6") },
+      uColorDeep: { value: new THREE.Color("#284A44") },
       uLayerAlpha: { value: 1 },
     },
     vertexShader: /* glsl */ `
@@ -592,12 +601,22 @@ export function buildTouchdown(mats: Mats): SceneObject {
   ground.position.set(0, 0, 2);
   group.add(ground);
 
+  // Door/beacon pulled back from z=0 to z=-2.5 (world z=-20.5, matching the
+  // final camera waypoint's look-at target almost exactly — see
+  // CameraPath.ts's TOUCHDOWN waypoint, look=[0,1.15,-20.5]). At z=0 this
+  // door sat only ~1.4 world units from the final camera position; at
+  // FOV 50 a 1.4-wide box that close already exceeds the horizontal
+  // field of view, so it filled the entire frame and — being the bright
+  // jadeBright material at any exposure, emissive or not — bloomed into
+  // the reported full-screen neon-mint flood at touchdown. Pulled back to
+  // ~3.9 units out, it now reads as a lit doorway ahead of the camera
+  // instead of a wall the camera has driven into.
   const door = new THREE.Mesh(doorGeo, mats.beacon);
-  door.position.set(0, 1.2, 0);
+  door.position.set(0, 1.2, -2.5);
   group.add(door);
 
   const beacon = new THREE.Mesh(beaconGeo, mats.beacon);
-  beacon.position.set(0, 1.2, 0.2);
+  beacon.position.set(0, 1.2, -2.3);
   group.add(beacon);
 
   return {
@@ -605,9 +624,17 @@ export function buildTouchdown(mats: Mats): SceneObject {
     update: (dt, _elapsed, progress) => {
       beacon.rotation.y += dt * 0.06;
       // Door beacon breathes brighter as touchdown approaches (>=84%).
+      // Capped lower than the original (was 0.55 -> 1.05): at the final
+      // waypoint the camera sits ~1.2 world units from this door, so at
+      // FOV 50 the door already fills most of the frame — the old ceiling
+      // pushed that huge a screen area past UnrealBloomPass's 0.88
+      // threshold and the whole touchdown beat bloomed into a flat neon
+      // fill (the reported "gray/washed" defect's worst instance). This
+      // keeps the beacon reading as a lit doorway, not a screen-filling
+      // flare.
       const near = THREE.MathUtils.clamp((progress - 0.84) / 0.16, 0, 1);
       (mats.beacon as THREE.MeshStandardMaterial).emissiveIntensity =
-        0.55 + near * 0.5;
+        0.32 + near * 0.28;
     },
     dispose: t.dispose,
   };
