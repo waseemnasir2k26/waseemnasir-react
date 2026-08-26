@@ -13,7 +13,7 @@ export const WAYPOINTS: {
   pos: [number, number, number];
   look: [number, number, number];
 }[] = [
-  { pos: [0, 2.4, 5.5], look: [0, 2, -3] }, // ENTRY — near-static, low, grid ahead
+  { pos: [3.4, 3.4, 3.2], look: [0.2, 2.1, -6.5] }, // ENTRY — 3/4 angle straight into the STACK cluster, dense at load
   { pos: [4.2, 6.5, 0.5], look: [0, 1.6, -6] }, // GRID — 35deg overhead lift over the stack
   { pos: [-2.8, 1.5, -12.5], look: [-1.6, 1.3, -16.5] }, // TOWER FLYBYS — street-grazing dolly
   { pos: [1.4, 1.7, -22], look: [-1, 1.4, -26] }, // PROOF SUBSTATION — plaza glide

@@ -7,10 +7,12 @@ import { buildCameraCurves, damp3 } from "./CameraPath";
 import {
   makeMaterials,
   buildBuildings,
+  buildBuildingFill,
   buildBridgeCore,
   buildBridgeUnderlay,
   buildWindowFlicker,
   buildGroundGrid,
+  buildJunctionGlow,
   type SceneObject,
 } from "./SceneObjects";
 import { NAMED_NODES, NAMED_NODE_INDEX } from "./graph";
@@ -110,15 +112,24 @@ const SignalGridCanvas = forwardRef<
     );
 
     const mats = makeMaterials();
+    const groundObj = buildGroundGrid(mats);
+    const fillObj = buildBuildingFill(mats);
+    const buildingsObj = buildBuildings(mats);
+    const bridgeUnderlayObj = buildBridgeUnderlay(mats);
+    const bridgeCoreObj = buildBridgeCore(mats);
+    const flickerObj = buildWindowFlicker(mats);
+    const junctionObj = buildJunctionGlow(mats);
     const objects: SceneObject[] = [
-      buildGroundGrid(mats),
-      buildBuildings(mats),
-      buildBridgeUnderlay(mats),
-      buildBridgeCore(mats),
-      buildWindowFlicker(mats),
+      groundObj,
+      fillObj,
+      buildingsObj,
+      bridgeUnderlayObj,
+      bridgeCoreObj,
+      flickerObj,
+      junctionObj,
     ];
     objects.forEach((o) => scene.add(o.group));
-    const flickerGroup = objects[4].group;
+    const flickerGroup = flickerObj.group;
 
     const { posCurve, lookCurve } = buildCameraCurves();
     const targetPos = new THREE.Vector3();

@@ -27,6 +27,12 @@ export const C = {
   signalDim: "rgba(31,231,199,0.22)",
   signalHot: "#7FFFE9",
   gridHair: "rgba(17,126,115,0.30)",
+
+  /* HOLOGRAPHIC pass additions — additive only, one warm secondary accent
+     so the frame isn't monochrome teal. Amber marks REAL client traffic
+     (the "honest" lanes) so the colour split is legible, not decorative. */
+  signalAmber: "#FFB870",
+  glassFillDim: "rgba(17,126,115,0.05)",
 } as const;
 
 export const CTA_URL = "https://skynetjoe.com/discovery-call";
