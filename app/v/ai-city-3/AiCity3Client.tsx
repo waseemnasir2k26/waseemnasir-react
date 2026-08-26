@@ -194,7 +194,7 @@ export default function AiCity3Client() {
           }}
         >
           {is3D ? (
-            <PinnedTrack progress={scrollYProgress} setFocus={setFocus} />
+            <PinnedTrack progress={scrollYProgress} setFocus={setFocus} is3D />
           ) : (
             <StaticTrack reduce={reduceOS} />
           )}
@@ -268,16 +268,18 @@ function MiniNav() {
 function PinnedTrack({
   progress,
   setFocus,
+  is3D,
 }: {
   progress: MotionValue<number>;
   setFocus: (id: string | null) => void;
+  is3D: boolean;
 }) {
   const total = SCENES.length;
   return (
     <div className="sticky top-0 h-screen w-full overflow-hidden">
       {SCENES.map((id, i) => (
         <PinnedScene key={id} id={id} i={i} total={total} progress={progress}>
-          {sceneContent(id, setFocus)}
+          {sceneContent(id, setFocus, is3D)}
         </PinnedScene>
       ))}
     </div>
@@ -447,10 +449,11 @@ function Scrim({
 function sceneContent(
   id: (typeof SCENES)[number],
   setFocus: (id: string | null) => void,
+  is3D = false,
 ) {
   switch (id) {
     case "entry":
-      return <EntryScene setFocus={setFocus} />;
+      return <EntryScene setFocus={setFocus} is3D={is3D} />;
     case "grid":
       return <GridScene setFocus={setFocus} />;
     case "flybys":
@@ -466,10 +469,24 @@ function sceneContent(
   }
 }
 
-function EntryScene({ setFocus }: { setFocus: (id: string | null) => void }) {
+function EntryScene({
+  setFocus,
+  is3D,
+}: {
+  setFocus: (id: string | null) => void;
+  is3D: boolean;
+}) {
   return (
-    <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
-      <div className="lg:col-span-7" style={{ paddingTop: "4.5rem" }}>
+    <div
+      className={`grid grid-cols-1 items-center gap-10 ${is3D ? "" : "lg:grid-cols-12"}`}
+    >
+      <div
+        className={is3D ? "" : "lg:col-span-7"}
+        style={{
+          paddingTop: "4.5rem",
+          maxWidth: is3D ? "640px" : undefined,
+        }}
+      >
         <Scrim className="px-6 py-7 sm:px-8 sm:py-9">
           <Mono color={C.jadeBright}>SIGNALGRID — the data is the star</Mono>
           <h1
@@ -552,9 +569,11 @@ function EntryScene({ setFocus }: { setFocus: (id: string | null) => void }) {
           </button>
         </Scrim>
       </div>
-      <div className="lg:col-span-5">
-        <GridIllustration />
-      </div>
+      {!is3D && (
+        <div className="lg:col-span-5">
+          <GridIllustration />
+        </div>
+      )}
     </div>
   );
 }
