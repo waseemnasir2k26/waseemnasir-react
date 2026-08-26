@@ -11,7 +11,7 @@ export const C = {
   // Night sky / haze — identical to skyline, the state the whole
   // cycle lands on and stays on for every HTML surface.
   skyDark: "#03110F",
-  ground: "#0A3D38",
+  ground: "#0A2E2B", // darkened/desaturated 08-27 grade pass — recede, don't read as felt
   paper: "#FBFCFD",
   card: "#0F2E2A",
   ink: "#EAF4F1",
@@ -20,7 +20,7 @@ export const C = {
   hairline: "rgba(234,244,241,0.14)",
   jade: "#117E73",
   jadeBright: "#1FE7C7",
-  inkJade: "#0A3D38",
+  inkJade: "#071F1D", // darkened 08-27 grade pass — buildings/ground base must read as ink even under the warm sun-side rim, 3D-only (never an HTML surface, verified)
   jadeTint: "rgba(17,126,115,0.18)",
   live: "#15A06B",
   onDeep: "#EAF4F1",
@@ -30,11 +30,29 @@ export const C = {
    (muted terracotta -> plum haze -> jade-ink), never neon-orange
    "AI-slop sunset" territory, and only ever visible for the first
    ~30% of scroll before the cycle folds back into C.skyDark. NEVER
-   reference these in any HTML/Scrim/card — those stay on C above. */
+   reference these in any HTML/Scrim/card — those stay on C above.
+
+   Re-graded 08-27 (Meridian grade pass): the original trio read as
+   pastel/washed once ACES tone mapping and the fog band got hold of
+   it (beige haze, not a low-sun gradient). Deepened + desaturated
+   each stop so the ramp reads as one deliberate low-sun dusk rather
+   than a bright sky dissolving into mush at distance. */
 export const DUSK = {
-  duskA: "#E9C9A6", // warm horizon haze, muted (not saturated peach)
-  duskB: "#B87A5C", // mid-sky terracotta, desaturated
-  duskC: "#3B4A52", // upper-sky plum-slate, folds into skyDark
+  duskA: "#D9A972", // warm horizon haze, deepened amber (not pastel beige)
+  duskB: "#96604A", // mid-sky terracotta, desaturated + darker
+  duskC: "#28353D", // upper-sky ink-slate, folds into skyDark
+} as const;
+
+/* Warm ignition colour — ordinary city lighting (windows, streetlamps).
+   Deliberately distinct from C.jadeBright, which is reserved for the
+   SkynetLabs "systems" signal (stack-district towers, proof beacons,
+   light-bridges, the last dark window). Two intentional families —
+   warm inhabited city + cool brand-accent glow — instead of one teal
+   note bleeding into everything else. SHADER/CANVAS ONLY, same rule
+   as DUSK above. */
+export const WARM = {
+  windowBright: "#F3C57E",
+  lampBright: "#F0B15C",
 } as const;
 
 export const CTA_URL = "https://skynetjoe.com/discovery-call";

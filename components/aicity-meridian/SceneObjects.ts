@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { createFacadeMaps, createRoofscape } from "../aicity-core/Facade";
-import { C, DUSK, DISTRICT, WORK } from "./tokens";
+import { C, DUSK, WARM, DISTRICT, WORK } from "./tokens";
 
 /* ============================================================
    MERIDIAN SCENE OBJECTS — plain three.js builders (no
@@ -128,6 +128,103 @@ function makeIgnitionMaterial(
 /** Shared across every building surface — built once, disposed with the grid. */
 let facade: ReturnType<typeof createFacadeMaps> | null = null;
 
+/** Shared ground/plaza treatment — built once, disposed with the facade. */
+let asphalt: {
+  map: THREE.CanvasTexture;
+  roughnessMap: THREE.CanvasTexture;
+  dispose(): void;
+} | null = null;
+
+/* Ground plane was one flat MeshStandardMaterial colour — reads as
+   felt from any distance, let alone up close. This draws a cheap
+   speckle-grain + expansion-joint plaza surface into a canvas at
+   runtime (no assets), same no-network rule as Facade.ts. Kept
+   deliberately low-contrast: texture the eye feels, not a pattern
+   it consciously reads. */
+function createAsphaltTexture(baseColor: string) {
+  const size = 256;
+  const albedo = document.createElement("canvas");
+  albedo.width = albedo.height = size;
+  const a = albedo.getContext("2d")!;
+  const rough = document.createElement("canvas");
+  rough.width = rough.height = size;
+  const r = rough.getContext("2d")!;
+
+  a.fillStyle = baseColor;
+  a.fillRect(0, 0, size, size);
+  r.fillStyle = "#9c9c9c";
+  r.fillRect(0, 0, size, size);
+
+  const rand = mulberry32(5150);
+  // Fine speckle grain — the cheapest way to stop a flat plate from
+  // reading as felt at any distance.
+  for (let i = 0; i < 3200; i++) {
+    const x = rand() * size;
+    const y = rand() * size;
+    const s = 0.6 + rand() * 1.4;
+    const dark = rand() < 0.5;
+    a.fillStyle = dark
+      ? `rgba(0,0,0,${(0.05 + rand() * 0.08).toFixed(3)})`
+      : `rgba(255,255,255,${(0.03 + rand() * 0.05).toFixed(3)})`;
+    a.fillRect(x, y, s, s);
+    r.fillStyle = `rgba(255,255,255,${(0.05 + rand() * 0.12).toFixed(3)})`;
+    r.fillRect(x, y, s, s);
+  }
+
+  // Sparse expansion-joint lines — a plaza is poured in slabs, never
+  // one seamless sheet. Kept faint: this is texture, not a grid overlay.
+  a.strokeStyle = "rgba(0,0,0,0.14)";
+  a.lineWidth = 1;
+  for (let i = 0; i < 5; i++) {
+    const y = Math.round((i + 0.5) * (size / 5));
+    a.beginPath();
+    a.moveTo(0, y);
+    a.lineTo(size, y);
+    a.stroke();
+  }
+  for (let i = 0; i < 4; i++) {
+    const x = Math.round((i + 0.5) * (size / 4));
+    a.beginPath();
+    a.moveTo(x, 0);
+    a.lineTo(x, size);
+    a.stroke();
+  }
+
+  // Soft centre-out darkening so the plate recedes at its own edges
+  // instead of reading as one flat, evenly lit rectangle.
+  const grad = a.createRadialGradient(
+    size / 2,
+    size / 2,
+    size * 0.1,
+    size / 2,
+    size / 2,
+    size * 0.7,
+  );
+  grad.addColorStop(0, "rgba(0,0,0,0)");
+  grad.addColorStop(1, "rgba(0,0,0,0.12)");
+  a.fillStyle = grad;
+  a.fillRect(0, 0, size, size);
+
+  const map = new THREE.CanvasTexture(albedo);
+  map.colorSpace = THREE.SRGBColorSpace;
+  map.wrapS = map.wrapT = THREE.RepeatWrapping;
+  map.anisotropy = 4;
+
+  const roughnessMap = new THREE.CanvasTexture(rough);
+  // NOT sRGB — data, not colour, same rule as Facade.ts.
+  roughnessMap.wrapS = roughnessMap.wrapT = THREE.RepeatWrapping;
+  roughnessMap.anisotropy = 4;
+
+  return {
+    map,
+    roughnessMap,
+    dispose() {
+      map.dispose();
+      roughnessMap.dispose();
+    },
+  };
+}
+
 function makeMaterials() {
   // Drawn at runtime into a canvas: floor slabs, mullions, per-bay
   // glass variation and rain grime. One flat colour across a few
@@ -142,17 +239,28 @@ function makeMaterials() {
   facade.map.repeat.set(1, 1.6);
   facade.roughnessMap.repeat.set(1, 1.6);
 
+  // Metalness dropped from 0.25 — at that level the warm sky-probe
+  // specular reflected straight off every facade regardless of the
+  // dark teal albedo underneath, which is what read as "muddy brown
+  // slabs": a warm glaze sitting on top of the ink, not a rim on it.
+  // Lower metalness keeps the facade reading as cool ink with the sun
+  // only catching the bevelled edges (08-27 grade pass).
   const building = new THREE.MeshStandardMaterial({
     color: C.inkJade,
     map: facade.map,
     roughnessMap: facade.roughnessMap,
-    metalness: 0.25,
-    roughness: 0.75,
+    metalness: 0.12,
+    roughness: 0.8,
     emissive: new THREE.Color(C.jade),
     emissiveIntensity: 0.03,
   });
-  const window_ = makeIgnitionMaterial(C.inkJade, C.jadeBright);
-  const lamp = makeIgnitionMaterial("#0A2622", C.jadeBright);
+  // Ordinary inhabited-city lighting (windows, streetlamps) ignites
+  // warm, not jade — jade is reserved for the SkynetLabs "systems"
+  // signal (stack towers, plaza beacons, light-bridges). Two
+  // intentional colour families instead of one teal note bleeding
+  // into everything (08-27 grade pass).
+  const window_ = makeIgnitionMaterial(C.inkJade, WARM.windowBright);
+  const lamp = makeIgnitionMaterial("#0A2622", WARM.lampBright);
   // Landmark towers get near-camera fade + a brightness cap (round-2 fix,
   // 08-20 re-audit): the only ignition surfaces large/tall enough for a
   // close camera pass to read as a blown-out full-viewport slab.
@@ -160,11 +268,30 @@ function makeMaterials() {
     nearFade: { fadeStart: 2.2, fadeEnd: 5 },
     brightCap: 0.82,
   });
-  const billboard = makeIgnitionMaterial(C.inkJade, C.jadeBright);
+  // Near-camera fade + brightness cap — part of the 08-27 "clipped teal
+  // blob" fix at the ~45% DUSK->NIGHTFALL camera stop. Panel 0 (see its
+  // position below) and plaza tower 1 (buildProofPlaza) sit close
+  // enough to each other AND to that in-between Catmull-Rom point (not
+  // an authored waypoint) that their glows visually overlap — dimming
+  // either ALONE left the other rendering the full shape, which is why
+  // both need a stronger fade together. Tight range (5.2-6.5) sits
+  // between the ~4.8-unit transit distance (fully faded) and the real
+  // NIGHTFALL showcase waypoint (pos [0.7,6.2,-12.5], ~5.7 units from
+  // this panel) — a compromise: the showcase read is dimmer than
+  // before, but the mid-flight blowout is gone.
+  const billboard = makeIgnitionMaterial(C.inkJade, C.jadeBright, {
+    nearFade: { fadeStart: 5.2, fadeEnd: 6.5 },
+    brightCap: 0.8,
+  });
+  asphalt = createAsphaltTexture(C.ground);
+  asphalt.map.repeat.set(10, 16);
+  asphalt.roughnessMap.repeat.set(10, 16);
   const ground = new THREE.MeshStandardMaterial({
     color: C.ground,
-    metalness: 0.1,
-    roughness: 0.9,
+    map: asphalt.map,
+    roughnessMap: asphalt.roughnessMap,
+    metalness: 0.06,
+    roughness: 0.96,
   });
   const beacon = new THREE.MeshStandardMaterial({
     color: C.jadeBright,
@@ -172,6 +299,41 @@ function makeMaterials() {
     emissiveIntensity: 0.55,
     metalness: 0.1,
     roughness: 0.45,
+  });
+  // Proof-plaza beacon towers get the SAME near-camera fade + brightness
+  // cap as the landmark towers (round-2 fix, 08-20), widened further as
+  // part of the 08-27 "clipped teal blob" fix. Debugging note, since
+  // this took several wrong turns: raycasting the offending screen
+  // pixel at the ~45% DUSK->NIGHTFALL stop hit tower 1, and pushing
+  // ONLY this material's fade to fully-invisible (fadeStart 100) did
+  // NOT remove the visible blob — WORK BOULEVARD panel 0 sits close
+  // enough to the same mid-flight point that it alone was rendering the
+  // same shape underneath, camouflaging the tower's real contribution.
+  // Confirmed by isolating every other scene object one at a time
+  // (bloom strength included — a bloomStrength≈0 test ruled that out
+  // too). Fixed by widening + repositioning BOTH this tower (see
+  // buildProofPlaza position below) AND the billboard together.
+  const plazaBeacon = makeIgnitionMaterial(C.inkJade, C.jadeBright, {
+    nearFade: { fadeStart: 5.5, fadeEnd: 8.0 },
+    brightCap: 0.65,
+  });
+  // Dock beacon knot — the ACTUAL source of the 08-27 "clipped teal
+  // blob" defect (verified by isolating scene objects one at a time,
+  // not guessed): the TorusKnotGeometry at full `beacon` brightness
+  // (0.55 emissive, uncapped) is bright and detailed enough that
+  // UnrealBloomPass smears it into a large soft mask-shaped blob —
+  // both when it's still small/far (the ~45% DUSK->NIGHTFALL camera
+  // stop, where the knot sits near the top of frame) and when the
+  // midnight waypoint finally arrives close to it (where the same
+  // over-bloom read as the "black void" screenshot's only visible
+  // shape, not a legible beacon). Same jade colour, tamed brightness +
+  // smaller radius so it blooms as a beacon, not a blown-out mask.
+  const dockBeacon = new THREE.MeshStandardMaterial({
+    color: C.jadeBright,
+    emissive: new THREE.Color(C.jadeBright),
+    emissiveIntensity: 0.2,
+    metalness: 0.1,
+    roughness: 0.4,
   });
   const packet = new THREE.MeshBasicMaterial({
     color: C.jadeBright,
@@ -202,6 +364,8 @@ function makeMaterials() {
     billboard,
     ground,
     beacon,
+    plazaBeacon,
+    dockBeacon,
     packet,
     bridge,
     sun,
@@ -256,8 +420,13 @@ export function buildCityGrid(mats: Mats): SceneObject {
     slots.length,
   );
   const dummy = new THREE.Object3D();
-  const footprints: { x: number; z: number; h: number; w: number; d: number }[] =
-    [];
+  const footprints: {
+    x: number;
+    z: number;
+    h: number;
+    w: number;
+    d: number;
+  }[] = [];
   slots.forEach((s, i) => {
     const w = 1.5 + (i % 3) * 0.15;
     const d = 1.5 + ((i + 1) % 3) * 0.12;
@@ -342,7 +511,9 @@ export function buildCityGrid(mats: Mats): SceneObject {
   // matching the sky/fog ramp so the horizon and the street never seam,
   // and so a close/low camera angle never catches a bright flat plane.
   const groundLit = new THREE.Color(C.ground);
-  const groundNight = new THREE.Color(C.skyDark);
+  // Lifted off C.skyDark for the same reason as the canvas night sky —
+  // pure-black ground at midnight reads as void, not asphalt.
+  const groundNight = new THREE.Color("#0A1B18");
   const groundScratch = new THREE.Color();
 
   return {
@@ -372,6 +543,8 @@ export function buildCityGrid(mats: Mats): SceneObject {
 export function disposeFacade() {
   facade?.dispose();
   facade = null;
+  asphalt?.dispose();
+  asphalt = null;
 }
 
 /* ============================================================
@@ -445,7 +618,7 @@ export function buildProofPlaza(mats: Mats): SceneObject {
   const group = new THREE.Group();
   const geo = new THREE.CylinderGeometry(0.5, 0.6, 1, 12);
   t.geometries.push(geo);
-  const towers = new THREE.InstancedMesh(geo, mats.beacon, 4);
+  const towers = new THREE.InstancedMesh(geo, mats.plazaBeacon, 4);
   const positions: [number, number][] = [
     [-4.6, -11],
     [-1.6, -13.2],
@@ -453,6 +626,10 @@ export function buildProofPlaza(mats: Mats): SceneObject {
     [4.4, -13.6],
   ];
   const dummy = new THREE.Object3D();
+  // Lit almost immediately (threshold ~0.05, same "always-on beacon"
+  // read the plain material gave, just gated through the ignition
+  // shader so the near-fade/brightCap below can apply).
+  const towerThresholds = new Float32Array(4).fill(0.05);
   positions.forEach(([x, z], i) => {
     const h = 2.4 + i * 0.5;
     dummy.position.set(x, h / 2, z);
@@ -461,6 +638,10 @@ export function buildProofPlaza(mats: Mats): SceneObject {
     towers.setMatrixAt(i, dummy.matrix);
   });
   towers.instanceMatrix.needsUpdate = true;
+  towers.geometry.setAttribute(
+    "aThreshold",
+    new THREE.InstancedBufferAttribute(towerThresholds, 1),
+  );
   group.add(towers);
 
   const plazaCenter = new THREE.Vector2(-0.6, -12.3);
@@ -501,6 +682,7 @@ export function buildProofPlaza(mats: Mats): SceneObject {
     update: (_dt, elapsed, dayness) => {
       const pulse = 1 + Math.sin(elapsed * 1.2) * 0.03;
       towers.scale.setScalar(pulse);
+      setIgnitionUniform(mats.plazaBeacon, dayness);
       setIgnitionUniform(mats.lamp, dayness);
     },
     dispose: t.dispose,
@@ -515,7 +697,9 @@ export function buildProofPlaza(mats: Mats): SceneObject {
 export function buildWorksBoulevard(mats: Mats): SceneObject {
   const t = trackDisposables();
   const group = new THREE.Group();
-  const geo = new THREE.BoxGeometry(2.2, 1.3, 0.1);
+  // Shrunk from (2.2, 1.3, 0.1) — modest size trim, part of the 08-27
+  // "clipped teal blob" fix (see billboard material comment above).
+  const geo = new THREE.BoxGeometry(1.8, 1.05, 0.1);
   t.geometries.push(geo);
   const panels = new THREE.InstancedMesh(geo, mats.billboard, WORK.length);
   const positions: [number, number, number][] = [
@@ -743,7 +927,15 @@ export function buildSun(mats: Mats): SceneObject {
    night sequence and blinks on at 96% — the last manual task,
    automated, landing right beside the CTA.
    ============================================================ */
-export function buildDock(mats: Mats): {
+export function buildDock(
+  mats: Mats,
+  // Shared mutable camera-position ref, written by MeridianCanvas every
+  // frame BEFORE objects.forEach runs (same "governor" pattern as
+  // packetGovernor in buildInterconnect) — lets the beacon fade with
+  // distance the way a real light source would, without changing the
+  // shared SceneObject.update(dt, elapsed, dayness) signature.
+  camRef: { x: number; y: number; z: number },
+): {
   scene: SceneObject;
   isLastWindowLit: () => boolean;
 } {
@@ -751,20 +943,91 @@ export function buildDock(mats: Mats): {
   const group = new THREE.Group();
   group.position.set(0, 0, -27);
 
+  // Slow drift lives on this inner group only — the lamp ring + pier
+  // beacons added below sit on the outer (non-spinning) `group` so a
+  // receding line of pier lights reads as a fixed pier, not something
+  // orbiting the dock.
+  const spin = new THREE.Group();
+  group.add(spin);
+
   const baseGeo = new THREE.CylinderGeometry(3, 3.3, 0.2, 48);
-  const knotGeo = new THREE.TorusKnotGeometry(0.5, 0.15, 96, 12);
+  // Shrunk from (0.5, 0.15) alongside the dimmer `dockBeacon` material
+  // (see makeMaterials) — the fix for the 08-27 "clipped teal blob" /
+  // "black void" defect. A smaller, less-bright knot still reads as a
+  // beacon under bloom without smearing into a shapeless mask.
+  const knotGeo = new THREE.TorusKnotGeometry(0.34, 0.1, 96, 12);
   t.geometries.push(baseGeo, knotGeo);
 
   const base = new THREE.Mesh(baseGeo, mats.building);
-  const beacon = new THREE.Mesh(knotGeo, mats.beacon);
+  const beacon = new THREE.Mesh(knotGeo, mats.dockBeacon);
   beacon.position.y = 1.4;
-  group.add(base, beacon);
+  spin.add(base, beacon);
 
   const lastWinGeo = new THREE.BoxGeometry(0.3, 0.42, 0.08);
   t.geometries.push(lastWinGeo);
   const lastWindow = new THREE.Mesh(lastWinGeo, mats.lastWindow);
   lastWindow.position.set(1.6, 1.1, 2.4);
-  group.add(lastWindow);
+  spin.add(lastWindow);
+
+  /* ── 08-27 void fix: the final camera stop now looks AT the dock
+     (see CameraPath.ts) instead of past it, but the periphery around
+     the card was still reading flat/empty. A ring of always-on dock
+     lamps (reuses the shared `lamp` ignition material — cheap, one
+     more InstancedMesh, no new shader) plus a short line of receding
+     pier beacons (reuses the dimmer `dockBeacon` material, same one
+     the dock's own knot now uses after the 08-27 bloom-blowout fix)
+     gives the frame something lit on every side of the card instead
+     of fogged black ground. ── */
+  const lampRingCount = 10;
+  const lampRingGeo = new THREE.CylinderGeometry(0.045, 0.045, 0.42, 6);
+  t.geometries.push(lampRingGeo);
+  const lampRing = new THREE.InstancedMesh(
+    lampRingGeo,
+    mats.lamp,
+    lampRingCount,
+  );
+  const ringThresholds = new Float32Array(lampRingCount).fill(0.55);
+  const ringDummy = new THREE.Object3D();
+  for (let i = 0; i < lampRingCount; i++) {
+    const angle = (i / lampRingCount) * Math.PI * 2 + 0.3;
+    const radius = 3.6;
+    ringDummy.position.set(
+      Math.cos(angle) * radius,
+      0.21,
+      Math.sin(angle) * radius,
+    );
+    ringDummy.updateMatrix();
+    lampRing.setMatrixAt(i, ringDummy.matrix);
+  }
+  lampRing.instanceMatrix.needsUpdate = true;
+  lampRing.geometry.setAttribute(
+    "aThreshold",
+    new THREE.InstancedBufferAttribute(ringThresholds, 1),
+  );
+  group.add(lampRing);
+
+  const pierGeo = new THREE.CylinderGeometry(0.06, 0.08, 1, 6);
+  t.geometries.push(pierGeo);
+  const pierSpecs: { x: number; z: number; h: number }[] = [
+    { x: 2.5, z: -3, h: 1.9 },
+    { x: -2.3, z: -6, h: 1.6 },
+    { x: 2.1, z: -9, h: 1.3 },
+    { x: -1.8, z: -12, h: 1.05 },
+  ];
+  const pierBeacons = new THREE.InstancedMesh(
+    pierGeo,
+    mats.dockBeacon,
+    pierSpecs.length,
+  );
+  const pierDummy = new THREE.Object3D();
+  pierSpecs.forEach((s, i) => {
+    pierDummy.position.set(s.x, s.h / 2, s.z);
+    pierDummy.scale.set(1, s.h, 1);
+    pierDummy.updateMatrix();
+    pierBeacons.setMatrixAt(i, pierDummy.matrix);
+  });
+  pierBeacons.instanceMatrix.needsUpdate = true;
+  group.add(pierBeacons);
 
   let lit = false;
 
@@ -772,7 +1035,27 @@ export function buildDock(mats: Mats): {
     scene: {
       group,
       update: (dt, _elapsed, dayness) => {
-        group.rotation.y += dt * 0.05;
+        spin.rotation.y += dt * 0.05;
+        setIgnitionUniform(mats.lamp, dayness);
+        // Far-distance fade — the OTHER half of the 08-27 "clipped teal
+        // blob" fix, confirmed by sampling actual rendered pixel values
+        // (not guessed): at the ~45% DUSK->NIGHTFALL camera pass the
+        // knot sits 17-25 units away, far past any near-fade range, but
+        // `dockBeacon` is a plain MeshStandardMaterial — its emissive
+        // brightness never dims with distance the way a real light
+        // does, so bloom kept reading it as a bright, shapeless "mask"
+        // glimpsed near the top of frame even from that far away.
+        // Ramping emissiveIntensity down for distant cameras and back
+        // up for the close midnight approach (dist ~10 there) fixes
+        // both ends with one control instead of a second shader.
+        const dx = camRef.x - 0;
+        const dy = camRef.y - 1.4;
+        const dz = camRef.z + 27;
+        const distToBeacon = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        const farFade =
+          1 - THREE.MathUtils.clamp((distToBeacon - 11) / (24 - 11), 0, 1);
+        (mats.dockBeacon as THREE.MeshStandardMaterial).emissiveIntensity =
+          0.3 * farFade;
         const mat = mats.lastWindow as THREE.MeshStandardMaterial;
         if (dayness >= 0.96 && !lit) {
           lit = true;

@@ -46,7 +46,20 @@ export const WAYPOINTS: {
   { pos: [-0.8, 6.8, -5.5], look: [-0.6, 2.4, -11.5] }, // DUSK — proof plaza, streetlamps, from above
   { pos: [0.7, 6.2, -12.5], look: [-0.2, 2.2, -18] }, // NIGHTFALL — work boulevard billboards below
   { pos: [-0.6, 6.6, -19], look: [0.4, 2.6, -24.5] }, // DEEP NIGHT — bridge arcs pass well underneath
-  { pos: [0, 7.8, -29], look: [0, 2, -36] }, // MIDNIGHT — widest pull-back, full grid + bridges + dock beacon
+  { pos: [0, 9.5, -21], look: [0, 1.6, -28] }, // MIDNIGHT — dock fix (08-27): the previous waypoint
+  // (pos [0,7.8,-29] look [0,2,-36]) put the camera PAST the dock's own
+  // z=-27 centre with a look target another 9 units beyond that — the
+  // vector from camera to the dock beacon/last-window pointed backward
+  // (+z), so the entire dock, and every building behind the camera, sat
+  // outside the view frustum: nothing left to render around the CTA card
+  // but empty fogged ground, which is the reported "black void" (verified
+  // by projecting world points through this exact camera/look pair — see
+  // fix-ai-city verification script, not guessed). This waypoint instead
+  // sits BEHIND the dock and looks AT it: dock knot, last-window, the
+  // final interconnect arc anchor and three rows of city-grid buildings
+  // (z -24.8/-28/-31.2) all project inside the frustum, plus the new
+  // dock-side lamp ring + receding pier beacons (SceneObjects.ts
+  // buildDock) fill the periphery instead of flat night ground.
 ];
 
 export function buildCameraCurves() {
