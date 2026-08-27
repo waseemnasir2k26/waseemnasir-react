@@ -51,7 +51,21 @@ export default function AltitudeCanvas({
       powerPreference: "high-performance",
       alpha: false,
     });
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    // 2 (was 1.5): the 1.5 cap read visibly soft/pixelated on standard
+    // displays — owner called it out. Frame governor still sheds DPR
+    // under load, so the ceiling only costs GPUs that can afford it.
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // The route's REAL font families (next/font mangles the names, so a
+    // literal "Bricolage Grotesque" string never matches) — read from
+    // the CSS vars the client component sets on this subtree. Canvas
+    // signage textures bake whatever family resolves at draw time.
+    const rootStyle = getComputedStyle(mount);
+    const displayStack =
+      rootStyle.getPropertyValue("--font-display").trim() ||
+      '"Bricolage Grotesque", sans-serif';
+    const bodyStack =
+      rootStyle.getPropertyValue("--font-body").trim() ||
+      '"Hanken Grotesk", sans-serif';
     renderer.setPixelRatio(dpr);
     renderer.setSize(window.innerWidth, window.innerHeight);
     // Filmic response BEFORE anything reads a colour. Without it every
@@ -307,6 +321,7 @@ export default function AltitudeCanvas({
         maxOpacity: 0.55,
         plate: "rgba(3,12,11,0.95)",
         border: "rgba(31,231,199,0.55)",
+        headlineFont: displayStack,
       },
     );
     districts.group.add(signage.group);
@@ -393,7 +408,7 @@ export default function AltitudeCanvas({
         hideAfter: 0.08,
         headlineSize: 0.155,
         maxHeadlineLines: 3,
-        texDim: 1536,
+        texDim: 2048,
       },
       // ── HERO PITCH — same spire, below the headline board. SUB is the
       // only copy shortened to fit a board (long-form site copy, not a
@@ -447,7 +462,7 @@ export default function AltitudeCanvas({
         headlineSize: 0.16,
         maxHeadlineLines: 2,
         maxBodyLines: 2,
-        texDim: 1024,
+        texDim: 1536,
       },
       // ── SIGNAL HEIGHTS — message board near the existing name-plate.
       {
@@ -597,6 +612,8 @@ export default function AltitudeCanvas({
       plate: "rgba(3,10,9,0.97)",
       border: "rgba(31,231,199,0.6)",
       bodyColor: C.body,
+      headlineFont: displayStack,
+      bodyFont: bodyStack,
       revealSpan: 0.05,
     });
     scene.add(boards.group);

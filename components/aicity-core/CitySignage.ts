@@ -93,6 +93,14 @@ export type CitySignageOptions = {
   accent?: string;
   /** Backing-plate fill behind the letters. */
   plate?: string;
+  /** Full CSS font-family stack for headlines/eyebrows/chips. Default =
+      the original mono stack, so existing callers render unchanged.
+      Pass the route's real (next/font-mangled) family — read it from
+      the CSS var at runtime — or the canvas bakes a Courier fallback. */
+  headlineFont?: string;
+  /** Full CSS font-family stack for billboard body copy. Defaults to
+      headlineFont. */
+  bodyFont?: string;
   /** Scroll distance over which a sign fades up. */
   revealSpan?: number;
   /** Max opacity — signage should sit just under full white. */
@@ -119,8 +127,11 @@ export type CitySignageHandle = {
 /** Texel density — px per world unit. 320 puts a 2.5-unit sign at
     800px wide, which stays crisp at the closest camera approach
     without paying for a full 1k texture per building. */
-const PX_PER_UNIT = 320;
-const MAX_DIM = 1024;
+const PX_PER_UNIT = 512;
+const MAX_DIM = 2048;
+/** Default type stack — kept as the fallback so callers that never pass
+    fonts (Meridian) keep their existing look. */
+const MONO_STACK = '"IBM Plex Mono", ui-monospace, "Courier New", monospace';
 /** Sub line is only drawn when the plate is tall enough to carry it
     legibly; below this the name gets the whole plate instead of two
     unreadable lines. */
@@ -129,7 +140,7 @@ const MIN_SUB_PX = 60;
 function drawSignTexture(
   spec: SignSpec,
   o: Required<Pick<CitySignageOptions, "color" | "accent" | "plate">> &
-    Pick<CitySignageOptions, "border">,
+    Pick<CitySignageOptions, "border" | "headlineFont">,
 ): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   const w = Math.min(MAX_DIM, Math.round(spec.width * PX_PER_UNIT));
@@ -174,7 +185,7 @@ function drawSignTexture(
   const nameText = spec.name.toUpperCase();
   let fontSize = hasSub ? h * 0.46 : h * 0.62;
   const fontFor = (size: number, weight: number) =>
-    `${weight} ${size}px "IBM Plex Mono", ui-monospace, "Courier New", monospace`;
+    `${weight} ${size}px ${o.headlineFont ?? MONO_STACK}`;
 
   for (let i = 0; i < 24; i++) {
     ctx.font = fontFor(fontSize, 600);
@@ -188,7 +199,7 @@ function drawSignTexture(
   // A soft glow under the letters so the sign reads as emissive at
   // night without needing a second additive pass.
   ctx.shadowColor = o.accent;
-  ctx.shadowBlur = Math.max(4, h * 0.06);
+  ctx.shadowBlur = Math.max(2, h * 0.02);
   ctx.font = fontFor(fontSize, 600);
   ctx.fillText(nameText, padX, hasSub ? h * 0.38 : h * 0.5);
   ctx.shadowBlur = 0;
@@ -253,7 +264,7 @@ function drawBillboardTexture(
   o: Required<
     Pick<CitySignageOptions, "color" | "accent" | "plate" | "bodyColor">
   > &
-    Pick<CitySignageOptions, "border">,
+    Pick<CitySignageOptions, "border" | "headlineFont" | "bodyFont">,
 ): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   const dim = spec.texDim ?? MAX_DIM;
@@ -280,8 +291,12 @@ function drawBillboardTexture(
     ctx.globalAlpha = 1;
   }
 
-  const fontFor = (size: number, weight: number) =>
-    `${weight} ${size}px "IBM Plex Mono", ui-monospace, "Courier New", monospace`;
+  const fontFor = (size: number, weight: number, body = false) =>
+    `${weight} ${size}px ${
+      body
+        ? (o.bodyFont ?? o.headlineFont ?? MONO_STACK)
+        : (o.headlineFont ?? MONO_STACK)
+    }`;
 
   const padX = w * 0.055;
   const usable = w - padX * 2;
@@ -338,7 +353,7 @@ function drawBillboardTexture(
 
   if (spec.body) {
     const bodySize = Math.max(9, h * 0.044);
-    ctx.font = fontFor(bodySize, 400);
+    ctx.font = fontFor(bodySize, 400, true);
     const bodyLines = wrapText(ctx, spec.body, usable).slice(
       0,
       spec.maxBodyLines ?? 5,
@@ -403,7 +418,18 @@ export function createCitySignage(
     maxOpacity = 0.94,
     border,
     bodyColor = color,
+    headlineFont,
+    bodyFont,
   } = opts;
+  const drawOpts = {
+    color,
+    accent,
+    plate,
+    border,
+    bodyColor,
+    headlineFont,
+    bodyFont,
+  };
 
   const group = new THREE.Group();
   group.name = "city-signage";
@@ -418,14 +444,8 @@ export function createCitySignage(
     // so it always takes the untouched drawSignTexture path below.
     const tex =
       spec.eyebrow || spec.body
-        ? drawBillboardTexture(spec, {
-            color,
-            accent,
-            plate,
-            border,
-            bodyColor,
-          })
-        : drawSignTexture(spec, { color, accent, plate, border });
+        ? drawBillboardTexture(spec, drawOpts)
+        : drawSignTexture(spec, drawOpts);
     textures.push(tex);
 
     const geo = new THREE.PlaneGeometry(spec.width, spec.height);
@@ -461,6 +481,30 @@ export function createCitySignage(
     };
   });
 
+  // Canvas textures are drawn synchronously at build time — if the web
+  // fonts haven't finished loading yet, the browser bakes the FALLBACK
+  // face (Courier) into every plate permanently. Redraw once the route's
+  // fonts are actually ready so the plates carry the real typography.
+  let disposed = false;
+  if (typeof document !== "undefined" && document.fonts?.ready) {
+    document.fonts.ready.then(() => {
+      if (disposed) return;
+      specs.forEach((spec, i) => {
+        const rec = recs[i];
+        const old = textures[i];
+        if (!rec || !old) return;
+        const fresh =
+          spec.eyebrow || spec.body
+            ? drawBillboardTexture(spec, drawOpts)
+            : drawSignTexture(spec, drawOpts);
+        rec.mat.map = fresh;
+        rec.mat.needsUpdate = true;
+        textures[i] = fresh;
+        old.dispose();
+      });
+    });
+  }
+
   const update = (progress: number) => {
     for (const r of recs) {
       const revealIn = THREE.MathUtils.clamp(
@@ -489,6 +533,7 @@ export function createCitySignage(
   };
 
   const dispose = () => {
+    disposed = true;
     recs.forEach((r) => group.remove(r.mesh));
     geometries.forEach((g) => g.dispose());
     materials.forEach((m) => m.dispose());
