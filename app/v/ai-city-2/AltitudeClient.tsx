@@ -675,7 +675,16 @@ function Scrim({
         // touchdown dock card's 0.78 and well past it) so the card is
         // the readable surface and the 3D scene stays environment, not
         // a second layer of content fighting the text.
-        background: "rgba(3,17,15,0.94)",
+        // OWNER FIX (08-27, paired with the signage maxOpacity raise to
+        // 0.55 in AltitudeCanvas.tsx — signage now carries its own dark
+        // lightbox plate + border and needs to read as genuinely LIT,
+        // so the double-exposure defence had to move fully onto this
+        // Scrim rather than signage dimness): nudged 0.94 -> 0.96, a
+        // small extra margin so a district's own sign sitting directly
+        // behind its own headline (Broadcast Basin at the 70% stop,
+        // verified by screenshot) stays a sub-perceptible watermark
+        // under backdropFilter blur, not a readable ghost.
+        background: "rgba(3,17,15,0.96)",
         backdropFilter: "blur(10px)",
         WebkitBackdropFilter: "blur(10px)",
         border: `1px solid ${C.hairline}`,

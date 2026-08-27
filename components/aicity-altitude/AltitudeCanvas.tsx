@@ -10,6 +10,7 @@ import {
   buildDescentDistricts,
   buildBridges,
   buildTouchdown,
+  buildEarlyMist,
   DISTRICT_THRESHOLDS,
   type SceneObject,
 } from "./SceneObjects";
@@ -209,6 +210,8 @@ export default function AltitudeCanvas({
       districts,
       buildBridges(pipelineAnchor),
       buildTouchdown(mats),
+      // OWNER FIX (08-27) — see buildEarlyMist's own header comment.
+      buildEarlyMist(),
     ];
     objects.forEach((o) => scene.add(o.group));
 
@@ -233,6 +236,8 @@ export default function AltitudeCanvas({
         // it in front of the falling camera, the way a street sign
         // projects over the street rather than away from it.
         const inboard = (a.x < 0 ? 1 : -1) * (SIGN_W / 2 - TOWER_HALF) * 0.9;
+        // `a.y` is roof + 0.5, i.e. tower height h = a.y - 0.5.
+        const towerH = a.y - 0.5;
         return {
           id: d.id,
           name: d.landmark,
@@ -242,12 +247,23 @@ export default function AltitudeCanvas({
           // written as "<service>: <promise>" (or "<service> — <promise>"),
           // so the head of the string is the discipline the building runs.
           sub: d.pitch.split(/[:—]/)[0].trim(),
-          // `a.y` is roof + 0.5; sit the plate about a storey below the
-          // roofline (not just under it) so it enters the frame of a
-          // camera that is looking down and forward as it falls, and
-          // stand the plate well proud of the front face (z + 0.55) so
-          // it reads as mounted signage from a falling camera.
-          position: new THREE.Vector3(a.x + inboard, a.y - 1.7, a.z + 0.72),
+          // OWNER FIX (08-27 — "signs float above/on top of buildings,
+          // not on them"): the sign used to stand proud of the front
+          // face by 0.72 (0.17 beyond the tower's own half-width) and
+          // sit one storey below the roofline (a.y - 1.7) — from a
+          // camera that is looking down and forward through most of the
+          // descent, that proud offset plus near-roofline height read as
+          // a card hovering just above/in front of the roof cap rather
+          // than signage bolted to the wall. Now flush (tower half 0.55
+          // + a 0.02 physical standoff, same as a real sign's mounting
+          // bracket depth) and at mid-facade height (55% up the body)
+          // so it unambiguously reads as mounted on the building, not
+          // near its cap.
+          position: new THREE.Vector3(
+            a.x + inboard,
+            towerH * 0.55,
+            a.z + TOWER_HALF + 0.02,
+          ),
           width: SIGN_W,
           height: 0.4,
           appearAt: threshold + 0.03,
@@ -258,15 +274,22 @@ export default function AltitudeCanvas({
       // left at CitySignage's default (0.94, near-full white) — bright
       // enough that at the Broadcast Basin stop it reads as a second,
       // competing headline rather than ambient city signage behind the
-      // card. Dropped to 0.5 so it still lights the tower it's mounted
-      // on (this variant's whole "the city is doing this" motif) without
-      // fighting the HTML text for attention when the two land close
-      // together on screen. Paired with the Scrim opacity fix in
-      // AltitudeClient.tsx, which now near-fully masks any sign that
-      // does end up behind a card.
-      // Round-3: 0.5 still left a legible ghost of the billboard caps
-      // behind the Broadcast Basin headline (re-jury crop evidence).
-      { color: C.ink, accent: C.jadeBright, maxOpacity: 0.32 },
+      // card. Dropped to 0.5, then 0.32 in round 3 (still a legible ghost
+      // behind the Broadcast Basin headline). The double-exposure defence
+      // now lives in the near-opaque card Scrim (0.94 in AltitudeClient.tsx)
+      // instead of dim signage, so OWNER FIX (08-27) raises this back up —
+      // signage needs to read as genuinely LIT department boards, not a
+      // ghost — to 0.55, and adds a dark lightbox plate + jade hairline
+      // border so each sign reads as a physical mounted sign, not a
+      // decal. Re-verified at the 70% stop: no double-exposure regression
+      // (Scrim, not signage dimness, carries that defence now).
+      {
+        color: C.ink,
+        accent: C.jadeBright,
+        maxOpacity: 0.55,
+        plate: "rgba(3,12,11,0.95)",
+        border: "rgba(31,231,199,0.55)",
+      },
     );
     districts.group.add(signage.group);
 

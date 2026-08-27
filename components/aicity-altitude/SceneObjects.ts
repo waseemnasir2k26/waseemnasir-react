@@ -525,6 +525,144 @@ export function buildDescentDistricts(
   };
 }
 
+/* Soft radial-gradient CanvasTexture — one draw, reused by every mist
+   sprite below (same texture instance, cheap: no per-sprite canvas
+   work). Colour matches buildClouds' own pale-jade tone (#9DCAC6) so a
+   wisp reads as a continuation of the cloud deck the camera just fell
+   through, not a new unrelated effect. */
+function buildMistTexture(): THREE.CanvasTexture {
+  const size = 256;
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext("2d")!;
+  const grad = ctx.createRadialGradient(
+    size / 2,
+    size / 2,
+    0,
+    size / 2,
+    size / 2,
+    size / 2,
+  );
+  grad.addColorStop(0, "rgba(157,202,198,0.55)");
+  grad.addColorStop(0.55, "rgba(157,202,198,0.22)");
+  grad.addColorStop(1, "rgba(157,202,198,0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, size, size);
+  const tex = new THREE.CanvasTexture(canvas);
+  // Matches Facade.ts's own albedo map: an untagged CanvasTexture is
+  // colour data read as-is (no sRGB decode), which under this scene's
+  // ACES filmic + exposure 0.86 was rendering the wisp's RGB far too
+  // dark to read as the intended pale-jade haze.
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.needsUpdate = true;
+  return tex;
+}
+
+/* ============================================================
+   EARLY MIST — OWNER FIX (08-27 audit pass): the two flat pale
+   tower faces at the 25% stop (Pipeline Row's dark pre-wake massing,
+   viewed near-perpendicular from above during the still-bright early
+   IBL stop) read as paper cutouts — a known open item, traced back to
+   the same reflective-hot-spot cause the round-3 material pull only
+   partly closed (see makeMaterials' comment above). Rather than chase
+   the reflection further (3 rounds already spent there, and the scene
+   fog is deliberately kept off building-range geometry so it never
+   mutes contrast — see the scene.fog comment in AltitudeCanvas.tsx),
+   this leans into the read the owner asked for: a handful of soft,
+   camera-facing mist sprites — visually a continuation of the CLOUD
+   PUNCH deck the camera just fell through — drift in front of the
+   Signal Heights / Pipeline Row towers only during the early descent
+   (progress ~0.03-0.34) and are fully gone well before the 45% stop.
+   They partially veil the flat faces with atmosphere instead of
+   trying to re-texture a surface that's being blown out by the sky
+   probe. Sprites (not custom-shader planes): auto-billboards toward
+   the camera for free, no per-frame matrix work beyond a few opacity
+   writes, no new geometry/shader surface to jury against.
+   ============================================================ */
+export function buildEarlyMist(): SceneObject {
+  const tex = buildMistTexture();
+  const mat = new THREE.SpriteMaterial({
+    map: tex,
+    transparent: true,
+    opacity: 0,
+    depthWrite: false,
+    // Depth-tested atmosphere would depend on guessing the exact world
+    // z of whichever tower face is blowing out on a given load (varies
+    // with the seeded jitter in buildDescentDistricts) — a sprite even
+    // slightly behind its target face would just vanish, invisible and
+    // silent. depthTest off makes this an always-on-top soft wash
+    // instead, which is the correct behaviour for "cloud wisps drifting
+    // past camera," not a risk: it is low-alpha, additive-feeling, and
+    // active for only the first third of the descent.
+    depthTest: false,
+    fog: true,
+  });
+  const group = new THREE.Group();
+  // Spread across BOTH Signal Heights (z ~ -1.8) and Pipeline Row's
+  // pre-wake massing (z ~ -6.2) — the flat pale faces observed span
+  // that whole early-descent range, not one single tower.
+  // OWNER FIX round 2: y was 2.4-4.4, too high — from the steeply
+  // top-down early camera (pos.y ~7-8, looking down+forward) that put
+  // every sprite in the upper half of frame, well clear of the actual
+  // flat pale tower faces filling the LOWER half of the screenshot
+  // evidence. Those faces are the lower/mid body of the two nearest
+  // Signal Heights towers (the same ones carrying The Signal Spire's
+  // own sign) — pulled the whole slot set down (y ~1.0-2.6) and out
+  // (larger scale) to actually sit over that geometry, and weighted
+  // more of them toward Signal Heights' own z range (-0.5 to -3.2)
+  // since that is where the defect evidence was captured.
+  const slots = [
+    { x: -2.4, y: 1.6, z: -1.0, s: 5.5 },
+    { x: -1.4, y: 2.4, z: -0.4, s: 5.0 },
+    { x: 2.2, y: 1.3, z: -1.4, s: 5.2 },
+    { x: 3.0, y: 2.2, z: -2.4, s: 4.6 },
+    { x: -0.6, y: 1.8, z: -3.0, s: 4.4 },
+    { x: -2.0, y: 1.4, z: -5.4, s: 4.2 },
+    { x: 1.2, y: 1.9, z: -6.6, s: 4.6 },
+    { x: 2.8, y: 1.3, z: -7.4, s: 4.0 },
+  ];
+  const sprites = slots.map((s) => {
+    const sprite = new THREE.Sprite(mat);
+    sprite.position.set(s.x, s.y, s.z);
+    sprite.scale.setScalar(s.s);
+    group.add(sprite);
+    return sprite;
+  });
+
+  const FADE_IN_START = 0.02;
+  const FADE_IN_END = 0.08;
+  const FADE_OUT_START = 0.32;
+  const FADE_OUT_END = 0.4;
+  const PEAK_OPACITY = 0.6;
+
+  return {
+    group,
+    update: (_dt, _elapsed, progress) => {
+      let alpha: number;
+      if (progress <= FADE_IN_START || progress >= FADE_OUT_END) {
+        alpha = 0;
+      } else if (progress < FADE_IN_END) {
+        alpha =
+          ((progress - FADE_IN_START) / (FADE_IN_END - FADE_IN_START)) *
+          PEAK_OPACITY;
+      } else if (progress < FADE_OUT_START) {
+        alpha = PEAK_OPACITY;
+      } else {
+        alpha =
+          (1 - (progress - FADE_OUT_START) / (FADE_OUT_END - FADE_OUT_START)) *
+          PEAK_OPACITY;
+      }
+      if (Math.abs(mat.opacity - alpha) > 0.004) mat.opacity = alpha;
+      const on = alpha > 0.003;
+      if (sprites[0].visible !== on) sprites.forEach((s) => (s.visible = on));
+    },
+    dispose: () => {
+      tex.dispose();
+      mat.dispose();
+    },
+  };
+}
+
 /* ============================================================
    INTERCONNECTION — light-bridges. ONE InstancedMesh of thin beams
    strung between adjacent districts, ONE custom ShaderMaterial: a
