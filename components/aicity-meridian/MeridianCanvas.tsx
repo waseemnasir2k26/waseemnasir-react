@@ -327,14 +327,20 @@ export default function MeridianCanvas({
       }
       camera.lookAt(currentLook);
 
-      // Sky/fog: 3-stop desaturated dusk ramp (0-30%) folding into the
-      // shipped night state (30-100%) — the same scalar as everything else.
-      if (dayness < 0.15) {
-        scratch.copy(cA).lerp(cB, dayness / 0.15);
-      } else if (dayness < 0.3) {
-        scratch.copy(cB).lerp(cC, (dayness - 0.15) / 0.15);
+      // Sky/fog: 3-stop desaturated dusk ramp (0-32%) folding into the
+      // shipped night state (32-100%) — the same scalar as everything else.
+      // Round-2 fix (08-27, jury MINOR #4): the cB->cC crossfade used to
+      // finish by 30%, so the 25% stop sampled ~67% of the way into the
+      // cool ink-slate cC already — read as a muddy mauve/pink haze
+      // rather than a deliberate amber dusk beat. Pushed both breakpoints
+      // out (0.15->0.17, 0.30->0.32) so the warm duskB tone (now itself
+      // re-keyed amber, see tokens.ts) still dominates at the 25% stop.
+      if (dayness < 0.17) {
+        scratch.copy(cA).lerp(cB, dayness / 0.17);
+      } else if (dayness < 0.32) {
+        scratch.copy(cB).lerp(cC, (dayness - 0.17) / 0.15);
       } else {
-        scratch.copy(cC).lerp(night, (dayness - 0.3) / 0.7);
+        scratch.copy(cC).lerp(night, (dayness - 0.32) / 0.68);
       }
       skyColor.copy(scratch);
       (scene.fog as THREE.Fog).color.copy(scratch);
@@ -347,9 +353,15 @@ export default function MeridianCanvas({
       // faces) was crushing to nearly pure black outside the window/
       // beacon emissives, which read as dead space around the final
       // CTA rather than a dark but legible night city (08-27 grade pass).
+      // Round-2 fix (08-27, jury MAJOR #2): moon ramp started at 0.4,
+      // leaving the 45% DUSK->NIGHTFALL and 70% DEEP NIGHT stops lit by
+      // ambient alone — not enough for the city grid beyond the card to
+      // read as anything but black. Starting the ramp at 0.3 (still
+      // fully off through GOLDEN/SUNSET) gets real fill light onto the
+      // grid by the time these two stops settle.
       moon.intensity =
-        0.42 * THREE.MathUtils.clamp((dayness - 0.4) / 0.3, 0, 1);
-      ambient.intensity = 0.2 + dayness * 0.3;
+        0.42 * THREE.MathUtils.clamp((dayness - 0.3) / 0.3, 0, 1);
+      ambient.intensity = 0.24 + dayness * 0.3;
       // Ramps in over the DEEP NIGHT -> MIDNIGHT stretch (80-100%) so it
       // is already lighting the dock's surroundings by the time the
       // final waypoint arrives, not popping on as a hard cut.

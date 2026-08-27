@@ -39,7 +39,13 @@ export const C = {
    than a bright sky dissolving into mush at distance. */
 export const DUSK = {
   duskA: "#D9A972", // warm horizon haze, deepened amber (not pastel beige)
-  duskB: "#96604A", // mid-sky terracotta, desaturated + darker
+  // Round-2 fix (08-27, jury MINOR #4): was "#96604A", a muddy terracotta
+  // that leaned mauve/pink once blended toward duskC at the 25% scroll
+  // stop, reading as under-rendered rather than a deliberate dusk beat.
+  // Re-keyed warmer/more amber (less brown/pink) so the 25% stop still
+  // reads as the SAME established amber-dusk ramp as duskA, not a
+  // separate cool-toned haze.
+  duskB: "#C2814A", // mid-sky amber-terracotta, warmer than before
   duskC: "#28353D", // upper-sky ink-slate, folds into skyDark
 } as const;
 

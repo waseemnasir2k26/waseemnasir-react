@@ -168,9 +168,17 @@ export default function AltitudeCanvas({
     scene.environment = skyEnv.get(0);
 
     const mats = makeMaterials();
-    // metalness 0.25 (building) with no environment to reflect was only
-    // ever darkening that surface — now it has something to catch.
-    applyEnvResponse(mats, 0.45);
+    // metalness (building) with no environment to reflect was only ever
+    // darkening that surface — now it has something to catch.
+    // ROUND-3 FIX (jury defect #1, MAJOR — paired with the metalness/
+    // roughness pull in SceneObjects.ts makeMaterials): was 0.45. At low
+    // scroll progress skyEnv.get(p) still serves its brightest baked
+    // stop (sunIntensity 1.0, sky=paper) — combined with the old, more
+    // reflective building material this mirrored a near-white sky patch
+    // onto any flat-topped box the descending camera looked down on,
+    // read as a blank white polygon. Cut further so the facade
+    // texture/colour stays the dominant surface signal at every stop.
+    applyEnvResponse(mats, 0.22);
     // Procedural facade detail (floor slabs, mullions, per-bay glass
     // variation, grime) — one CanvasTexture, no network fetch, applied to
     // the single shared building material so every tower in the
@@ -191,10 +199,15 @@ export default function AltitudeCanvas({
     mats.building.roughnessMap = facade.roughnessMap;
     mats.building.needsUpdate = true;
     const districts = buildDescentDistricts(mats);
+    // DISTRICTS[1] = Pipeline Row — its landmark anchor feeds the riser
+    // conduit added to buildBridges() (round-3, defect #2: "a building
+    // that IS a connection" needs a visible connection motif on the hero
+    // building itself, not just the background rail).
+    const pipelineAnchor = districts.landmarkAnchors[1];
     const objects: SceneObject[] = [
       buildClouds(),
       districts,
-      buildBridges(),
+      buildBridges(pipelineAnchor),
       buildTouchdown(mats),
     ];
     objects.forEach((o) => scene.add(o.group));
@@ -240,7 +253,20 @@ export default function AltitudeCanvas({
           appearAt: threshold + 0.03,
         };
       }),
-      { color: C.ink, accent: C.jadeBright },
+      // ROUND-2 FIX (jury defect #1a — 3D billboard text double-exposed
+      // with the HTML headline saying the same thing): maxOpacity was
+      // left at CitySignage's default (0.94, near-full white) — bright
+      // enough that at the Broadcast Basin stop it reads as a second,
+      // competing headline rather than ambient city signage behind the
+      // card. Dropped to 0.5 so it still lights the tower it's mounted
+      // on (this variant's whole "the city is doing this" motif) without
+      // fighting the HTML text for attention when the two land close
+      // together on screen. Paired with the Scrim opacity fix in
+      // AltitudeClient.tsx, which now near-fully masks any sign that
+      // does end up behind a card.
+      // Round-3: 0.5 still left a legible ghost of the billboard caps
+      // behind the Broadcast Basin headline (re-jury crop evidence).
+      { color: C.ink, accent: C.jadeBright, maxOpacity: 0.32 },
     );
     districts.group.add(signage.group);
 

@@ -135,6 +135,78 @@ let asphalt: {
   dispose(): void;
 } | null = null;
 
+/* ============================================================
+   LAMP GROUND-POOL TEXTURE — round-2 fix (08-27, jury MAJOR #1):
+   streetlamps were a single thin emissive cylinder with no pole
+   silhouette and no ground contact, so at night exposure they read
+   as disembodied glowing strokes rather than lamps. A soft radial
+   falloff canvas (white centre -> transparent edge) is drawn once
+   and reused by every lamp's ground-pool disc, additively blended
+   so it reads as a light POOL on the asphalt, not a flat sticker.
+   ============================================================ */
+let lampPoolTex: THREE.CanvasTexture | null = null;
+function createRadialPoolTexture() {
+  const size = 64;
+  const c = document.createElement("canvas");
+  c.width = c.height = size;
+  const ctx = c.getContext("2d")!;
+  const grad = ctx.createRadialGradient(
+    size / 2,
+    size / 2,
+    0,
+    size / 2,
+    size / 2,
+    size / 2,
+  );
+  grad.addColorStop(0, "rgba(255,255,255,1)");
+  grad.addColorStop(0.45, "rgba(255,255,255,0.4)");
+  grad.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, size, size);
+  const tex = new THREE.CanvasTexture(c);
+  return tex;
+}
+
+/** Additive, per-instance-gated ground-pool material — see lampPoolTex above. */
+function makePoolMaterial(brightHex: string, map: THREE.Texture) {
+  const uBright = new THREE.Color(brightHex);
+  return new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    uniforms: {
+      uDayness: { value: 0 },
+      uBright: { value: uBright },
+      uMap: { value: map },
+    },
+    vertexShader: /* glsl */ `
+      attribute float aThreshold;
+      varying float vLit;
+      varying vec2 vUv;
+      uniform float uDayness;
+      void main() {
+        vLit = smoothstep(aThreshold - 0.05, aThreshold + 0.05, uDayness);
+        vUv = uv;
+        vec3 transformed = position;
+        #ifdef USE_INSTANCING
+          transformed = (instanceMatrix * vec4(transformed, 1.0)).xyz;
+        #endif
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uBright;
+      uniform sampler2D uMap;
+      varying float vLit;
+      varying vec2 vUv;
+      void main() {
+        float falloff = texture2D(uMap, vUv).r;
+        gl_FragColor = vec4(uBright, falloff * vLit * 0.35);
+      }
+    `,
+  });
+}
+
 /* Ground plane was one flat MeshStandardMaterial colour — reads as
    felt from any distance, let alone up close. This draws a cheap
    speckle-grain + expansion-joint plaza surface into a canvas at
@@ -259,8 +331,43 @@ function makeMaterials() {
   // signal (stack towers, plaza beacons, light-bridges). Two
   // intentional colour families instead of one teal note bleeding
   // into everything (08-27 grade pass).
-  const window_ = makeIgnitionMaterial(C.inkJade, WARM.windowBright);
-  const lamp = makeIgnitionMaterial("#0A2622", WARM.lampBright);
+  // Round-2 fix (08-27, jury MAJOR #2): brightCap pushed past 1 (an HDR
+  // multiplier, not a clamp — see makeIgnitionMaterial's mix()) so lit
+  // windows clear the post chain's bloom threshold and actually pop as
+  // a constellation against the night sky/fog, instead of rendering as
+  // small, low-contrast amber rectangles that vanish at distance.
+  const window_ = makeIgnitionMaterial(C.inkJade, WARM.windowBright, {
+    brightCap: 1.7,
+  });
+  const lamp = makeIgnitionMaterial("#0A2622", WARM.lampBright, {
+    brightCap: 1.25,
+  });
+  // Lamp pole — round-2 fix (08-27, jury MAJOR #1): always dimly visible
+  // (not ignition-gated) so the physical pole reads at night exposure
+  // even before/without its head lit — the fix for "disembodied glowing
+  // strokes floating in blackness."
+  const lampPole = new THREE.MeshStandardMaterial({
+    color: "#152826",
+    emissive: new THREE.Color("#0E1D1B"),
+    emissiveIntensity: 0.5,
+    metalness: 0.35,
+    roughness: 0.45,
+  });
+  lampPoolTex = createRadialPoolTexture();
+  const lampPool = makePoolMaterial(WARM.lampBright, lampPoolTex);
+  // Plinth — round-2 fix (08-27, jury MAJOR #3): the dock's torus-knot
+  // sculpture sat on the shared `mats.building` base, which stays
+  // near-black at night same as every ordinary city building, so the
+  // "pedestal" was invisible and the knot read as floating. A dedicated,
+  // always-subtly-lit up-light material grounds it as a plausible public
+  // art plinth instead of another dark ink slab.
+  const plinth = new THREE.MeshStandardMaterial({
+    color: C.inkJade,
+    emissive: new THREE.Color(C.jade),
+    emissiveIntensity: 0.22,
+    metalness: 0.18,
+    roughness: 0.5,
+  });
   // Landmark towers get near-camera fade + a brightness cap (round-2 fix,
   // 08-20 re-audit): the only ignition surfaces large/tall enough for a
   // close camera pass to read as a blown-out full-viewport slab.
@@ -286,12 +393,25 @@ function makeMaterials() {
   asphalt = createAsphaltTexture(C.ground);
   asphalt.map.repeat.set(10, 16);
   asphalt.roughnessMap.repeat.set(10, 16);
+  // Round-3 fix (08-27, re-jury MAJOR — 25% "blue hour" stop): ground
+  // emissive starts at 0 and is driven per-frame by buildCityGrid's
+  // update() as a horizon-glow bump confined to the ~15-40% dayness
+  // band. At that settled camera the ground's own lit color had
+  // already crushed ~83% of the way to near-black (t01 = dayness/0.3)
+  // while the sky/fog ramp was still mid-transition — a flat plate
+  // this dark, this early, reads as a featureless black wedge rather
+  // than asphalt at dusk. A restrained warm-teal emissive lift (never
+  // touching dayness outside that band, so the 45/70/100% stops are
+  // byte-identical to before) puts the texture/grain back within
+  // visible range without brightening the shipped night ground.
   const ground = new THREE.MeshStandardMaterial({
     color: C.ground,
     map: asphalt.map,
     roughnessMap: asphalt.roughnessMap,
     metalness: 0.06,
     roughness: 0.96,
+    emissive: new THREE.Color(C.ground),
+    emissiveIntensity: 0,
   });
   const beacon = new THREE.MeshStandardMaterial({
     color: C.jadeBright,
@@ -360,6 +480,9 @@ function makeMaterials() {
     building,
     window_,
     lamp,
+    lampPole,
+    lampPool,
+    plinth,
     landmark,
     billboard,
     ground,
@@ -400,10 +523,13 @@ export function buildCityGrid(mats: Mats): SceneObject {
       const x = xi * 2.6 + (rand() - 0.5) * 0.6;
       if (Math.abs(x) < 1.1) continue; // clear flight corridor
       const h = 1.2 + rand() * 3.4;
-      // Each building's own ignition window: 0.18-0.62 of the cycle
-      // (sunset through nightfall) so the whole city is lit by the
-      // time the deep-night interconnection beat begins.
-      const base = 0.18 + rand() * 0.44;
+      // Each building's own ignition window — round-2 fix (08-27, jury
+      // MAJOR #2): narrowed from 0.18-0.62 to 0.14-0.52 so a clear
+      // majority of the city is already lit by the 45% DUSK->NIGHTFALL
+      // stop and effectively all of it by 70%, instead of leaving the
+      // background a near-featureless black at both settled camera
+      // positions.
+      const base = 0.14 + rand() * 0.38;
       slots.push({ x, z, h, base });
     }
   }
@@ -462,7 +588,11 @@ export function buildCityGrid(mats: Mats): SceneObject {
     for (const faceSign of [1, -1]) {
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < colsPerFace; c++) {
-          if (rand() < 0.22) continue; // some windows stay permanently dark
+          // Round-2 fix (08-27, jury MAJOR #2): trimmed from 0.22 — too
+          // many permanently-dark windows was part of why the night
+          // background read as near-featureless black rather than a
+          // sparse-but-present constellation.
+          if (rand() < 0.12) continue; // some windows stay permanently dark
           const y = 0.5 + r * 0.62;
           const xOff = -halfW * 0.55 + c * halfW * 1.1;
           wDummy.position.set(
@@ -499,6 +629,44 @@ export function buildCityGrid(mats: Mats): SceneObject {
   );
   group.add(windows);
 
+  // Round-2 fix (08-27, jury MAJOR #2, verify pass): raising the real
+  // facade windows' brightness/lit-fraction still left the 45% DUSK and
+  // 70% DEEP NIGHT camera stops reading near-black beyond the card — at
+  // those two tight-FOV positions only a handful of actual facade
+  // windows are ever inside frustum, and which few they are is down to
+  // camera geometry, not anything this pass controls per-stop. A sparse
+  // field of small standalone glints across the same corridor footprint
+  // (same ignition shader/material as real windows — zero new material,
+  // one more instanced draw call) guarantees a legible constellation of
+  // warm lit windows is visible regardless of which buildings a given
+  // stop happens to frame, same "sparse but clearly present" read the
+  // brief asked for.
+  // Round-3 (08-27, re-jury): glints above the building band read as
+  // stray mid-air debug dots. Fewer, smaller, and height-clamped into the
+  // band real facades occupy so they read as distant lit windows.
+  const glintCount = 64;
+  const glintGeo = new THREE.SphereGeometry(0.03, 6, 5);
+  t.geometries.push(glintGeo);
+  const glints = new THREE.InstancedMesh(glintGeo, mats.window_, glintCount);
+  const glintThresholds = new Float32Array(glintCount);
+  const grand = mulberry32(9911);
+  const gDummy = new THREE.Object3D();
+  for (let i = 0; i < glintCount; i++) {
+    const x = (grand() - 0.5) * 17;
+    const z = -4 - grand() * 26;
+    const y = 0.5 + grand() * 1.9;
+    gDummy.position.set(x, y, z);
+    gDummy.updateMatrix();
+    glints.setMatrixAt(i, gDummy.matrix);
+    glintThresholds[i] = 0.16 + grand() * 0.3;
+  }
+  glints.instanceMatrix.needsUpdate = true;
+  glints.geometry.setAttribute(
+    "aThreshold",
+    new THREE.InstancedBufferAttribute(glintThresholds, 1),
+  );
+  group.add(glints);
+
   const groundGeo = new THREE.PlaneGeometry(40, 64);
   t.geometries.push(groundGeo);
   const ground = new THREE.Mesh(groundGeo, mats.ground);
@@ -523,6 +691,32 @@ export function buildCityGrid(mats: Mats): SceneObject {
       const t01 = THREE.MathUtils.clamp(dayness / 0.3, 0, 1);
       groundScratch.copy(groundLit).lerp(groundNight, t01);
       (mats.ground as THREE.MeshStandardMaterial).color.copy(groundScratch);
+      // Round-2 fix (08-27, jury MAJOR #2): a faint, dayness-driven lift
+      // to the shared building material's own emissive so silhouettes
+      // catch a sliver of definition against the lifted night sky/fog,
+      // on top of (not instead of) the window ignition shader — subtle
+      // on purpose, this is a rim not a second light source.
+      const nightGlow = THREE.MathUtils.clamp((dayness - 0.2) / 0.5, 0, 1);
+      // Round-3 fix (08-27, re-jury MAJOR — 25% "blue hour" stop): an
+      // isolated triangular bump, zero outside dayness [0.06, 0.42] and
+      // peaking at 0.24 (centre of the settled 25% stop), so the
+      // 0/45/70/100% verify stops receive exactly zero contribution
+      // (confirmed: 0 at dayness 0, and 0 for dayness >= 0.42, well
+      // clear of the 45% stop). Lifts BOTH the ground (horizon-glow
+      // read, was crushing ~83% toward near-black by 25% while the sky
+      // ramp was still mid-transition — a flat black wedge instead of
+      // dusk asphalt) and the shared building material (silhouette edge
+      // definition against the haze) at that one settled beat, without
+      // touching any other stop's lighting.
+      const blueHourBump = THREE.MathUtils.clamp(
+        1 - Math.abs(dayness - 0.24) / 0.18,
+        0,
+        1,
+      );
+      (mats.ground as THREE.MeshStandardMaterial).emissiveIntensity =
+        blueHourBump * 0.42;
+      (mats.building as THREE.MeshStandardMaterial).emissiveIntensity =
+        0.03 + nightGlow * 0.07 + blueHourBump * 0.05;
     },
     dispose: () => {
       // The roofscape owns two geometries the shared tracker never
@@ -545,6 +739,8 @@ export function disposeFacade() {
   facade = null;
   asphalt?.dispose();
   asphalt = null;
+  lampPoolTex?.dispose();
+  lampPoolTex = null;
 }
 
 /* ============================================================
@@ -608,6 +804,80 @@ export function buildStackDistrict(mats: Mats): SceneObject {
 }
 
 /* ============================================================
+   LAMP ASSEMBLY — round-2 fix (08-27, jury MAJOR #1). Shared by
+   the proof plaza's ring of park lamps and the dock's lamp ring:
+   three InstancedMeshes per set (dark-but-visible pole, ignition-
+   gated head, additive ignition-gated ground pool) instead of one
+   bare emissive cylinder, so every lamp reads as a physical fixture
+   anchored to the ground rather than a floating glowing stroke.
+   ============================================================ */
+function buildLampAssembly(
+  t: ReturnType<typeof trackDisposables>,
+  mats: Mats,
+  positions: [number, number][],
+  thresholds: Float32Array,
+  scale = 1,
+): THREE.Group {
+  const group = new THREE.Group();
+  const count = positions.length;
+  const poleH = 0.9 * scale;
+
+  const poleGeo = new THREE.CylinderGeometry(
+    0.028 * scale,
+    0.045 * scale,
+    poleH,
+    6,
+  );
+  t.geometries.push(poleGeo);
+  const poles = new THREE.InstancedMesh(poleGeo, mats.lampPole, count);
+
+  const headGeo = new THREE.SphereGeometry(0.075 * scale, 8, 6);
+  t.geometries.push(headGeo);
+  const heads = new THREE.InstancedMesh(headGeo, mats.lamp, count);
+
+  // Round-2 re-tune (08-27, verify pass): 0.6 read as an oversized,
+  // overlapping "amoeba" blob once 24 pools sit close together under
+  // the near-overhead DUSK camera angle — shrunk + softened alpha (see
+  // makePoolMaterial call below) so each pool stays a discrete light
+  // pool at the lamp's own base, not a fused mass.
+  const poolGeo = new THREE.CircleGeometry(0.32 * scale, 20);
+  t.geometries.push(poolGeo);
+  const pools = new THREE.InstancedMesh(poolGeo, mats.lampPool, count);
+
+  const dummy = new THREE.Object3D();
+  positions.forEach(([x, z], i) => {
+    dummy.rotation.set(0, 0, 0);
+    dummy.position.set(x, poleH / 2, z);
+    dummy.updateMatrix();
+    poles.setMatrixAt(i, dummy.matrix);
+
+    dummy.position.set(x, poleH + 0.04 * scale, z);
+    dummy.updateMatrix();
+    heads.setMatrixAt(i, dummy.matrix);
+
+    dummy.rotation.set(-Math.PI / 2, 0, 0);
+    dummy.position.set(x, 0.018, z);
+    dummy.updateMatrix();
+    pools.setMatrixAt(i, dummy.matrix);
+  });
+  poles.instanceMatrix.needsUpdate = true;
+  heads.instanceMatrix.needsUpdate = true;
+  pools.instanceMatrix.needsUpdate = true;
+
+  heads.geometry.setAttribute(
+    "aThreshold",
+    new THREE.InstancedBufferAttribute(thresholds, 1),
+  );
+  pools.geometry.setAttribute(
+    "aThreshold",
+    new THREE.InstancedBufferAttribute(thresholds.slice(), 1),
+  );
+
+  group.add(poles, heads, pools);
+  return group;
+}
+
+/* ============================================================
    PROOF PLAZA + STREETLAMPS — 4 illuminated beacon towers (heights
    purely decorative, never tied to the numeric values — those live
    in the HTML CountUp) plus a ring of ~24 emissive streetlamp studs
@@ -646,12 +916,8 @@ export function buildProofPlaza(mats: Mats): SceneObject {
 
   const plazaCenter = new THREE.Vector2(-0.6, -12.3);
   const lampCount = 24;
-  const lampGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.5, 6);
-  t.geometries.push(lampGeo);
-  const lamps = new THREE.InstancedMesh(lampGeo, mats.lamp, lampCount);
   const lampThresholds = new Float32Array(lampCount);
   const rand = mulberry32(88);
-  const lDummy = new THREE.Object3D();
   let maxDist = 0;
   const lampPos: [number, number][] = [];
   for (let i = 0; i < lampCount; i++) {
@@ -663,19 +929,15 @@ export function buildProofPlaza(mats: Mats): SceneObject {
     maxDist = Math.max(maxDist, radius);
   }
   lampPos.forEach(([x, z], i) => {
-    lDummy.position.set(x, 0.25, z);
-    lDummy.updateMatrix();
-    lamps.setMatrixAt(i, lDummy.matrix);
     const dist = Math.hypot(x - plazaCenter.x, (z - plazaCenter.y) / 0.6);
     // Radial wave outward from plaza centre, entirely within DUSK (30-46%).
     lampThresholds[i] = 0.3 + (dist / maxDist) * 0.14;
   });
-  lamps.instanceMatrix.needsUpdate = true;
-  lamps.geometry.setAttribute(
-    "aThreshold",
-    new THREE.InstancedBufferAttribute(lampThresholds, 1),
-  );
-  group.add(lamps);
+  // Round-2 fix (08-27, jury MAJOR #1): pole + head + ground-pool
+  // assembly (see buildLampAssembly) replaces the old bare emissive
+  // cylinder — each lamp now anchors visibly to the plaza floor.
+  const lampAssembly = buildLampAssembly(t, mats, lampPos, lampThresholds);
+  group.add(lampAssembly);
 
   return {
     group,
@@ -684,6 +946,7 @@ export function buildProofPlaza(mats: Mats): SceneObject {
       towers.scale.setScalar(pulse);
       setIgnitionUniform(mats.plazaBeacon, dayness);
       setIgnitionUniform(mats.lamp, dayness);
+      setIgnitionUniform(mats.lampPool, dayness);
     },
     dispose: t.dispose,
   };
@@ -958,10 +1221,22 @@ export function buildDock(
   const knotGeo = new THREE.TorusKnotGeometry(0.34, 0.1, 96, 12);
   t.geometries.push(baseGeo, knotGeo);
 
-  const base = new THREE.Mesh(baseGeo, mats.building);
+  // Round-2 fix (08-27, jury MAJOR #3): base was `mats.building` — the
+  // same near-black-at-night material as ordinary city blocks — so the
+  // knot's own pedestal was invisible and it read as floating. Dedicated
+  // `plinth` material keeps it subtly up-lit at every hour.
+  const base = new THREE.Mesh(baseGeo, mats.plinth);
+  // Round-3 fix (08-27, re-jury): the knot hovered with a visible gap to
+  // the platform — read as a floating primitive. A pedestal column now
+  // rises from the platform and the knot is lowered to intersect its top,
+  // so the sculpture is visibly seated, not levitating.
+  const pedestalGeo = new THREE.CylinderGeometry(0.16, 0.22, 0.95, 24);
+  t.geometries.push(pedestalGeo);
+  const pedestal = new THREE.Mesh(pedestalGeo, mats.plinth);
+  pedestal.position.y = 0.575;
   const beacon = new THREE.Mesh(knotGeo, mats.dockBeacon);
-  beacon.position.y = 1.4;
-  spin.add(base, beacon);
+  beacon.position.y = 1.32;
+  spin.add(base, pedestal, beacon);
 
   const lastWinGeo = new THREE.BoxGeometry(0.3, 0.42, 0.08);
   t.geometries.push(lastWinGeo);
@@ -972,37 +1247,27 @@ export function buildDock(
   /* ── 08-27 void fix: the final camera stop now looks AT the dock
      (see CameraPath.ts) instead of past it, but the periphery around
      the card was still reading flat/empty. A ring of always-on dock
-     lamps (reuses the shared `lamp` ignition material — cheap, one
-     more InstancedMesh, no new shader) plus a short line of receding
-     pier beacons (reuses the dimmer `dockBeacon` material, same one
-     the dock's own knot now uses after the 08-27 bloom-blowout fix)
-     gives the frame something lit on every side of the card instead
-     of fogged black ground. ── */
+     lamps — round-2 fix (08-27, jury MAJOR #1): now the same pole +
+     head + ground-pool assembly as the proof plaza (see
+     buildLampAssembly), not a bare emissive cylinder — plus a short
+     line of receding pier beacons (reuses the dimmer `dockBeacon`
+     material, same one the dock's own knot now uses after the 08-27
+     bloom-blowout fix) gives the frame something lit and anchored on
+     every side of the card instead of fogged black ground. ── */
   const lampRingCount = 10;
-  const lampRingGeo = new THREE.CylinderGeometry(0.045, 0.045, 0.42, 6);
-  t.geometries.push(lampRingGeo);
-  const lampRing = new THREE.InstancedMesh(
-    lampRingGeo,
-    mats.lamp,
-    lampRingCount,
-  );
   const ringThresholds = new Float32Array(lampRingCount).fill(0.55);
-  const ringDummy = new THREE.Object3D();
+  const ringPositions: [number, number][] = [];
   for (let i = 0; i < lampRingCount; i++) {
     const angle = (i / lampRingCount) * Math.PI * 2 + 0.3;
     const radius = 3.6;
-    ringDummy.position.set(
-      Math.cos(angle) * radius,
-      0.21,
-      Math.sin(angle) * radius,
-    );
-    ringDummy.updateMatrix();
-    lampRing.setMatrixAt(i, ringDummy.matrix);
+    ringPositions.push([Math.cos(angle) * radius, Math.sin(angle) * radius]);
   }
-  lampRing.instanceMatrix.needsUpdate = true;
-  lampRing.geometry.setAttribute(
-    "aThreshold",
-    new THREE.InstancedBufferAttribute(ringThresholds, 1),
+  const lampRing = buildLampAssembly(
+    t,
+    mats,
+    ringPositions,
+    ringThresholds,
+    0.85,
   );
   group.add(lampRing);
 
@@ -1037,6 +1302,7 @@ export function buildDock(
       update: (dt, _elapsed, dayness) => {
         spin.rotation.y += dt * 0.05;
         setIgnitionUniform(mats.lamp, dayness);
+        setIgnitionUniform(mats.lampPool, dayness);
         // Far-distance fade — the OTHER half of the 08-27 "clipped teal
         // blob" fix, confirmed by sampling actual rendered pixel values
         // (not guessed): at the ~45% DUSK->NIGHTFALL camera pass the
@@ -1048,14 +1314,29 @@ export function buildDock(
         // Ramping emissiveIntensity down for distant cameras and back
         // up for the close midnight approach (dist ~10 there) fixes
         // both ends with one control instead of a second shader.
+        // Round-2 fix (08-27, jury MAJOR #3): the previous range (11-24)
+        // still left the knot ~23% visible at the ~45% stop (dist
+        // 17-25), which under bloom read as an unanchored floating
+        // shape near the top of frame — that far away, its own pedestal
+        // isn't even in frustum, so there is nothing to anchor it to.
+        // Tightened to fully vanish beyond 15 units (45% distance) while
+        // staying fully visible at the close midnight approach (dist
+        // ~10) where the new `plinth` base now grounds it.
         const dx = camRef.x - 0;
         const dy = camRef.y - 1.4;
         const dz = camRef.z + 27;
         const distToBeacon = Math.sqrt(dx * dx + dy * dy + dz * dz);
         const farFade =
-          1 - THREE.MathUtils.clamp((distToBeacon - 11) / (24 - 11), 0, 1);
+          1 - THREE.MathUtils.clamp((distToBeacon - 9) / (15 - 9), 0, 1);
         (mats.dockBeacon as THREE.MeshStandardMaterial).emissiveIntensity =
           0.3 * farFade;
+        // Dimming emissiveIntensity alone still left a faint but solid
+        // jade-coloured shape reflecting ambient/moon light — a real
+        // material albedo, not a light source, doesn't vanish just
+        // because its own glow is off. Full visibility toggle at the
+        // tail of the fade removes the shape outright at distance
+        // instead of leaving a residual "floating geometry" silhouette.
+        beacon.visible = farFade > 0.03;
         const mat = mats.lastWindow as THREE.MeshStandardMaterial;
         if (dayness >= 0.96 && !lit) {
           lit = true;
