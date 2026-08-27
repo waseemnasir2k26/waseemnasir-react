@@ -135,6 +135,23 @@ export default function AltitudeClient() {
         dangerouslySetInnerHTML={{
           __html: `
         html, body { background: ${C.skyDark} !important; color-scheme: dark !important; }
+        /* TYPOGRAPHY FIX T8 (2026-08-27) — the root layout sets
+           body.font-sans (next/font Inter, --font-sans) globally, and
+           the skip-link lives in app/layout.tsx (outside this route's
+           ownership, and outside <main> in the DOM — a CSS custom
+           property set on <main>'s className, like this route's own
+           --font-body, only inherits DOWN into main's subtree, so it
+           can never reach a sibling-before element like the skip-link).
+           Scoped override (removed on navigation away, same pattern as
+           the z-[60] rail override above): a literal fallback inside
+           var()'s own 2nd argument — NOT a comma-separated font-family
+           list, which would make the whole declaration invalid the
+           instant --font-body resolves to nothing outside <main> — so
+           this always lands on Hanken Grotesk (or its generic fallback)
+           instead of silently staying on the inherited Inter var. */
+        body, .skip-link {
+          font-family: var(--font-body, "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif) !important;
+        }
         /* This route has its own Altimeter Rail nav — the global
            layout-mounted ScrollProgress rail (components/ScrollProgress.tsx,
            z-[60], fixed top-0) would otherwise render a second, unrelated
@@ -181,7 +198,14 @@ export default function AltitudeClient() {
           ref={trackRef}
           style={{
             position: "relative",
-            ...(is3D ? { height: `${SCENES.length * 100}vh` } : {}),
+            // MOTION FIX M1 (2026-08-27) — track doubled 700vh -> ~1400vh
+            // (100vh/scene -> 200vh/scene). Every appearAt/hideAfter/
+            // threshold in AltitudeCanvas.tsx and PinnedScene's own
+            // fade windows below are all PROGRESS-relative (0-1
+            // fractions of this same track), so doubling its physical
+            // height only slows the scroll-to-progress rate — it does
+            // not require re-deriving a single one of those fractions.
+            ...(is3D ? { height: `${SCENES.length * 200}vh` } : {}),
           }}
         >
           {is3D ? (
@@ -1256,12 +1280,17 @@ function AltitudeFooter() {
 function DescentCTAPill({ progress }: { progress: MotionValue<number> }) {
   const opacity = useTransform(progress, [0, 0.035, 0.055], [0, 0, 1]);
   const pe = useTransform(progress, (p) =>
-    p > 0.05 ? "auto" : "none",
+    p > 0.05 && p <= 0.97 ? "auto" : "none",
   ) as MotionValue<string>;
+  // TYPOGRAPHY FIX T5 (2026-08-27) — past progress 0.97 (the touchdown
+  // beat, where the footer credit line sits directly under this fixed
+  // pill) the pill lifts clear by 72px so "Built by SkynetLabs ·
+  // waseemnasir.com" stays readable instead of sitting under/behind it.
+  const liftY = useTransform(progress, [0.965, 0.98], [0, -72]);
   return (
     <motion.div
       className="fixed inset-x-0 bottom-5 z-40 flex justify-center px-4"
-      style={{ opacity, pointerEvents: pe }}
+      style={{ opacity, y: liftY, pointerEvents: pe }}
     >
       <Magnetic>
         <Link

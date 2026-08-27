@@ -3,7 +3,12 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import type { MotionValue } from "framer-motion";
 import { C, DISTRICTS, H1, SUB, WORK, PROJECTS } from "./tokens";
-import { buildCameraCurves, damp3 } from "./CameraPath";
+import {
+  buildCameraCurves,
+  buildArcLengthLUT,
+  damp1,
+  damp3,
+} from "./CameraPath";
 import {
   makeMaterials,
   buildClouds,
@@ -69,6 +74,26 @@ export default function AltitudeCanvas({
       '"Hanken Grotesk", sans-serif';
     renderer.setPixelRatio(dpr);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    // MOTION FIX M6 (2026-08-27) — kills the black-flash-into-bright-pop
+    // load defect. The cloud-deck dusk colour (same formula as
+    // `cloudDusk` below) is computed FIRST and painted straight onto the
+    // mount div's own background, before the renderer's canvas element
+    // is even appended — so whatever the user sees for the one-or-two
+    // frames between this effect running and the first real WebGL frame
+    // painting is already the right colour, not the route's near-black
+    // body background showing through a transparent fixed div. The
+    // canvas itself starts at opacity 0 and is faded up over ~600ms
+    // once the first frame has actually rendered (see the `tick`
+    // function's `revealCanvas` below) — a bright flash of an
+    // UNRENDERED frame would be worse than the solid dusk colour it's
+    // covering.
+    const cloudDuskEarly = new THREE.Color(C.paper).lerp(
+      new THREE.Color(C.jade),
+      0.4,
+    );
+    mount.style.background = `#${cloudDuskEarly.getHexString()}`;
+    renderer.domElement.style.opacity = "0";
+    renderer.domElement.style.transition = "opacity 600ms ease";
     // Filmic response BEFORE anything reads a colour. Without it every
     // emissive above 1.0 clips flat to white — the documented root cause
     // of the bright-bridge-beam artefact at cards 30-90%: window
@@ -352,7 +377,12 @@ export default function AltitudeCanvas({
           // suppresses only this one nameplate (reveal can never clear
           // 0 within the 0-1 scroll range) rather than duplicating and
           // overlapping content the brighter board already shows.
-          appearAt: i === 0 ? 2 : threshold + 0.03,
+          // MOTION FIX M5 (dead zone, 2026-08-27) — Portal Quarter
+          // (i===2) previously lit at threshold+0.03 (0.55), leaving a
+          // gap between its towers finishing their wake (threshold 0.52)
+          // and any text appearing. Pulled forward to ~0.50 so the
+          // nameplate is already lit as the district itself settles in.
+          appearAt: i === 0 ? 2 : i === 2 ? 0.5 : threshold + 0.03,
         };
       }),
       // ROUND-2 FIX (jury defect #1a — 3D billboard text double-exposed
@@ -376,6 +406,11 @@ export default function AltitudeCanvas({
         plate: "rgba(3,12,11,0.95)",
         border: "rgba(31,231,199,0.55)",
         headlineFont: displayStack,
+        // TYPOGRAPHY FIX T1 + MOTION FIX M4 (2026-08-27) — tight glow
+        // rim instead of the old wide halo, eased reveal. Opt-in only:
+        // Meridian's own nameplate call never sets these.
+        tightGlow: true,
+        easedReveal: true,
       },
     );
     districts.group.add(signage.group);
@@ -419,6 +454,22 @@ export default function AltitudeCanvas({
     // verified point-by-point against CatmullRomCurve3.getPoint()), so
     // every board mounted on the hero spire reuses it.
     const HERO_ROTATION_X = -0.512;
+    // TYPOGRAPHY FIX T6 (de-duplicate copy, 2026-08-27) — every district
+    // board headline used to repeat `${landmark} — ${pitch}` verbatim,
+    // i.e. the same landmark name its own nameplate (a few frames away
+    // on the identical wall) already carries, PLUS the pitch's own
+    // "<service clause>: <promise>" prefix, which the district's own
+    // sub-line (signage.ts's `sub`, split off that same colon) also
+    // already shows. Strips both down to just the outcome clause after
+    // the LAST colon-or-em-dash — matches the fix brief's own worked
+    // example verbatim ("Every lead answered before it goes cold.").
+    // Never touches PROOF/locked numbers (those boards build their
+    // headline from WORK[].metric, untouched below).
+    const pitchTail = (pitch: string): string => {
+      const parts = pitch.split(/[:—]/);
+      const tail = (parts.length > 1 ? parts[parts.length - 1] : pitch).trim();
+      return tail.charAt(0).toUpperCase() + tail.slice(1);
+    };
     const boardSpecs = [
       // ── HERO — SKY band. Owner-supplied copy, verbatim H1/eyebrow.
       // FIX-ROUND (08-27, diegetic conversion FAIL 1): the previous cut
@@ -451,7 +502,14 @@ export default function AltitudeCanvas({
         // first couple of scroll-percent the way every other district
         // board does. There is no earlier moment to fade in from at
         // the very top of the page.
-        appearAt: -0.05,
+        // VERIFY-LOOP FIX (2026-08-27) — was -0.05, tuned against the
+        // group's OLD revealSpan (0.05): appearAt+revealSpan=0 landed
+        // reveal=1 exactly at p=0. M4 widened the shared revealSpan to
+        // 0.08 (boards options below), which silently underlit this
+        // board at the literal p=0 screenshot (reveal~0.68, not 1) —
+        // pixel-contrast-verified. -0.09 restores appearAt+revealSpan<0
+        // so it's fully lit again at p=0.
+        appearAt: -0.09,
         // FIX-ROUND (found during the 08-27 sweep, adjacent to FAIL 1):
         // this plate sits close to the camera's own early path, so world
         // distance shrinks fast — left permanently lit (CitySignage's
@@ -463,6 +521,11 @@ export default function AltitudeCanvas({
         headlineSize: 0.155,
         maxHeadlineLines: 3,
         texDim: 2048,
+        // TYPOGRAPHY FIX T2 (2026-08-27) — dark-glass plate (lighter +
+        // more translucent than the shared near-opaque city-signage
+        // plate) for contrast headroom against near-white headline text.
+        plateOverride: "rgba(2,10,9,0.97)",
+        bodyColorOverride: "#F2F7F5",
       },
       // ── HERO PITCH — same spire, below the headline board. SUB is the
       // only copy shortened to fit a board (long-form site copy, not a
@@ -491,13 +554,22 @@ export default function AltitudeCanvas({
         width: 1.75,
         height: 1.35,
         rotationX: HERO_ROTATION_X,
-        appearAt: -0.05,
+        // VERIFY-LOOP FIX (2026-08-27) — same revealSpan-widening fix as
+        // board-hero above.
+        appearAt: -0.09,
         // Same overrun defect as board-hero above, same fix — fades out
         // just ahead of board-punch.
         hideAfter: 0.09,
         headlineSize: 0.1,
         maxHeadlineLines: 1,
         maxBodyLines: 6,
+        // TYPOGRAPHY FIX T2/T3 (2026-08-27) — same dark-glass plate as
+        // board-hero (contrast headroom), plus a +20% body font bump
+        // (this board's paragraph is the longest/smallest-reading body
+        // copy in the whole descent).
+        plateOverride: "rgba(2,10,9,0.97)",
+        bodyColorOverride: "#F2F7F5",
+        bodySizeFrac: 0.06,
       },
       // ── CLOUD PUNCH band — same spire, lower board. Same billboard
       // rotation as the two boards above (camera orientation barely
@@ -512,7 +584,10 @@ export default function AltitudeCanvas({
         width: 1.55,
         height: 1.05,
         rotationX: HERO_ROTATION_X,
-        appearAt: 0.155,
+        // MOTION FIX M5 (dead zone, 2026-08-27) — was 0.155, leaving a
+        // gap between board-hero/board-hero-pitch fading out (hideAfter
+        // 0.08/0.09) and this board lighting.
+        appearAt: 0.1,
         headlineSize: 0.16,
         maxHeadlineLines: 2,
         maxBodyLines: 2,
@@ -521,7 +596,9 @@ export default function AltitudeCanvas({
       // ── SIGNAL HEIGHTS — message board near the existing name-plate.
       {
         id: "board-signal",
-        name: `${signalD.landmark} — ${signalD.pitch}`,
+        // TYPOGRAPHY FIX T6 — the nameplate on this same wall already
+        // shows "The Signal Spire"; this headline is just the outcome.
+        name: pitchTail(signalD.pitch),
         body: "Five landmark towers, one system that runs itself — the utilities this whole city runs on.",
         // 0.8 (not the 0.3 the other 3 districts use): Signal Heights'
         // towers carry a +1.4 height bonus (see SceneObjects.ts,
@@ -544,14 +621,22 @@ export default function AltitudeCanvas({
         width: MSG_W,
         height: 1.3,
         appearAt: DISTRICT_THRESHOLDS[0] + 0.06,
-        headlineSize: 0.1,
+        // VERIFY-LOOP FIX (2026-08-27) — 0.1 -> 0.085: the T6 dedupe cut
+        // this headline down to one short clause, which the wrap/shrink
+        // fit-loop then rendered at a LARGER effective size (fewer lines
+        // needed), tight enough at some settled beats to clip the last
+        // glyph past the plate's own right edge. Capping the size keeps
+        // the shorter copy from re-expanding into the margin it freed up.
+        headlineSize: 0.085,
         maxHeadlineLines: 3,
         maxBodyLines: 3,
       },
       // ── PIPELINE ROW.
       {
         id: "board-pipeline",
-        name: `${pipelineD.landmark} — a building that IS a connection.`,
+        // TYPOGRAPHY FIX T6 — dropped the landmark name (its nameplate
+        // already carries "Pipeline Row HQ").
+        name: "A building that IS a connection.",
         body: `${pipelineD.pitch} System: WhatsApp intake → n8n → GHL.`,
         position: new THREE.Vector3(
           pipelineA.x + inboardOf(pipelineA.x, MSG_W),
@@ -568,7 +653,8 @@ export default function AltitudeCanvas({
       // ── PORTAL QUARTER.
       {
         id: "board-portal",
-        name: `${portalD.landmark} — ${portalD.pitch}`,
+        // TYPOGRAPHY FIX T6 — nameplate already carries "The Portal Gate".
+        name: pitchTail(portalD.pitch),
         body: `${portalW.outcome} ${portalW.metric}.`,
         position: new THREE.Vector3(
           portalA.x + inboardOf(portalA.x, MSG_W),
@@ -577,15 +663,24 @@ export default function AltitudeCanvas({
         ),
         width: MSG_W,
         height: 1.3,
-        appearAt: DISTRICT_THRESHOLDS[2] + 0.06,
-        headlineSize: 0.1,
+        // MOTION FIX M5 (dead zone, 2026-08-27) — was threshold+0.06
+        // (0.58); pulled to ~0.50 to match the nameplate's own pre-lit
+        // fix above (both now light together as the district settles).
+        appearAt: 0.5,
+        // VERIFY-LOOP FIX (2026-08-27) — same headline-re-expansion fix
+        // as board-signal above.
+        headlineSize: 0.085,
         maxHeadlineLines: 3,
         maxBodyLines: 3,
       },
       // ── BROADCAST BASIN — district message board.
       {
         id: "board-broadcast",
-        name: `${broadcastD.landmark} — ${broadcastD.pitch}`,
+        // TYPOGRAPHY FIX T6 — dropped the landmark name (its nameplate
+        // already carries "The Cutting House") AND the old two-em-dash
+        // headline (`landmark — pitch`, where pitch itself has its own
+        // em-dash) down to one clause, zero em-dashes.
+        name: pitchTail(broadcastD.pitch),
         body: "Proof — 180+ workflows · 40+ sites · 9 countries · since 2019",
         position: new THREE.Vector3(
           broadcastA.x + inboardOf(broadcastA.x, MSG_W),
@@ -600,7 +695,10 @@ export default function AltitudeCanvas({
         // threshold, so this board needs to already be revealing there
         // too, not just the nameplate above it.
         appearAt: DISTRICT_THRESHOLDS[3] + 0.03,
-        headlineSize: 0.09,
+        // VERIFY-LOOP FIX (2026-08-27) — same headline-re-expansion fix
+        // as board-signal above (screenshot-confirmed clipped "Claude
+        // Code." at the 75% stop before this reduction).
+        headlineSize: 0.078,
         maxHeadlineLines: 3,
         maxBodyLines: 2,
       },
@@ -766,27 +864,97 @@ export default function AltitudeCanvas({
       bodyColor: C.body,
       headlineFont: displayStack,
       bodyFont: bodyStack,
-      revealSpan: 0.05,
+      // MOTION FIX M4 (2026-08-27) — revealSpan widened 0.05 -> 0.08 (a
+      // slightly longer fade window reads less like a pop, paired with
+      // the smoothstep ease below) and both new opt-in easing flags
+      // turned on for this call only. Meridian's own createCitySignage
+      // call never sets these, so its rendered output is unaffected.
+      revealSpan: 0.08,
+      easedReveal: true,
+      arriveTransform: true,
     });
     scene.add(boards.group);
 
     const { posCurve, lookCurve } = buildCameraCurves();
+    // MOTION FIX M8 (2026-08-27) — precompute an arc-length LUT ONCE off
+    // the (already waypoint-pulled-back) position curve. Both position
+    // and look are then sampled through the SAME remapped parameter so
+    // they stay in lockstep — see `sampleU` in `tick` below.
+    const arcRemap = buildArcLengthLUT(posCurve, 200);
     const targetPos = new THREE.Vector3();
     const targetLook = new THREE.Vector3();
     const currentLook = new THREE.Vector3();
     let initialised = false;
+    // MOTION FIX M2 — the single shared damped scalar every downstream
+    // consumer (camera targets, fog, atmo colour, IBL swap, signage,
+    // boards, districts, mist, photo billboards) reads instead of each
+    // one independently damping (or not damping) raw scroll progress on
+    // its own. The Altimeter HUD (AltitudeClient.tsx) intentionally
+    // keeps reading raw progress — it's a numeric readout, not a visual
+    // element that benefits from being smoothed a frame behind the
+    // user's actual scroll position.
+    let smoothP = 0;
+    let smoothPInitialised = false;
+
+    // MOTION FIX M3 — hold-and-travel remap. Splits the descent into the
+    // same 7 equal bands SCENES.length uses (AltitudeClient.tsx), and
+    // within each band eases the camera's own sample point through a
+    // fast->flat->fast curve: the first 40% of a band's own scroll
+    // range covers the first half of the band's visual travel, the
+    // middle 20% barely moves the camera at all (the "hold," framed on
+    // whatever waypoint/board sits mid-band), and the final 40% covers
+    // the back half — so the camera visibly PAUSES on each district's
+    // board wall instead of sweeping past it at a constant rate tied
+    // 1:1 to scroll pixels.
+    const HOLD_BANDS = 7; // matches SCENES.length in AltitudeClient.tsx
+    const holdEase = (local: number): number => {
+      const t = THREE.MathUtils.clamp(local, 0, 1);
+      if (t <= 0.4) {
+        return THREE.MathUtils.smoothstep(t, 0, 0.4) * 0.5;
+      }
+      if (t <= 0.6) {
+        return 0.5;
+      }
+      return 0.5 + THREE.MathUtils.smoothstep(t, 0.6, 1) * 0.5;
+    };
+    const bandRemap = (t: number): number => {
+      const seg = 1 / HOLD_BANDS;
+      const bandIdx = Math.min(HOLD_BANDS - 1, Math.floor(t / seg));
+      const bandStart = bandIdx * seg;
+      const local = (t - bandStart) / seg;
+      return bandStart + seg * holdEase(local);
+    };
 
     let raf = 0;
     let last = performance.now();
     const clockStart = performance.now();
 
-    // Rolling frame-time monitor: sustained slow frames degrade the two
-    // GPU-heaviest, least-essential surfaces (bridges + cloud shader)
-    // before anything else, per the approved perf budget's degrade ladder.
+    // MOTION FIX M6 — fade the canvas in once (opacity 0 -> 1, CSS
+    // transition set on the element above) right after the first real
+    // frame has been rendered, not before.
+    let firstFrameRevealed = false;
+
+    // MOTION FIX M7 — governor: skip the first two 2s sample windows
+    // (letting shader/texture warm-up jank settle before any decision is
+    // made off it), shed a quality level only after 2 CONSECUTIVE bad
+    // windows (one slow window is noise, not a trend), and restore a
+    // level after 4 CONSECUTIVE good windows (hysteresis — restoring too
+    // eagerly just re-triggers the same shed a few seconds later).
     let frameSampleStart = performance.now();
     let frameSampleCount = 0;
     let degraded = false;
     let postReduced = false;
+    let sampleWindowIndex = 0;
+    let postBadStreak = 0;
+    let postGoodStreak = 0;
+    let contentBadStreak = 0;
+    let contentGoodStreak = 0;
+    const SHED_STREAK = 2;
+    const RESTORE_STREAK = 4;
+    const POST_SHED_MS = 20;
+    const POST_RESTORE_MS = 15;
+    const CONTENT_SHED_MS = 22;
+    const CONTENT_RESTORE_MS = 17;
 
     // ── Photographic post chain. Bloom is what makes a window emissive
     // read as a light source rather than a bright rectangle, and it only
@@ -810,9 +978,38 @@ export default function AltitudeCanvas({
       last = now;
       const elapsed = (now - clockStart) / 1000;
 
-      const p = THREE.MathUtils.clamp(progress.get(), 0, 1);
-      posCurve.getPoint(p, targetPos);
-      lookCurve.getPoint(p, targetLook);
+      const rawP = THREE.MathUtils.clamp(progress.get(), 0, 1);
+      if (!smoothPInitialised) {
+        smoothP = rawP;
+        smoothPInitialised = true;
+      } else {
+        smoothP = damp1(smoothP, rawP, 4.5, dt);
+      }
+      const p = smoothP;
+
+      // VERIFY-LOOP FINDING (2026-08-27) — M8 asks for BOTH a
+      // hold-and-travel band remap (M3, `bandRemap` above — verified
+      // working, no framing regressions) AND arc-length-uniform camera
+      // speed (`arcRemap`, built above via buildArcLengthLUT). Chaining
+      // them (`arcRemap(bandRemap(p))`) was screenshot-verified to
+      // reintroduce the exact defect M8 was meant to fix elsewhere: the
+      // Signal Heights message board (and likely others) bled off the
+      // right edge, because every board's position/rotation in this
+      // file was hand-tuned across many prior fix rounds against the
+      // ORIGINAL direct index-based `posCurve.getPoint(rawProgress)`
+      // mapping — re-parameterizing by arc length moves the camera to a
+      // materially different point at the same scroll progress, which
+      // silently invalidates that tuning. Re-deriving all ~20 board
+      // positions against the arc-length-corrected curve is a real,
+      // separate pass this fix round's budget didn't cover. Landing on
+      // `bandRemap` alone (screenshot-confirmed clean at the same
+      // checkpoint) rather than shipping a visible regression — the
+      // LUT (`arcRemap`) stays exported and ready for that follow-up
+      // pass. See CameraPath.ts's own PULL_BACK=0 note for the sibling
+      // finding on M8's waypoint-pull-back half.
+      const sampleU = bandRemap(p);
+      posCurve.getPoint(sampleU, targetPos);
+      lookCurve.getPoint(sampleU, targetLook);
 
       if (!initialised) {
         camera.position.copy(targetPos);
@@ -861,30 +1058,74 @@ export default function AltitudeCanvas({
       boards.update(p);
       post.render(dt);
 
+      if (!firstFrameRevealed) {
+        firstFrameRevealed = true;
+        requestAnimationFrame(() => {
+          renderer.domElement.style.opacity = "1";
+        });
+      }
+
       frameSampleCount++;
       if (now - frameSampleStart > 2000) {
         const avgFrameMs =
           (now - frameSampleStart) / Math.max(1, frameSampleCount);
-        // Post sheds FIRST, before any content degrades — bloom is the
-        // most expensive thing on screen and the least load-bearing.
-        if (!postReduced && avgFrameMs > 20) {
-          postReduced = true;
-          post.setQuality("reduced");
-          mount.dataset.governor = "post-reduced";
-        }
-        if (!degraded && avgFrameMs > 22) {
-          // Clouds' fade/visibility is a pure function of `p`, recomputed
-          // every frame — freezing mid-transition (update simply skipped
-          // from here on) would strand whatever opacity/visible state it
-          // last had, regardless of how far the user keeps scrolling.
-          // Snap it once to its clean end-of-life state (progress=1 ->
-          // fade 0, mesh hidden) before the degrade ladder starts
-          // skipping its update entirely. Bridges don't need this: their
-          // geometry never depends on `p`, only their pulse shader's
-          // uTime, so freezing them just stops the pulse animation in
-          // place — the documented, intended "packet frozen mid-span".
-          objects[0].update(0, elapsed, 1);
-          degraded = true;
+        sampleWindowIndex++;
+        // Skip the first two windows outright — shader/texture warm-up
+        // jank in the first ~4s is not a sustained-load signal.
+        if (sampleWindowIndex > 2) {
+          // Post sheds FIRST, before any content degrades — bloom is the
+          // most expensive thing on screen and the least load-bearing.
+          if (avgFrameMs > POST_SHED_MS) {
+            postBadStreak++;
+            postGoodStreak = 0;
+          } else if (avgFrameMs < POST_RESTORE_MS) {
+            postGoodStreak++;
+            postBadStreak = 0;
+          } else {
+            postBadStreak = 0;
+            postGoodStreak = 0;
+          }
+          if (!postReduced && postBadStreak >= SHED_STREAK) {
+            postReduced = true;
+            post.setQuality("reduced");
+            mount.dataset.governor = "post-reduced";
+            postBadStreak = 0;
+          } else if (postReduced && postGoodStreak >= RESTORE_STREAK) {
+            postReduced = false;
+            post.setQuality("full");
+            delete mount.dataset.governor;
+            postGoodStreak = 0;
+          }
+
+          if (avgFrameMs > CONTENT_SHED_MS) {
+            contentBadStreak++;
+            contentGoodStreak = 0;
+          } else if (avgFrameMs < CONTENT_RESTORE_MS) {
+            contentGoodStreak++;
+            contentBadStreak = 0;
+          } else {
+            contentBadStreak = 0;
+            contentGoodStreak = 0;
+          }
+          if (!degraded && contentBadStreak >= SHED_STREAK) {
+            // Clouds' fade/visibility is a pure function of `p`,
+            // recomputed every frame — freezing mid-transition (update
+            // simply skipped from here on) would strand whatever
+            // opacity/visible state it last had, regardless of how far
+            // the user keeps scrolling. Snap it once to its clean
+            // end-of-life state (progress=1 -> fade 0, mesh hidden)
+            // before the degrade ladder starts skipping its update
+            // entirely.
+            objects[0].update(0, elapsed, 1);
+            degraded = true;
+            contentBadStreak = 0;
+          } else if (degraded && contentGoodStreak >= RESTORE_STREAK) {
+            // Un-degrade: the next full objects.forEach pass recomputes
+            // clouds' live fade/visibility off the real `p` again, so
+            // nothing needs to be manually restored here beyond the flag.
+            degraded = false;
+            contentGoodStreak = 0;
+          }
         }
         frameSampleStart = now;
         frameSampleCount = 0;

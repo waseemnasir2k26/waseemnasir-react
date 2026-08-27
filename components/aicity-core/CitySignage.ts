@@ -84,6 +84,25 @@ export type SignSpec = {
       hero billboards need more texel density than the default MAX_DIM
       to stay crisp at their larger world-unit size. */
   texDim?: number;
+
+  /* ── OPT-IN per-spec overrides (typography fix round, 2026-08-27) ──
+     None of these are read unless present, so any caller that doesn't
+     set them (every existing spec — Meridian AND every other Altitude
+     board) renders byte-for-byte the same. */
+  /** Backing-plate fill for THIS sign only, overriding the group's
+      shared `plate` option — used by the hero + "How it works" boards,
+      which need a lighter dark-glass plate than the rest of the city's
+      near-black lightbox signage for contrast headroom (typography fix
+      T2). */
+  plateOverride?: string;
+  /** Body-copy colour for THIS sign only, overriding the group's shared
+      `bodyColor`/`color` (typography fix T2). */
+  bodyColorOverride?: string;
+  /** Body font-size as a fraction of plate height, overriding the
+      billboard variant's default 0.044 (typography fix T3 — the "How it
+      works" board's body copy needs to read at ~16-17px-equivalent, not
+      the smaller default that was fine for shorter proof-card bodies). */
+  bodySizeFrac?: number;
 };
 
 export type CitySignageOptions = {
@@ -115,6 +134,26 @@ export type CitySignageOptions = {
   /** Body-copy text colour for billboard-variant signs. Defaults to
       `color` at reduced alpha. No-op for nameplate-variant signs. */
   bodyColor?: string;
+
+  /* ── OPT-IN group-level flags (fix round, 2026-08-27) — each one is a
+     no-op for any existing caller (Meridian) that doesn't set it, so
+     Meridian's rendered output is byte-for-byte unchanged. ── */
+  /** Motion fix M4 — ease the reveal fade with smoothstep instead of a
+      linear ramp. Undefined/false = the original linear ramp
+      (Meridian, and left off by default for everyone). */
+  easedReveal?: boolean;
+  /** Motion fix M4 — a gentle "arrive" scale-up (0.97 -> 1.0) applied to
+      the mesh as it reveals, on top of the opacity fade, so a board
+      settles into place instead of popping. Undefined/false = no
+      transform (Meridian's nameplates never scale). */
+  arriveTransform?: boolean;
+  /** Typography fix T1 — tighten the nameplate headline's glow to a
+      thin ~0.06em rim instead of the original wide height-relative
+      blur. Only affects the plain NAMEPLATE variant (drawSignTexture);
+      the billboard variant's headline glow is tightened unconditionally
+      below since Meridian never reaches that code path. Undefined/false
+      = Meridian's original nameplate glow, unchanged. */
+  tightGlow?: boolean;
 };
 
 export type CitySignageHandle = {
@@ -137,10 +176,24 @@ const MONO_STACK = '"IBM Plex Mono", ui-monospace, "Courier New", monospace';
     unreadable lines. */
 const MIN_SUB_PX = 60;
 
+/** Hex/short-color -> rgba() string at the given alpha. Falls through to
+    the input unmodified if it isn't a recognizable #rrggbb hex (e.g. an
+    already-rgba string), so this never throws on a caller-supplied
+    CSS colour of any form. */
+function withAlpha(color: string, alpha: number): string {
+  const m = /^#([0-9a-f]{6})$/i.exec(color.trim());
+  if (!m) return color;
+  const n = parseInt(m[1], 16);
+  const r = (n >> 16) & 255;
+  const g = (n >> 8) & 255;
+  const b = n & 255;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 function drawSignTexture(
   spec: SignSpec,
   o: Required<Pick<CitySignageOptions, "color" | "accent" | "plate">> &
-    Pick<CitySignageOptions, "border" | "headlineFont">,
+    Pick<CitySignageOptions, "border" | "headlineFont" | "tightGlow">,
 ): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   const w = Math.min(MAX_DIM, Math.round(spec.width * PX_PER_UNIT));
@@ -198,8 +251,20 @@ function drawSignTexture(
   ctx.fillStyle = o.color;
   // A soft glow under the letters so the sign reads as emissive at
   // night without needing a second additive pass.
-  ctx.shadowColor = o.accent;
-  ctx.shadowBlur = Math.max(2, h * 0.02);
+  // TYPOGRAPHY FIX T1 (opt-in via tightGlow, 2026-08-27) — the original
+  // blur scaled off the whole plate HEIGHT (h*0.02), which on a tall
+  // Altitude nameplate read as a wide, ~80%-of-letterform halo rather
+  // than a tight emissive rim. Tightened to ~0.06em (a fraction of the
+  // actual FONT size, not plate height) at reduced alpha, single pass —
+  // Meridian never sets tightGlow so its nameplates render byte-for-byte
+  // unchanged.
+  if (o.tightGlow) {
+    ctx.shadowColor = withAlpha(o.accent, 0.35);
+    ctx.shadowBlur = Math.max(1, fontSize * 0.06);
+  } else {
+    ctx.shadowColor = o.accent;
+    ctx.shadowBlur = Math.max(2, h * 0.02);
+  }
   ctx.font = fontFor(fontSize, 600);
   ctx.fillText(nameText, padX, hasSub ? h * 0.38 : h * 0.5);
   ctx.shadowBlur = 0;
@@ -276,7 +341,11 @@ function drawBillboardTexture(
   const ctx = canvas.getContext("2d");
   if (!ctx) return new THREE.CanvasTexture(canvas);
 
-  ctx.fillStyle = o.plate;
+  // TYPOGRAPHY FIX T2 (per-spec override, 2026-08-27) — the hero +
+  // "How it works" boards need a lighter dark-glass plate for contrast
+  // headroom against their near-white headline; every other board keeps
+  // the group's shared near-opaque lightbox plate.
+  ctx.fillStyle = spec.plateOverride ?? o.plate;
   ctx.fillRect(0, 0, w, h);
 
   ctx.fillStyle = o.accent;
@@ -341,8 +410,14 @@ function drawBillboardTexture(
   }
   ctx.font = fontFor(headSize, 700);
   ctx.fillStyle = o.color;
-  ctx.shadowColor = o.accent;
-  ctx.shadowBlur = Math.max(3, h * 0.018);
+  // TYPOGRAPHY FIX T1 (billboard headline glow, 2026-08-27) — Meridian
+  // never reaches drawBillboardTexture (it never sets eyebrow/body), so
+  // this can tighten unconditionally: was a wide plate-height-relative
+  // blur (h*0.018, full-alpha accent) reading as ~80% of the letterform
+  // wrapped in haze. Now a thin ~0.06em rim at reduced alpha, single
+  // pass — still reads as lit signage, no longer a soft blob.
+  ctx.shadowColor = withAlpha(o.accent, 0.35);
+  ctx.shadowBlur = Math.max(1, headSize * 0.06);
   headLines.slice(0, maxHeadLines).forEach((line) => {
     cursorY += headSize * 0.95;
     ctx.fillText(line, padX, cursorY);
@@ -352,13 +427,19 @@ function drawBillboardTexture(
   cursorY += headSize * 0.3;
 
   if (spec.body) {
-    const bodySize = Math.max(9, h * 0.044);
+    // TYPOGRAPHY FIX T3/T7 (2026-08-27) — base body size raised 0.044 ->
+    // 0.05 (~16-17px-equivalent at this route's typical board sizes,
+    // the general mid-step bump every board gets), with a further
+    // per-spec override (bodySizeFrac) for boards that need MORE room —
+    // the "How it works" board passes 0.06 (+20% over the new 0.05
+    // base) since its longer paragraph reads smallest of any board.
+    const bodySize = Math.max(9, h * (spec.bodySizeFrac ?? 0.05));
     ctx.font = fontFor(bodySize, 400, true);
     const bodyLines = wrapText(ctx, spec.body, usable).slice(
       0,
       spec.maxBodyLines ?? 5,
     );
-    ctx.fillStyle = o.bodyColor;
+    ctx.fillStyle = spec.bodyColorOverride ?? o.bodyColor;
     ctx.globalAlpha = 0.92;
     bodyLines.forEach((line) => {
       cursorY += bodySize * 1.4;
@@ -420,6 +501,9 @@ export function createCitySignage(
     bodyColor = color,
     headlineFont,
     bodyFont,
+    easedReveal = false,
+    arriveTransform = false,
+    tightGlow = false,
   } = opts;
   const drawOpts = {
     color,
@@ -429,6 +513,7 @@ export function createCitySignage(
     bodyColor,
     headlineFont,
     bodyFont,
+    tightGlow,
   };
 
   const group = new THREE.Group();
@@ -442,10 +527,10 @@ export function createCitySignage(
     // Billboard variant (eyebrow/body present) vs the original nameplate
     // layout — every existing caller (Meridian) never sets eyebrow/body,
     // so it always takes the untouched drawSignTexture path below.
-    const tex =
-      spec.eyebrow || spec.body
-        ? drawBillboardTexture(spec, drawOpts)
-        : drawSignTexture(spec, drawOpts);
+    const isBillboard = Boolean(spec.eyebrow || spec.body);
+    const tex = isBillboard
+      ? drawBillboardTexture(spec, drawOpts)
+      : drawSignTexture(spec, drawOpts);
     textures.push(tex);
 
     const geo = new THREE.PlaneGeometry(spec.width, spec.height);
@@ -459,7 +544,14 @@ export function createCitySignage(
       // is mounted on; depthTest stays ON so towers in FRONT still
       // occlude it — that is the whole reason this is a mesh.
       depthWrite: false,
-      fog: true,
+      // MOTION FIX M5 (2026-08-27) — billboard-variant boards (the
+      // content boards, drawn self-lit with their own dark plate) skip
+      // scene fog entirely: they're meant to read as genuinely LIT
+      // signage independent of corridor haze. Plain nameplate signs
+      // (isBillboard=false, including every Meridian sign) keep fog:true
+      // unchanged — they're meant to atmosphere with the facade behind
+      // them.
+      fog: !isBillboard,
       toneMapped: false,
     });
     materials.push(mat);
@@ -487,7 +579,23 @@ export function createCitySignage(
   // fonts are actually ready so the plates carry the real typography.
   let disposed = false;
   if (typeof document !== "undefined" && document.fonts?.ready) {
-    document.fonts.ready.then(() => {
+    // fonts.ready alone is NOT enough: canvas fillText never triggers a
+    // webfont download, and faces with no visible DOM usage stay
+    // "unloaded" forever — the boards then bake the metric fallback
+    // (Arial-like) permanently. Explicitly request every family/weight
+    // the plates draw with, THEN redraw.
+    const famLoads: Promise<unknown>[] = [];
+    const fams = [headlineFont, bodyFont].filter(Boolean) as string[];
+    for (const fam of fams) {
+      for (const wt of [400, 600, 700, 800]) {
+        try {
+          famLoads.push(document.fonts.load(`${wt} 64px ${fam}`));
+        } catch {
+          /* malformed stack — fall through to fonts.ready alone */
+        }
+      }
+    }
+    Promise.allSettled([document.fonts.ready, ...famLoads]).then(() => {
       if (disposed) return;
       specs.forEach((spec, i) => {
         const rec = recs[i];
@@ -507,28 +615,61 @@ export function createCitySignage(
 
   const update = (progress: number) => {
     for (const r of recs) {
-      const revealIn = THREE.MathUtils.clamp(
-        (progress - r.appearAt) / revealSpan,
-        0,
-        1,
-      );
+      // MOTION FIX M4 (opt-in via easedReveal, 2026-08-27) — the linear
+      // ramp made a reveal pop in visibly linearly; smoothstep gives it
+      // an ease-in/ease-out arrival instead. THREE.MathUtils.smoothstep
+      // already clamps its input to [min,max], so this replaces the
+      // clamp+linear-divide pair below rather than wrapping it.
+      // Undefined/false (every existing caller, Meridian included) keeps
+      // the original clamp+linear ramp, byte-for-byte.
+      const revealIn = easedReveal
+        ? THREE.MathUtils.smoothstep(
+            progress,
+            r.appearAt,
+            r.appearAt + revealSpan,
+          )
+        : THREE.MathUtils.clamp((progress - r.appearAt) / revealSpan, 0, 1);
       // hideAfter mirrors the fade-in as a fade-out over the same span —
       // undefined (every caller except the hero-mast boards) leaves
       // revealOut permanently at 1, i.e. no behaviour change.
       const revealOut =
         r.hideAfter === undefined
           ? 1
-          : THREE.MathUtils.clamp(
-              (r.hideAfter + revealSpan - progress) / revealSpan,
-              0,
-              1,
-            );
+          : easedReveal
+            ? // BUG FIX (verify-loop, 2026-08-27) — smoothstep(x, min, max)
+              // requires min < max; passing (hideAfter+span, hideAfter)
+              // inverted was undefined behaviour and pinned every
+              // hideAfter-carrying board (the hero mast) permanently
+              // near-invisible, screenshot-confirmed at the p=0 beat.
+              // 1 - smoothstep(progress, hideAfter, hideAfter+span) is the
+              // correct decreasing-from-1 mirror of the fade-in ramp.
+              1 -
+              THREE.MathUtils.smoothstep(
+                progress,
+                r.hideAfter,
+                r.hideAfter + revealSpan,
+              )
+            : THREE.MathUtils.clamp(
+                (r.hideAfter + revealSpan - progress) / revealSpan,
+                0,
+                1,
+              );
       const reveal = revealIn * revealOut;
       const on = reveal > 0.01;
       if (r.mesh.visible !== on) r.mesh.visible = on;
       if (!on) continue;
       const target = reveal * maxOpacity;
       if (Math.abs(r.mat.opacity - target) > 0.005) r.mat.opacity = target;
+      // MOTION FIX M4 (opt-in via arriveTransform) — a gentle scale-up
+      // (0.97 -> 1.0) tied to the same reveal scalar so a board settles
+      // into place instead of popping fully-sized the instant it clears
+      // the opacity threshold. Undefined/false = mesh.scale is never
+      // touched, staying at its geometry-native (1,1,1) default — no
+      // behaviour change for Meridian or any caller that doesn't opt in.
+      if (arriveTransform) {
+        const s = THREE.MathUtils.lerp(0.97, 1, reveal);
+        if (Math.abs(r.mesh.scale.x - s) > 0.001) r.mesh.scale.setScalar(s);
+      }
     }
   };
 
