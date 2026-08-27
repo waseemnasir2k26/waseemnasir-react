@@ -27,6 +27,9 @@ import {
   DISTRICTS,
   EASE,
 } from "@/components/aicity-altitude/tokens";
+// (PROJECTS is consumed inside AltitudeCanvas.tsx, not here — this file
+// only renders the sr-only/static-mode copy, which stays scoped to the
+// existing 7 scenes per the owner's original scope.)
 
 /* ============================================================
    VARIANT: /v/ai-city-2 — ALTITUDE ZERO

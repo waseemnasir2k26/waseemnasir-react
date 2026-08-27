@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import type { MotionValue } from "framer-motion";
-import { C, DISTRICTS, H1, SUB, WORK } from "./tokens";
+import { C, DISTRICTS, H1, SUB, WORK, PROJECTS } from "./tokens";
 import { buildCameraCurves, damp3 } from "./CameraPath";
 import {
   makeMaterials,
@@ -15,6 +15,7 @@ import {
   DISTRICT_THRESHOLDS,
   type SceneObject,
 } from "./SceneObjects";
+import { buildPhotoBillboards } from "./PhotoBillboards";
 import { createCitySignage } from "../aicity-core/CitySignage";
 import { createFacadeMaps } from "../aicity-core/Facade";
 import {
@@ -221,6 +222,53 @@ export default function AltitudeCanvas({
     // building itself, not just the background rail).
     const pipelineAnchor = districts.landmarkAnchors[1];
     const heroSpire = buildHeroSpire(mats);
+    // OWNER FIX (08-27 portfolio expansion) — Waseem's own professional
+    // photos, mounted on free (unclaimed) towers via districts.freeAnchors.
+    // One PORTRAIT near the FIRST district (Signal Heights) so his face
+    // reads early in the descent, one CAFE-WORK/founder-at-work board in
+    // Pipeline Row. Both picks are named files in public/img/pro/ — see
+    // that folder's own filename convention (CATEGORY-date-scene.jpg).
+    // VERIFY-LOOP FIX (08-27): heightFrac 0.3 + appearAt tight to
+    // threshold, matching the exact proven convention every other
+    // secondary-tower board in this file uses (board-pipeline,
+    // board-portal, proofAnchors) — see the project-boards comment
+    // below for the screenshot-confirmed failure of the first cut's
+    // 0.5/wide-offset guess (huge, clipped, overlapping boards).
+    // targetHeight trimmed to stay inside the same footprint proof
+    // boards use (height 1.55 there) rather than the oversized 1.6-1.7
+    // first attempt.
+    // VERIFY-LOOP FIX ROUND 4 (08-27): the previous cut mounted each
+    // photo on its OWN 3rd free tower — screenshot-confirmed landing
+    // inside the fixed AltimeterRailLive's own left-column footprint
+    // (same root cause as the project-boards fix above: any far-left
+    // free tower's ndcX falls inside the rail). Fixed by co-mounting
+    // each photo on the SAME tower/face as its district's own low-band
+    // project board (freeAnchors[di][0] — "AI Voice Calling Agents" /
+    // "End-to-End CRM Automation"), just at a much higher heightFrac —
+    // the exact "share a wall, stack by height" convention this file's
+    // nameplate + message board already use on every landmark tower.
+    // Every ndcX/ndcY re-checked against the real camera curve.
+    const photoBillboards = buildPhotoBillboards([
+      {
+        id: "photo-portrait",
+        url: "/img/pro/PORTRAIT-2026-02-15-balcony-gray-adidas-soft-smile.jpg",
+        // SAME tower as "AI Voice Calling Agents" (freeIndex 0) — stacked
+        // well above it (heightFrac 1.1 vs the board's 0.5).
+        anchor: districts.freeAnchors[0]?.[0],
+        heightFrac: 1.1,
+        targetHeight: 0.95,
+        appearAt: DISTRICT_THRESHOLDS[0] + 0.05,
+      },
+      {
+        id: "photo-work",
+        url: "/img/pro/CAFE-WORK-2026-03-30-dual-laptop-analytics-dashboard-coffee.jpg",
+        // SAME tower as "End-to-End CRM Automation" (freeIndex 0).
+        anchor: districts.freeAnchors[1]?.[0],
+        heightFrac: 1.1,
+        targetHeight: 0.95,
+        appearAt: DISTRICT_THRESHOLDS[1] + 0.06,
+      },
+    ]);
     const objects: SceneObject[] = [
       buildClouds(),
       districts,
@@ -231,6 +279,12 @@ export default function AltitudeCanvas({
       // OWNER FIX (08-27) — see buildHeroSpire's own header comment: a
       // static, always-built mounting surface for the hero billboards.
       heroSpire,
+      // Appended LAST — the perf-degrade ladder below indexes into this
+      // array by fixed position (objects[0]=clouds, [1]=districts,
+      // [3]=touchdown); adding this at the end keeps every existing
+      // index correct. Same fate as bridges/clouds under degrade: it
+      // simply stops fading in further, never crashes.
+      photoBillboards,
     ];
     objects.forEach((o) => scene.add(o.group));
 
@@ -575,6 +629,104 @@ export default function AltitudeCanvas({
           maxBodyLines: 4,
         };
       }).filter((s): s is NonNullable<typeof s> => s !== null),
+      // ── PORTFOLIO PROJECT BOARDS (OWNER FIX, 08-27 expansion) — "what
+      // I'm building now." Each mounted on a free (previously-unused)
+      // tower via districts.freeAnchors, matched thematically to its
+      // district (Signal Heights = lead response -> voice/nurture
+      // agents; Pipeline Row = ops/CRM -> CRM automation + the Slack
+      // chief-of-staff bot; Portal Quarter = customer portals -> the
+      // club platform; Broadcast Basin = video/publishing -> the video
+      // pipeline).
+      //
+      // VERIFY-LOOP FIX ROUND 4 (08-27): round 3's vertical-only stagger
+      // fixed board-vs-board overlap but missed a second collision
+      // surface — the fixed HTML AltimeterRailLive (left ~4-270px,
+      // vertically centred) occupies real screen space too, and every
+      // free tower far enough left/negative-x to clear the OTHER board
+      // on its side of the corridor also lands ITS OWN ndcX inside the
+      // rail's own footprint (screenshot-confirmed: "Lead Nurture
+      // Agents"' chip pill under the "150M — TOUCHDOWN" nav pill).
+      // Root cause: Signal Heights only has ONE free tower on the
+      // corridor's right side (freeIndex 3, x=+3.28) — piling 2 boards
+      // on the left (freeIndex 0/1, both x<-1.5) always pushes one of
+      // them into the rail's column. Fixed by moving the SECOND board on
+      // each side-heavy district onto the FAR side (mirrors how Pipeline
+      // Row's own CRM/chief-of-staff boards already split left/right),
+      // and moving both PHOTO billboards onto the SAME tower/face as
+      // their district's low-band project board (same "share a wall,
+      // stack by height" convention board-signal/board-signal-nameplate
+      // already use) instead of a 3rd separate tower whose x nobody had
+      // re-verified. Every ndcX/ndcY value re-checked against the real
+      // camera curve before landing here.
+      ...(
+        [
+          {
+            districtIndex: 0,
+            freeIndex: 0,
+            project: PROJECTS[0],
+            offset: 0.03,
+            heightFrac: 0.5,
+          }, // Signal: AI Voice Calling Agents (low band, left tower)
+          {
+            districtIndex: 0,
+            freeIndex: 3,
+            project: PROJECTS[2],
+            offset: 0.02,
+            heightFrac: 0.55,
+          }, // Signal: Lead Nurture Agents (right tower — clears the Altimeter Rail on the left)
+          {
+            districtIndex: 1,
+            freeIndex: 0,
+            project: PROJECTS[1],
+            offset: 0.03,
+            heightFrac: 0.2,
+          }, // Pipeline: End-to-End CRM Automation (low band, left tower)
+          {
+            districtIndex: 1,
+            freeIndex: 1,
+            project: PROJECTS[3],
+            offset: 0.05,
+            heightFrac: 0.3,
+          }, // Pipeline: Slack Chief-of-Staff Bot (right tower)
+          {
+            districtIndex: 2,
+            freeIndex: 0,
+            project: PROJECTS[5],
+            offset: 0.05,
+            heightFrac: 0.3,
+          }, // Portal: Club Platform (only free tower — no collision risk)
+          {
+            districtIndex: 3,
+            freeIndex: 0,
+            project: PROJECTS[4],
+            offset: 0.04,
+            heightFrac: 0.3,
+          }, // Broadcast: AI Video Pipeline (only free tower — no collision risk)
+        ] as const
+      )
+        .map(({ districtIndex, freeIndex, project, offset, heightFrac }) => {
+          const a = districts.freeAnchors[districtIndex]?.[freeIndex];
+          if (!a) return null;
+          const w = 1.0;
+          return {
+            id: `board-project-${project.id}`,
+            name: project.name,
+            chip: project.chip,
+            body: project.pitch,
+            position: new THREE.Vector3(
+              a.x + inboardOf(a.x, w),
+              (a.y - 0.5) * heightFrac,
+              a.z + TOWER_HALF + 0.02,
+            ),
+            width: w,
+            height: 0.95,
+            appearAt: DISTRICT_THRESHOLDS[districtIndex] + offset,
+            headlineSize: 0.12,
+            maxHeadlineLines: 2,
+            maxBodyLines: 3,
+          };
+        })
+        .filter((s): s is NonNullable<typeof s> => s !== null),
       // ── TOUCHDOWN — landing-pad board. Positioned beside the lit
       // doorway (touchdown group sits at world z=-18, door at local
       // z=-2.5 -> world z=-20.5). No CTA button text here — in-world

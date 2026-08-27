@@ -291,6 +291,13 @@ export function buildDescentDistricts(mats: Mats): SceneObject & {
       instanced towers so a proof board is always mounted on an
       actual building face, never floating in empty space. */
   proofAnchors: LandmarkAnchor[];
+  /** OWNER FIX (08-27 portfolio expansion) — every tower NOT already
+      carrying a nameplate, message board, or proof board: one array per
+      district (best-scoring — tall + near corridor centre, same formula
+      as landmarkAnchors — first), so a project board or photo billboard
+      always mounts on a real, unclaimed building face and never
+      double-books a wall another board already owns. */
+  freeAnchors: LandmarkAnchor[][];
 } {
   const t = trackDisposables();
   const group = new THREE.Group();
@@ -496,22 +503,41 @@ export function buildDescentDistricts(mats: Mats): SceneObject & {
   // copy both cut off at the frame edge. Tightened to 2.4 so all 4 proof
   // anchors stay inside the camera's own narrow corridor path.
   const broadcastLandmarkTower = landmarkTowers[3];
-  const proofAnchors: LandmarkAnchor[] = towers
+  const proofTowers = towers
     .filter((r) => r.districtIndex === 3 && r !== broadcastLandmarkTower)
     .map((r) => ({ r, score: r.h - Math.abs(r.x) * 2.4 }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 4)
-    .map(({ r }) => ({ x: r.x, y: r.h + 0.5, z: r.z }))
+    .map(({ r }) => r);
+  const proofTowerSet = new Set(proofTowers);
+  const proofAnchors: LandmarkAnchor[] = proofTowers
+    .map((r) => ({ x: r.x, y: r.h + 0.5, z: r.z }))
     // Most-central tower FIRST: proof boards reveal in array order, and
     // the first one is on screen at the settled 75% stop — an outer-x
     // tower there sits half off-frame (screenshot-confirmed), while the
     // later boards get more forgiving, lower camera angles.
     .sort((p, q) => Math.abs(p.x) - Math.abs(q.x));
 
+  // FREE ANCHORS (08-27 portfolio expansion) — see the field's own doc
+  // comment above. Excludes each district's own landmark tower, plus
+  // (Broadcast Basin only) the 4 towers proofAnchors already claimed.
+  const freeAnchors: LandmarkAnchor[][] = DISTRICTS.map((_d, di) => {
+    const landmark = landmarkTowers[di];
+    return towers
+      .filter(
+        (r) =>
+          r.districtIndex === di && r !== landmark && !proofTowerSet.has(r),
+      )
+      .map((r) => ({ r, score: r.h - Math.abs(r.x) * 1.6 }))
+      .sort((a, b) => b.score - a.score)
+      .map(({ r }) => ({ x: r.x, y: r.h + 0.5, z: r.z }));
+  });
+
   return {
     group,
     landmarkAnchors,
     proofAnchors,
+    freeAnchors,
     update: (_dt, elapsed, progress) => {
       let anyDirty = false;
       let anyTowerDirty = false;

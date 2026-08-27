@@ -135,7 +135,7 @@ export const DISTRICTS = [
     altLabel: "1200–800M",
     survey: "DISTRICT 02 · PIPELINE ROW · ALT 1200–800M",
     landmark: "Pipeline Row HQ",
-    pitch: "Ops & CRM follow-up: first touch to close, no human relay.",
+    pitch: "Ops & CRM follow-up: first touch to close, zero manual relay.",
   },
   {
     id: "portal",
@@ -158,3 +158,53 @@ export const DISTRICTS = [
 ] as const;
 
 export const EASE = [0.16, 1, 0.3, 1] as const;
+
+/* PORTFOLIO PROJECT BOARDS — "what I'm building now" (owner request,
+   08-27 expansion pass). Honest status chips: never say LIVE unless the
+   thing is actually shipped and listed so here — see TRUTH-LOCK.
+   Mounted on free (previously-unused) towers across the descent
+   districts by AltitudeCanvas.tsx, using SceneObjects.ts'
+   `freeAnchors` pool. */
+export const PROJECTS = [
+  {
+    id: "voice-agents",
+    name: "AI Voice Calling Agents",
+    chip: "IN BUILD",
+    pitch:
+      "Phone agents that answer, qualify and book — an AI front desk for service businesses.",
+  },
+  {
+    id: "crm-automation",
+    name: "End-to-End CRM Automation",
+    chip: "CLIENT WORK",
+    pitch:
+      "GoHighLevel pipelines wired to n8n — intake to invoice without manual relay.",
+  },
+  {
+    id: "lead-nurture",
+    name: "Lead Nurture Agents",
+    chip: "RUNNING",
+    pitch:
+      "Cold outreach + follow-up engine on a private VPS — every reply triaged, every lead worked.",
+  },
+  {
+    id: "chief-of-staff",
+    name: "Slack Chief-of-Staff Bot",
+    chip: "IN BUILD",
+    pitch:
+      "A personal AI chief of staff living in Slack — tasks, notes and decisions on command.",
+  },
+  {
+    id: "video-pipeline",
+    name: "AI Video Pipeline",
+    chip: "SHIPPING",
+    pitch: "Whole videos edited by Claude Code — cut, captioned, published.",
+  },
+  {
+    id: "club-platform",
+    name: "Club Platform: balibadminton.com",
+    chip: "LIVE",
+    pitch:
+      "Community site with shop, jersey builder and an AI assistant — built end to end.",
+  },
+] as const;
