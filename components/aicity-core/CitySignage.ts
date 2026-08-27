@@ -52,6 +52,13 @@ export type CitySignageOptions = {
   revealSpan?: number;
   /** Max opacity — signage should sit just under full white. */
   maxOpacity?: number;
+  /** Opt-in hairline border drawn around the whole plate edge, so the
+      sign reads as a physical lightbox bolted to the facade rather than
+      a decal — a full rectangle stroke, on top of the existing left-edge
+      accent rule. Undefined (default) keeps the old left-rule-only look,
+      i.e. this is a no-op for any caller that doesn't pass it (Meridian
+      never does — its rendered output is unchanged). */
+  border?: string;
 };
 
 export type CitySignageHandle = {
@@ -73,7 +80,8 @@ const MIN_SUB_PX = 60;
 
 function drawSignTexture(
   spec: SignSpec,
-  o: Required<Pick<CitySignageOptions, "color" | "accent" | "plate">>,
+  o: Required<Pick<CitySignageOptions, "color" | "accent" | "plate">> &
+    Pick<CitySignageOptions, "border">,
 ): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   const w = Math.min(MAX_DIM, Math.round(spec.width * PX_PER_UNIT));
@@ -93,6 +101,20 @@ function drawSignTexture(
   // than a decal, and gives the eye an entry point at small sizes.
   ctx.fillStyle = o.accent;
   ctx.fillRect(0, 0, Math.max(2, w * 0.012), h);
+
+  // Opt-in hairline border around the whole plate — closes the box so
+  // the sign reads as a physical lightbox casing (bolted signage) rather
+  // than a name floating in front of the facade. Inset by half its own
+  // width so the stroke stays fully inside the plate's own texture (a
+  // stroke centred on the edge would bleed half its width off-canvas).
+  if (o.border) {
+    const lw = Math.max(2, w * 0.01);
+    ctx.strokeStyle = o.border;
+    ctx.lineWidth = lw;
+    ctx.globalAlpha = 0.85;
+    ctx.strokeRect(lw / 2, lw / 2, w - lw, h - lw);
+    ctx.globalAlpha = 1;
+  }
 
   const hasSub = Boolean(spec.sub) && h >= MIN_SUB_PX;
   const padX = w * 0.06;
@@ -154,6 +176,7 @@ export function createCitySignage(
     plate = "rgba(4,20,18,0.92)",
     revealSpan = 0.05,
     maxOpacity = 0.94,
+    border,
   } = opts;
 
   const group = new THREE.Group();
@@ -164,7 +187,7 @@ export function createCitySignage(
   const materials: THREE.Material[] = [];
 
   const recs = specs.map((spec) => {
-    const tex = drawSignTexture(spec, { color, accent, plate });
+    const tex = drawSignTexture(spec, { color, accent, plate, border });
     textures.push(tex);
 
     const geo = new THREE.PlaneGeometry(spec.width, spec.height);
