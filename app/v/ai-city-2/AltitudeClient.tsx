@@ -16,6 +16,7 @@ import {
   JetBrains_Mono,
 } from "next/font/google";
 import Magnetic from "@/components/Magnetic";
+import SmoothScroll from "@/components/SmoothScroll";
 import {
   C,
   CTA_URL,
@@ -131,6 +132,12 @@ export default function AltitudeClient() {
 
   return (
     <>
+      {/* Owner-jank fix (08-28): this route never had a smooth-scroll
+          layer — native wheel steps hit scrollTop directly, and no
+          amount of downstream damping makes stepped input read as
+          glide. Same Lenis component the homepage uses; 3D mode only
+          (static/reduced-motion paths keep native scroll). */}
+      {is3D ? <SmoothScroll /> : null}
       <style
         dangerouslySetInnerHTML={{
           __html: `

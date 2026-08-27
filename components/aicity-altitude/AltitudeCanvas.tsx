@@ -907,15 +907,20 @@ export default function AltitudeCanvas({
     // board wall instead of sweeping past it at a constant rate tied
     // 1:1 to scroll pixels.
     const HOLD_BANDS = 7; // matches SCENES.length in AltitudeClient.tsx
+    // Owner-jank fix (08-28): the mid-band hold was a DEAD-FLAT plateau —
+    // wheel input produced zero camera motion for 20% of every band,
+    // which against native scroll reads as "the page stuttered/hung",
+    // not as a cinematic pause. The hold is now a SLOW ZONE (0.6x of
+    // average slope), never zero — always some visual response to input.
     const holdEase = (local: number): number => {
       const t = THREE.MathUtils.clamp(local, 0, 1);
       if (t <= 0.4) {
-        return THREE.MathUtils.smoothstep(t, 0, 0.4) * 0.5;
+        return THREE.MathUtils.smoothstep(t, 0, 0.4) * 0.44;
       }
       if (t <= 0.6) {
-        return 0.5;
+        return 0.44 + ((t - 0.4) / 0.2) * 0.12;
       }
-      return 0.5 + THREE.MathUtils.smoothstep(t, 0.6, 1) * 0.5;
+      return 0.56 + THREE.MathUtils.smoothstep(t, 0.6, 1) * 0.44;
     };
     const bandRemap = (t: number): number => {
       const seg = 1 / HOLD_BANDS;
