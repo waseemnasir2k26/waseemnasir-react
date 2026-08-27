@@ -189,7 +189,16 @@ export default function AltitudeClient() {
         </div>
 
         <AltitudeFooter />
-        <MobileCTA />
+        {/* OWNER FIX (08-27) — with narrative Scrim cards (including every
+            section's own CTA button) sr-only in 3D mode, "in-world text
+            can't be clicked" means the descent needs its own always-there
+            clickable prompt beyond the fixed nav button. One small pill,
+            bottom-center, every breakpoint — appears once the hero has
+            started scrolling past (progress > ~0.05) and stays up for the
+            rest of the descent, nav + pill together satisfying "clickable
+            CTA present at every stop." Static mode keeps its original
+            mobile-only bottom bar (MobileCTA), unchanged. */}
+        {is3D ? <DescentCTAPill progress={scrollYProgress} /> : <MobileCTA />}
       </main>
     </>
   );
@@ -716,26 +725,41 @@ function DistrictHeader({ survey }: { survey: string }) {
 
 /* ============================================================
    SCENE CONTENT — identical copy in both modes.
+
+   OWNER FIX (08-27, diegetic-copy rebuild): the visible floating
+   Scrim cards were the thing the owner asked to remove from 3D mode
+   — narrative copy now lives on in-world billboard signage (see
+   AltitudeCanvas.tsx's `boards`) instead. Static mode is UNCHANGED
+   (still renders the same visible cards it always has — this
+   rebuild is 3D-mode only, per scope). In 3D mode the exact same
+   scene components still render (same text, same DOM structure,
+   zero copy duplicated/retyped anywhere) but wrapped `sr-only` —
+   visually hidden, present for screen readers and for SEO crawlers
+   that don't execute the WebGL canvas, and inert-toggled by
+   PinnedScene exactly like the old visible cards were.
    ============================================================ */
 function sceneContent(id: SceneId, surveyed: SceneId[], is3D: boolean) {
-  switch (id) {
-    case "sky":
-      return <SkyScene is3D={is3D} />;
-    case "punch":
-      return <PunchScene is3D={is3D} />;
-    case "signal":
-      return <SignalScene is3D={is3D} />;
-    case "pipeline":
-      return <PipelineScene is3D={is3D} />;
-    case "portal":
-      return <PortalScene is3D={is3D} />;
-    case "broadcast":
-      return <BroadcastScene is3D={is3D} />;
-    case "touchdown":
-      return <TouchdownScene surveyed={surveyed} />;
-    default:
-      return null;
-  }
+  const scene = (() => {
+    switch (id) {
+      case "sky":
+        return <SkyScene is3D={is3D} />;
+      case "punch":
+        return <PunchScene is3D={is3D} />;
+      case "signal":
+        return <SignalScene is3D={is3D} />;
+      case "pipeline":
+        return <PipelineScene is3D={is3D} />;
+      case "portal":
+        return <PortalScene is3D={is3D} />;
+      case "broadcast":
+        return <BroadcastScene is3D={is3D} />;
+      case "touchdown":
+        return <TouchdownScene surveyed={surveyed} />;
+      default:
+        return null;
+    }
+  })();
+  return is3D ? <div className="sr-only">{scene}</div> : scene;
 }
 
 function SkyScene({ is3D }: { is3D: boolean }) {
@@ -797,9 +821,18 @@ function SkyScene({ is3D }: { is3D: boolean }) {
               See the city ↓
             </a>
           </div>
-          <div className="mt-6">
-            <Mono color={C.jadeBright}>ALT 2400M · V 0.0 M/S</Mono>
-          </div>
+          {/* OWNER FIX (08-27) — "should not [be] coming on top of website,
+              better place them on those buildings": deleted from the 3D
+              path (the left Altimeter Rail already carries a live altitude
+              readout there). Kept in the static/reduced-motion fallback,
+              which has no rail at all — see AltimeterRail's null return
+              when progress is null — so static-mode users still get this
+              one decorative readout somewhere on the page. */}
+          {!is3D && (
+            <div className="mt-6">
+              <Mono color={C.jadeBright}>ALT 2400M · V 0.0 M/S</Mono>
+            </div>
+          )}
         </Scrim>
       </div>
       {!is3D && (
@@ -1210,6 +1243,42 @@ function AltitudeFooter() {
         </a>
       </Mono>
     </footer>
+  );
+}
+
+/** OWNER FIX (08-27) — the one clickable CTA that survives the switch to
+    in-world signage during the 3D descent, besides the fixed nav button.
+    Pure MotionValue-driven opacity/pointer-events (no React re-render on
+    scroll) — same pattern as AltimeterRailLive's altText above. */
+function DescentCTAPill({ progress }: { progress: MotionValue<number> }) {
+  const opacity = useTransform(progress, [0, 0.035, 0.055], [0, 0, 1]);
+  const pe = useTransform(progress, (p) =>
+    p > 0.05 ? "auto" : "none",
+  ) as MotionValue<string>;
+  return (
+    <motion.div
+      className="fixed inset-x-0 bottom-5 z-40 flex justify-center px-4"
+      style={{ opacity, pointerEvents: pe }}
+    >
+      <Magnetic>
+        <Link
+          href={CTA_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="altitude-cta inline-flex items-center rounded-full font-semibold"
+          style={{
+            background: C.jade,
+            color: "#fff",
+            fontSize: "0.85rem",
+            padding: "0.65rem 1.35rem",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+            border: `1px solid ${C.jadeBright}`,
+          }}
+        >
+          {CTA_LABEL}
+        </Link>
+      </Magnetic>
+    </motion.div>
   );
 }
 

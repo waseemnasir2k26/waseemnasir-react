@@ -37,8 +37,53 @@ export type SignSpec = {
   height: number;
   /** Y-rotation so the sign lies flat on the facade it belongs to. */
   rotationY?: number;
+  /** OPT-IN (Altitude Zero hero billboards, 2026-08-27) — X-rotation so
+      a free-standing plate can be tilted to face a camera that is
+      itself pitched down/up, instead of always standing dead vertical.
+      No-op for every existing caller (Meridian, district nameplates)
+      since they never set it. */
+  rotationX?: number;
   /** Scroll progress at which the sign lights up. */
   appearAt: number;
+  /** OPT-IN (Altitude Zero hero billboards, 2026-08-27 fix round) —
+      scroll progress at which a free-standing plate starts fading back
+      OUT (mirrors appearAt's fade-in, same revealSpan). For a plate
+      mounted close to the camera's own path early in the descent, world
+      distance shrinks fast — left un-bounded it grows to fill/overrun
+      the frame a few scroll-percent after its intended stop
+      (screenshot-confirmed: the hero-pitch board at the 15% stop,
+      oversized and clipped past the left edge). Undefined (default)
+      keeps a sign lit forever once revealed, i.e. a no-op for every
+      existing caller (Meridian, district nameplates, every other
+      Altitude board). */
+  hideAfter?: number;
+
+  /* ── OPT-IN "billboard" fields (Altitude Zero, 2026-08-27) ──
+     None of these are read unless present, and their presence is what
+     switches drawSignTexture into the billboard layout instead of the
+     original nameplate layout below — a spec with none of them set
+     (every existing Meridian call) renders byte-for-byte the same as
+     before. See drawBillboardTexture(). */
+  /** Small eyebrow line above the headline (e.g. a category tag). */
+  eyebrow?: string;
+  /** Paragraph of body copy under the headline — auto word-wrapped to
+      fit the plate width, capped at maxBodyLines. */
+  body?: string;
+  /** Small status pill drawn top-right (e.g. "DELIVERED"/"LIVE"/"DEMO"). */
+  chip?: string;
+  /** Headline font size as a fraction of plate height. Default 0.16. */
+  headlineSize?: number;
+  /** Max lines the headline is allowed to wrap to before shrinking
+      further. Default 3. */
+  maxHeadlineLines?: number;
+  /** Max body-copy lines rendered (extra lines are dropped, never
+      truncated mid-word — callers should pre-shorten copy that doesn't
+      fit rather than rely on silent clipping). Default 5. */
+  maxBodyLines?: number;
+  /** Per-sign override of the texture's max pixel dimension — some
+      hero billboards need more texel density than the default MAX_DIM
+      to stay crisp at their larger world-unit size. */
+  texDim?: number;
 };
 
 export type CitySignageOptions = {
@@ -59,6 +104,9 @@ export type CitySignageOptions = {
       i.e. this is a no-op for any caller that doesn't pass it (Meridian
       never does — its rendered output is unchanged). */
   border?: string;
+  /** Body-copy text colour for billboard-variant signs. Defaults to
+      `color` at reduced alpha. No-op for nameplate-variant signs. */
+  bodyColor?: string;
 };
 
 export type CitySignageHandle = {
@@ -166,6 +214,183 @@ function drawSignTexture(
   return tex;
 }
 
+/** Greedy word-wrap: splits `text` into lines that each measure within
+    `maxWidth` under whatever font is currently set on `ctx`. A single
+    word wider than maxWidth is placed on its own line rather than
+    split mid-word (this module never truncates a syllable). */
+function wrapText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+): string[] {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let cur = "";
+  for (const word of words) {
+    const test = cur ? `${cur} ${word}` : word;
+    if (cur && ctx.measureText(test).width > maxWidth) {
+      lines.push(cur);
+      cur = word;
+    } else {
+      cur = test;
+    }
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+/* ============================================================
+   BILLBOARD VARIANT — larger multi-line message plate: eyebrow +
+   wrapped headline + wrapped body copy + an optional status chip.
+   Only entered when a SignSpec carries `eyebrow` and/or `body`
+   (drawSignTexture's plain nameplate layout above is untouched and
+   stays the default for every spec that doesn't). Same backing-plate
+   + accent-rule + border treatment as the nameplate variant, so a
+   billboard still reads as the same family of mounted signage.
+   ============================================================ */
+function drawBillboardTexture(
+  spec: SignSpec,
+  o: Required<
+    Pick<CitySignageOptions, "color" | "accent" | "plate" | "bodyColor">
+  > &
+    Pick<CitySignageOptions, "border">,
+): THREE.CanvasTexture {
+  const canvas = document.createElement("canvas");
+  const dim = spec.texDim ?? MAX_DIM;
+  const w = Math.min(dim, Math.round(spec.width * PX_PER_UNIT));
+  const h = Math.min(dim, Math.round(spec.height * PX_PER_UNIT));
+  canvas.width = w;
+  canvas.height = h;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return new THREE.CanvasTexture(canvas);
+
+  ctx.fillStyle = o.plate;
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.fillStyle = o.accent;
+  ctx.fillRect(0, 0, Math.max(2, w * 0.012), h);
+
+  if (o.border) {
+    const lw = Math.max(2, w * 0.008);
+    ctx.strokeStyle = o.border;
+    ctx.lineWidth = lw;
+    ctx.globalAlpha = 0.85;
+    ctx.strokeRect(lw / 2, lw / 2, w - lw, h - lw);
+    ctx.globalAlpha = 1;
+  }
+
+  const fontFor = (size: number, weight: number) =>
+    `${weight} ${size}px "IBM Plex Mono", ui-monospace, "Courier New", monospace`;
+
+  const padX = w * 0.055;
+  const usable = w - padX * 2;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+
+  let cursorY = h * 0.16;
+
+  // Status chip — measured first (top-right) so the eyebrow/headline
+  // width budget can steer clear of it, but drawn last so it always
+  // sits on top of any text that runs long.
+  let chipReserve = 0;
+  if (spec.chip) {
+    ctx.font = fontFor(Math.max(10, h * 0.05), 600);
+    chipReserve = ctx.measureText(spec.chip.toUpperCase()).width + h * 0.14;
+  }
+
+  if (spec.eyebrow) {
+    const eyebrowSize = Math.max(9, h * 0.052);
+    ctx.font = fontFor(eyebrowSize, 600);
+    ctx.fillStyle = o.accent;
+    ctx.globalAlpha = 0.95;
+    ctx.fillText(
+      spec.eyebrow.toUpperCase(),
+      padX,
+      cursorY,
+      usable - chipReserve,
+    );
+    ctx.globalAlpha = 1;
+    cursorY += eyebrowSize * 1.9;
+  }
+
+  // Headline — wrap + shrink until it fits within maxHeadlineLines.
+  let headSize = Math.max(12, h * (spec.headlineSize ?? 0.16));
+  const maxHeadLines = spec.maxHeadlineLines ?? 3;
+  let headLines: string[] = [spec.name];
+  for (let i = 0; i < 10; i++) {
+    ctx.font = fontFor(headSize, 700);
+    headLines = wrapText(ctx, spec.name, usable);
+    if (headLines.length <= maxHeadLines) break;
+    headSize *= 0.9;
+  }
+  ctx.font = fontFor(headSize, 700);
+  ctx.fillStyle = o.color;
+  ctx.shadowColor = o.accent;
+  ctx.shadowBlur = Math.max(3, h * 0.018);
+  headLines.slice(0, maxHeadLines).forEach((line) => {
+    cursorY += headSize * 0.95;
+    ctx.fillText(line, padX, cursorY);
+    cursorY += headSize * 0.28;
+  });
+  ctx.shadowBlur = 0;
+  cursorY += headSize * 0.3;
+
+  if (spec.body) {
+    const bodySize = Math.max(9, h * 0.044);
+    ctx.font = fontFor(bodySize, 400);
+    const bodyLines = wrapText(ctx, spec.body, usable).slice(
+      0,
+      spec.maxBodyLines ?? 5,
+    );
+    ctx.fillStyle = o.bodyColor;
+    ctx.globalAlpha = 0.92;
+    bodyLines.forEach((line) => {
+      cursorY += bodySize * 1.4;
+      ctx.fillText(line, padX, cursorY);
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  if (spec.chip) {
+    const chipText = spec.chip.toUpperCase();
+    const chipFontSize = Math.max(10, h * 0.05);
+    ctx.font = fontFor(chipFontSize, 600);
+    const tw = ctx.measureText(chipText).width;
+    const chipPadX = h * 0.045;
+    const chipW = tw + chipPadX * 2;
+    const chipH = h * 0.1;
+    const chipX = w - padX - chipW;
+    const chipY = h * 0.09;
+    const draw = () => {
+      if (typeof ctx.roundRect === "function") {
+        ctx.beginPath();
+        ctx.roundRect(chipX, chipY, chipW, chipH, chipH / 2);
+      } else {
+        ctx.beginPath();
+        ctx.rect(chipX, chipY, chipW, chipH);
+      }
+    };
+    ctx.fillStyle = o.accent;
+    ctx.globalAlpha = 0.18;
+    draw();
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = o.accent;
+    ctx.lineWidth = Math.max(1, h * 0.0035);
+    draw();
+    ctx.stroke();
+    ctx.fillStyle = o.accent;
+    ctx.textBaseline = "middle";
+    ctx.fillText(chipText, chipX + chipPadX, chipY + chipH / 2 + chipH * 0.03);
+  }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.anisotropy = 4;
+  tex.needsUpdate = true;
+  return tex;
+}
+
 export function createCitySignage(
   specs: SignSpec[],
   opts: CitySignageOptions = {},
@@ -177,6 +402,7 @@ export function createCitySignage(
     revealSpan = 0.05,
     maxOpacity = 0.94,
     border,
+    bodyColor = color,
   } = opts;
 
   const group = new THREE.Group();
@@ -187,7 +413,19 @@ export function createCitySignage(
   const materials: THREE.Material[] = [];
 
   const recs = specs.map((spec) => {
-    const tex = drawSignTexture(spec, { color, accent, plate, border });
+    // Billboard variant (eyebrow/body present) vs the original nameplate
+    // layout — every existing caller (Meridian) never sets eyebrow/body,
+    // so it always takes the untouched drawSignTexture path below.
+    const tex =
+      spec.eyebrow || spec.body
+        ? drawBillboardTexture(spec, {
+            color,
+            accent,
+            plate,
+            border,
+            bodyColor,
+          })
+        : drawSignTexture(spec, { color, accent, plate, border });
     textures.push(tex);
 
     const geo = new THREE.PlaneGeometry(spec.width, spec.height);
@@ -209,21 +447,39 @@ export function createCitySignage(
     const mesh = new THREE.Mesh(geo, mat);
     mesh.position.copy(spec.position);
     if (spec.rotationY) mesh.rotation.y = spec.rotationY;
+    if (spec.rotationX) mesh.rotation.x = spec.rotationX;
     // Hidden until its reveal — an invisible mesh still costs a draw
     // call, so kill visibility outright rather than just alpha 0.
     mesh.visible = false;
     group.add(mesh);
 
-    return { mesh, mat, appearAt: spec.appearAt };
+    return {
+      mesh,
+      mat,
+      appearAt: spec.appearAt,
+      hideAfter: spec.hideAfter,
+    };
   });
 
   const update = (progress: number) => {
     for (const r of recs) {
-      const reveal = THREE.MathUtils.clamp(
+      const revealIn = THREE.MathUtils.clamp(
         (progress - r.appearAt) / revealSpan,
         0,
         1,
       );
+      // hideAfter mirrors the fade-in as a fade-out over the same span —
+      // undefined (every caller except the hero-mast boards) leaves
+      // revealOut permanently at 1, i.e. no behaviour change.
+      const revealOut =
+        r.hideAfter === undefined
+          ? 1
+          : THREE.MathUtils.clamp(
+              (r.hideAfter + revealSpan - progress) / revealSpan,
+              0,
+              1,
+            );
+      const reveal = revealIn * revealOut;
       const on = reveal > 0.01;
       if (r.mesh.visible !== on) r.mesh.visible = on;
       if (!on) continue;

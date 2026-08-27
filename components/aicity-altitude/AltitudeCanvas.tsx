@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import type { MotionValue } from "framer-motion";
-import { C, DISTRICTS } from "./tokens";
+import { C, DISTRICTS, H1, SUB, WORK } from "./tokens";
 import { buildCameraCurves, damp3 } from "./CameraPath";
 import {
   makeMaterials,
@@ -11,6 +11,7 @@ import {
   buildBridges,
   buildTouchdown,
   buildEarlyMist,
+  buildHeroSpire,
   DISTRICT_THRESHOLDS,
   type SceneObject,
 } from "./SceneObjects";
@@ -205,6 +206,7 @@ export default function AltitudeCanvas({
     // that IS a connection" needs a visible connection motif on the hero
     // building itself, not just the background rail).
     const pipelineAnchor = districts.landmarkAnchors[1];
+    const heroSpire = buildHeroSpire(mats);
     const objects: SceneObject[] = [
       buildClouds(),
       districts,
@@ -212,6 +214,9 @@ export default function AltitudeCanvas({
       buildTouchdown(mats),
       // OWNER FIX (08-27) — see buildEarlyMist's own header comment.
       buildEarlyMist(),
+      // OWNER FIX (08-27) — see buildHeroSpire's own header comment: a
+      // static, always-built mounting surface for the hero billboards.
+      heroSpire,
     ];
     objects.forEach((o) => scene.add(o.group));
 
@@ -266,7 +271,20 @@ export default function AltitudeCanvas({
           ),
           width: SIGN_W,
           height: 0.4,
-          appearAt: threshold + 0.03,
+          // FIX-ROUND (08-27, diegetic conversion FAIL 2): Signal
+          // Heights (i===0) is the one district whose message board
+          // (board-signal below) shares the SAME tower/wall as this
+          // small nameplate — its +1.4 tower-height bonus means, at
+          // whatever fraction keeps this nameplate off the bottom
+          // frame edge, it lands squarely inside the message board's
+          // own footprint (screenshot-verified: two overlapping signs,
+          // one dim/one bright, on the identical wall). The message
+          // board's headline already carries this exact landmark name +
+          // pitch verbatim, so nothing is lost — appearAt pushed past 1
+          // suppresses only this one nameplate (reveal can never clear
+          // 0 within the 0-1 scroll range) rather than duplicating and
+          // overlapping content the brighter board already shows.
+          appearAt: i === 0 ? 2 : threshold + 0.03,
         };
       }),
       // ROUND-2 FIX (jury defect #1a — 3D billboard text double-exposed
@@ -292,6 +310,296 @@ export default function AltitudeCanvas({
       },
     );
     districts.group.add(signage.group);
+
+    // ============================================================
+    // NARRATIVE BILLBOARDS — OWNER FIX (08-27, diegetic-copy rebuild).
+    // Owner ruling: "ALT 2400M · V 0.0 M/S and all other such texts,
+    // should not [come] on top of website, better place them on those
+    // buildings." Every scroll-section's copy that used to live in a
+    // floating HTML Scrim card now has a matching board mounted flush
+    // on an actual building face — hero + punch on the always-built
+    // heroSpire, one message board per district near its existing
+    // name-plate, 4 client-proof boards on 4 Broadcast Basin towers
+    // (mirroring the "BLDG 01-04" fiction those proof cards already
+    // were), and a landing-pad board at touchdown. Claims text is
+    // copied verbatim from components/aicity-altitude/tokens.ts in
+    // every case below — nothing here re-types a number or a locked
+    // phrase from memory.
+    // ============================================================
+    const TOWER_HALF = 0.55; // towers are 1.1 wide (matches signage above)
+    const inboardOf = (ax: number, w: number) =>
+      (ax < 0 ? 1 : -1) * (w / 2 - TOWER_HALF) * 0.9;
+
+    const signalD = DISTRICTS[0];
+    const pipelineD = DISTRICTS[1];
+    const portalD = DISTRICTS[2];
+    const broadcastD = DISTRICTS[3];
+    const signalA = districts.landmarkAnchors[0];
+    const pipelineA = districts.landmarkAnchors[1];
+    const portalA = districts.landmarkAnchors[2];
+    const broadcastA = districts.landmarkAnchors[3];
+    const portalW = WORK[0];
+
+    const MSG_W = 1.9;
+    // Camera pitch at the SKY waypoint (p=0), computed once from the
+    // real curve — see CameraPath.ts WAYPOINTS[0]: pos (0,10.5,6), look
+    // (0,6,-2). fwd = normalize(look-pos); this is atan2(-fwd.y,-fwd.z),
+    // the rotation-about-world-X that turns a default +Z-facing plate
+    // into a true billboard facing that settled camera. Stays accurate
+    // through progress ~0.15 (the curve barely bends over that span —
+    // verified point-by-point against CatmullRomCurve3.getPoint()), so
+    // every board mounted on the hero spire reuses it.
+    const HERO_ROTATION_X = -0.512;
+    const boardSpecs = [
+      // ── HERO — SKY band. Owner-supplied copy, verbatim H1/eyebrow.
+      // FIX-ROUND (08-27, diegetic conversion FAIL 1): the previous cut
+      // left this board's rotation at the default (facing world +Z)
+      // while the p=0 waypoint (pos (0,10.5,6), look (0,6,-2)) pitches
+      // the camera down ~29deg — a flat, unrotated plate viewed from
+      // that far off its own normal rendered as the reported
+      // "edge-on/sharply angled" trapezoid, screenshot-confirmed. Fixed
+      // by giving the whole hero-mast set of boards `rotationX` equal to
+      // the camera's own pitch at p=0 (HERO_ROTATION_X below, derived
+      // from THREE.CatmullRomCurve3.getPoint(0) directly, not guessed) —
+      // that makes each plate a true billboard facing the settled
+      // camera, not a wall-mounted sign facing a fixed compass
+      // direction. Position also re-centred (world-space math verified
+      // against the real curve, not eyeballed) so the headline sits as
+      // the clear rule-of-thirds subject of the settled 0% frame
+      // instead of pinned into the top-left corner.
+      {
+        id: "board-hero",
+        name: H1,
+        eyebrow: "AI automation that pays for itself",
+        position: new THREE.Vector3(-0.58, 9.28, 2.32),
+        width: 1.9,
+        height: 1.1,
+        rotationX: HERO_ROTATION_X,
+        // Negative appearAt (paired with a tight revealSpan below via
+        // the shared `boards` options) so this board is ALREADY fully
+        // lit at literal scroll-progress 0 — the hero stop's settled
+        // screenshot — rather than fading in from nothing over the
+        // first couple of scroll-percent the way every other district
+        // board does. There is no earlier moment to fade in from at
+        // the very top of the page.
+        appearAt: -0.05,
+        // FIX-ROUND (found during the 08-27 sweep, adjacent to FAIL 1):
+        // this plate sits close to the camera's own early path, so world
+        // distance shrinks fast — left permanently lit (CitySignage's
+        // old behaviour) it overran the frame and clipped past the left
+        // edge by the 15% stop, screenshot-confirmed. Fades back out
+        // just before board-punch (appearAt 0.155) takes over the same
+        // mast as the next beat.
+        hideAfter: 0.08,
+        headlineSize: 0.155,
+        maxHeadlineLines: 3,
+        texDim: 1536,
+      },
+      // ── HERO PITCH — same spire, below the headline board. SUB is the
+      // only copy shortened to fit a board (long-form site copy, not a
+      // locked claim) — original vs. shortened text is in the PR notes.
+      // FIX-ROUND (FAIL 1): appearAt used to be 0.02 with a 0.05
+      // revealSpan, so at the literal progress-0 screenshot
+      // reveal = (0-0.02)/0.05 clamps to 0 — the board was fully
+      // transparent (mesh.visible stays false) at the exact stop the
+      // verify loop checks, independent of any position issue. Matched
+      // to the hero board's own -0.05 so it is already lit at p=0, and
+      // repositioned directly under the headline board (same rotation,
+      // same rule-of-thirds column) so it reads as the hero card's
+      // sub-panel rather than a separate, half-visible plate.
+      {
+        id: "board-hero-pitch",
+        name: "How it works",
+        body: "Intake, follow-up, scheduling, reporting, publishing — each runs without a person in the seat. One AI system, wired end to end. — Waseem Nasir, founder, SkynetLabs.",
+        // z=2.30 (not flush with the mast's own z=1.7 +- 0.275 half-
+        // depth): a first pass at z=1.58 sat INSIDE the mast's solid
+        // box footprint (x also overlapped its [-2.075,-1.525] span),
+        // so the mast physically occluded the plate's left edge —
+        // screenshot-confirmed as the headline's leading "H" eaten by
+        // the mast. Matches the hero board's own clearance (z=2.32) in
+        // front of the mast instead.
+        position: new THREE.Vector3(-0.86, 7.35, 2.3),
+        width: 1.75,
+        height: 1.35,
+        rotationX: HERO_ROTATION_X,
+        appearAt: -0.05,
+        // Same overrun defect as board-hero above, same fix — fades out
+        // just ahead of board-punch.
+        hideAfter: 0.09,
+        headlineSize: 0.1,
+        maxHeadlineLines: 1,
+        maxBodyLines: 6,
+      },
+      // ── CLOUD PUNCH band — same spire, lower board. Same billboard
+      // rotation as the two boards above (camera orientation barely
+      // moves between p=0 and this board's own appearAt=0.155 — verified
+      // against the curve, fwd/up within ~0.01 of the p=0 values), so it
+      // stops this board keystoning too when it lights up.
+      {
+        id: "board-punch",
+        name: "Through the deck. The city is real.",
+        body: "180+ workflows · 40+ sites · 9 countries · since 2019",
+        position: new THREE.Vector3(-1.05, 1.7, heroSpire.anchor.z + 0.35),
+        width: 1.55,
+        height: 1.05,
+        rotationX: HERO_ROTATION_X,
+        appearAt: 0.155,
+        headlineSize: 0.16,
+        maxHeadlineLines: 2,
+        maxBodyLines: 2,
+        texDim: 1024,
+      },
+      // ── SIGNAL HEIGHTS — message board near the existing name-plate.
+      {
+        id: "board-signal",
+        name: `${signalD.landmark} — ${signalD.pitch}`,
+        body: "Five landmark towers, one system that runs itself — the utilities this whole city runs on.",
+        // 0.8 (not the 0.3 the other 3 districts use): Signal Heights'
+        // towers carry a +1.4 height bonus (see SceneObjects.ts,
+        // `di === 0 ? 1.4 : 0`) — at 0.3, and even at the previously
+        // "fixed" 0.42, of that taller tower's own height the board
+        // still landed below the settled 30% stop's visible frustum
+        // (screenshot-confirmed FAIL 2 of the 08-27 fix round: bottom
+        // edge clipped, second line of text cut mid-line). Re-derived
+        // against the real camera curve (CatmullRomCurve3.getPoint(0.3))
+        // rather than eyeballed: 0.42 projected the plate's own centre
+        // BELOW the bottom edge; 0.8 lands the whole plate inside the
+        // frame with clearance above the CTA pill, and still under the
+        // tower's own roofline (h~4.93 at this seed), at both 1440x900
+        // and 1280x800 (same 16:10 aspect, so the fraction carries over).
+        position: new THREE.Vector3(
+          signalA.x + inboardOf(signalA.x, MSG_W),
+          (signalA.y - 0.5) * 0.8,
+          signalA.z + TOWER_HALF + 0.02,
+        ),
+        width: MSG_W,
+        height: 1.3,
+        appearAt: DISTRICT_THRESHOLDS[0] + 0.06,
+        headlineSize: 0.1,
+        maxHeadlineLines: 3,
+        maxBodyLines: 3,
+      },
+      // ── PIPELINE ROW.
+      {
+        id: "board-pipeline",
+        name: `${pipelineD.landmark} — a building that IS a connection.`,
+        body: `${pipelineD.pitch} System: WhatsApp intake → n8n → GHL.`,
+        position: new THREE.Vector3(
+          pipelineA.x + inboardOf(pipelineA.x, MSG_W),
+          (pipelineA.y - 0.5) * 0.3,
+          pipelineA.z + TOWER_HALF + 0.02,
+        ),
+        width: MSG_W,
+        height: 1.3,
+        appearAt: DISTRICT_THRESHOLDS[1] + 0.06,
+        headlineSize: 0.09,
+        maxHeadlineLines: 3,
+        maxBodyLines: 3,
+      },
+      // ── PORTAL QUARTER.
+      {
+        id: "board-portal",
+        name: `${portalD.landmark} — ${portalD.pitch}`,
+        body: `${portalW.outcome} ${portalW.metric}.`,
+        position: new THREE.Vector3(
+          portalA.x + inboardOf(portalA.x, MSG_W),
+          (portalA.y - 0.5) * 0.3,
+          portalA.z + TOWER_HALF + 0.02,
+        ),
+        width: MSG_W,
+        height: 1.3,
+        appearAt: DISTRICT_THRESHOLDS[2] + 0.06,
+        headlineSize: 0.1,
+        maxHeadlineLines: 3,
+        maxBodyLines: 3,
+      },
+      // ── BROADCAST BASIN — district message board.
+      {
+        id: "board-broadcast",
+        name: `${broadcastD.landmark} — ${broadcastD.pitch}`,
+        body: "Proof — 180+ workflows · 40+ sites · 9 countries · since 2019",
+        position: new THREE.Vector3(
+          broadcastA.x + inboardOf(broadcastA.x, MSG_W),
+          (broadcastA.y - 0.5) * 0.3,
+          broadcastA.z + TOWER_HALF + 0.02,
+        ),
+        width: MSG_W,
+        height: 1.3,
+        // Matches the existing nameplate's own appearAt (threshold+0.03)
+        // rather than +0.06 — the owner's verify loop checks the literal
+        // 70% stop, which is only ~0.003 past Broadcast Basin's 0.7143
+        // threshold, so this board needs to already be revealing there
+        // too, not just the nameplate above it.
+        appearAt: DISTRICT_THRESHOLDS[3] + 0.03,
+        headlineSize: 0.09,
+        maxHeadlineLines: 3,
+        maxBodyLines: 2,
+      },
+      // ── BROADCAST BASIN — 4 client-proof boards, one per proof
+      // anchor tower (the "BLDG 01-04" fiction already used by the
+      // proof cards). Staggered appearAt so all 4 don't pop at once.
+      ...WORK.map((w, i) => {
+        const a = districts.proofAnchors[i];
+        if (!a) return null;
+        return {
+          id: `board-proof-${i}`,
+          name: w.metric,
+          eyebrow: w.client,
+          body: `${w.note} ${w.outcome}`,
+          chip: w.status,
+          position: new THREE.Vector3(
+            a.x + inboardOf(a.x, 1.3),
+            (a.y - 0.5) * 0.3,
+            a.z + TOWER_HALF + 0.02,
+          ),
+          width: 1.3,
+          height: 1.55,
+          appearAt: DISTRICT_THRESHOLDS[3] + 0.07 + i * 0.03,
+          headlineSize: 0.15,
+          maxHeadlineLines: 2,
+          maxBodyLines: 4,
+        };
+      }).filter((s): s is NonNullable<typeof s> => s !== null),
+      // ── TOUCHDOWN — landing-pad board. Positioned beside the lit
+      // doorway (touchdown group sits at world z=-18, door at local
+      // z=-2.5 -> world z=-20.5). No CTA button text here — in-world
+      // text can't be clicked, so the click action stays on the fixed
+      // nav button + the DescentCTAPill (AltitudeClient.tsx).
+      {
+        id: "board-touchdown",
+        name: "Find your leak. I'll engineer it shut.",
+        eyebrow: "ALT 0M · LANDED",
+        body: "Free · 30 min · no pitch",
+        // x=2.1 (was 1.35): the touchdown door is a 1.4-wide box
+        // centred on x=0 (spans -0.7 to 0.7) — at 1.35 this board's own
+        // left edge (1.35-0.85=0.5) fell INSIDE the door's footprint,
+        // screenshot-confirmed clipping the headline's wrapped lines.
+        // 2.1 clears the door's right edge (0.7) with real margin.
+        position: new THREE.Vector3(2.1, 1.3, -20.5 + 0.12),
+        width: 1.7,
+        height: 1.5,
+        appearAt: 0.9,
+        headlineSize: 0.12,
+        maxHeadlineLines: 3,
+        maxBodyLines: 2,
+      },
+    ];
+
+    const boards = createCitySignage(boardSpecs, {
+      color: C.ink,
+      accent: C.jadeBright,
+      // Higher than the nameplate signage's 0.55 — the double-exposure
+      // defence that capped nameplate opacity lived against the DOM
+      // Scrim cards, which are sr-only (invisible) in 3D mode now, so
+      // there is nothing left for a bright board to double-expose
+      // against. These boards ARE the readable copy in 3D mode.
+      maxOpacity: 0.94,
+      plate: "rgba(3,10,9,0.97)",
+      border: "rgba(31,231,199,0.6)",
+      bodyColor: C.body,
+      revealSpan: 0.05,
+    });
+    scene.add(boards.group);
 
     const { posCurve, lookCurve } = buildCameraCurves();
     const targetPos = new THREE.Vector3();
@@ -381,6 +689,7 @@ export default function AltitudeCanvas({
       // are content (district names), so they keep updating even when
       // the perf governor has degraded the decorative layers.
       signage.update(p);
+      boards.update(p);
       post.render(dt);
 
       frameSampleCount++;
@@ -446,6 +755,7 @@ export default function AltitudeCanvas({
       document.removeEventListener("visibilitychange", onVisibility);
       canvasEl.removeEventListener("webglcontextlost", onContextLost);
       signage.dispose();
+      boards.dispose();
       facade.dispose();
       post.dispose();
       skyEnv.dispose();

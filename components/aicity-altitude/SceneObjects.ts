@@ -281,9 +281,17 @@ type WindowRec = {
 /** Where a district's name-plate hangs, in world space. Index = district. */
 export type LandmarkAnchor = { x: number; y: number; z: number };
 
-export function buildDescentDistricts(
-  mats: Mats,
-): SceneObject & { landmarkAnchors: LandmarkAnchor[] } {
+export function buildDescentDistricts(mats: Mats): SceneObject & {
+  landmarkAnchors: LandmarkAnchor[];
+  /** OWNER FIX (08-27) — 4 tower anchors within Broadcast Basin
+      (district index 3) for the 4 client-proof boards, mirroring the
+      "BLDG 01-04" fiction the proof cards already used. Distinct from
+      landmarkAnchors[3] (the district's single tallest/name-plate
+      tower) — these 4 are picked from that same district's real
+      instanced towers so a proof board is always mounted on an
+      actual building face, never floating in empty space. */
+  proofAnchors: LandmarkAnchor[];
+} {
   const t = trackDisposables();
   const group = new THREE.Group();
   const rand = mulberry32(2400);
@@ -430,6 +438,18 @@ export function buildDescentDistricts(
   // that reads as the district's landmark from the descent corridor.
   // Derived from the same seeded `towers` array the geometry uses, so
   // the plate can never end up over a building that isn't there.
+  // FIX-ROUND (08-27, diegetic conversion FAIL 3): the scorer below and
+  // the proof-anchor scorer further down used near-identical formulas
+  // over the same district-3 tower pool, so they picked the SAME
+  // physical tower for both the Broadcast Basin district board and the
+  // first client-proof board (idea-viaggi) — verified via the debug
+  // anchor dump: landmarkAnchors[3] and proofAnchors[0] landed on
+  // identical x/y/z. Two boards mounted on the same wall, appearing ~4%
+  // of scroll apart, is exactly the "interleaved unreadable double text"
+  // overlap the settled 75% screenshot showed. `landmarkTowers` keeps a
+  // reference to the actual TowerRec each district's plate lands on, so
+  // the proof-anchor picker below can explicitly exclude district 3's.
+  const landmarkTowers: (TowerRec | null)[] = [];
   const landmarkAnchors: LandmarkAnchor[] = DISTRICTS.map((_d, di) => {
     // Tall AND near the corridor centre. Height alone picks the outer
     // towers (x = +/-3.2), which sit at the screen edge on a camera that
@@ -453,14 +473,45 @@ export function buildDescentDistricts(
       if (r.districtIndex !== di) continue;
       if (!best || score(r) > score(best)) best = r;
     }
+    landmarkTowers[di] = best;
     const r = best ?? { x: 0, z: districtZ[di] ?? 0, h: 3, districtIndex: di };
     // +0.5 clears the roofline; the tower's final (woken) height is r.h.
     return { x: r.x, y: r.h + 0.5, z: r.z };
   });
 
+  // 4 proof-board anchors, Broadcast Basin (district index 3) only —
+  // same "tall + near corridor centre" scoring as the landmark picker
+  // above, just keeping the top 4 instead of 1. Excludes district 3's
+  // own landmark tower (see FIX-ROUND note above) so the district
+  // message board and the first proof board can never land on the same
+  // wall.
+  // FIX-ROUND (08-27, diegetic conversion FAIL 3, part 2): the centring
+  // penalty here (1.2) was noticeably looser than the landmark picker's
+  // own (1.6) — loose enough that, once the landmark tower is excluded
+  // above, the next-best 4 towers by this score could still include an
+  // x~+-2.4 outlier. At the settled 75% stop that tower's board sits
+  // most of its own width off the LEFT edge of a 16:10 frame (the
+  // camera's own x through Broadcast Basin never strays past +-0.6),
+  // screenshot-confirmed as a proof board with a chip and mid-sentence
+  // copy both cut off at the frame edge. Tightened to 2.4 so all 4 proof
+  // anchors stay inside the camera's own narrow corridor path.
+  const broadcastLandmarkTower = landmarkTowers[3];
+  const proofAnchors: LandmarkAnchor[] = towers
+    .filter((r) => r.districtIndex === 3 && r !== broadcastLandmarkTower)
+    .map((r) => ({ r, score: r.h - Math.abs(r.x) * 2.4 }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+    .map(({ r }) => ({ x: r.x, y: r.h + 0.5, z: r.z }))
+    // Most-central tower FIRST: proof boards reveal in array order, and
+    // the first one is on screen at the settled 75% stop — an outer-x
+    // tower there sits half off-frame (screenshot-confirmed), while the
+    // later boards get more forgiving, lower camera angles.
+    .sort((p, q) => Math.abs(p.x) - Math.abs(q.x));
+
   return {
     group,
     landmarkAnchors,
+    proofAnchors,
     update: (_dt, elapsed, progress) => {
       let anyDirty = false;
       let anyTowerDirty = false;
@@ -631,8 +682,18 @@ export function buildEarlyMist(): SceneObject {
 
   const FADE_IN_START = 0.02;
   const FADE_IN_END = 0.08;
-  const FADE_OUT_START = 0.32;
-  const FADE_OUT_END = 0.4;
+  // FIX-ROUND (08-27, diegetic conversion FAIL 2): fade-out used to run
+  // 0.32-0.4, i.e. these sprites were still at PEAK_OPACITY at the
+  // settled 30% stop — two of the eight slots (near Signal Heights' own
+  // sign wall) sit close enough to the camera there to read as huge soft
+  // blobs dominating the frame over the message board, screenshot-
+  // confirmed. Their job (masking flat pre-wake tower faces) is done
+  // once Signal Heights' own district board has lit (appearAt 0.16+0.06
+  // = 0.22) — pulled the whole fade-out window earlier so the mist is
+  // fully clear well before that board's reveal finishes, let alone the
+  // 30% checkpoint.
+  const FADE_OUT_START = 0.14;
+  const FADE_OUT_END = 0.2;
   const PEAK_OPACITY = 0.6;
 
   return {
@@ -660,6 +721,67 @@ export function buildEarlyMist(): SceneObject {
       tex.dispose();
       mat.dispose();
     },
+  };
+}
+
+/* ============================================================
+   HERO SPIRE — OWNER FIX (08-27, diegetic-copy rebuild): the owner's
+   rule is that narrative text lives IN the city, on buildings, not on
+   top of the viewport. The hero copy ("AI automation that pays for
+   itself" / the H1 / the SUB pitch) used to be a floating HTML card;
+   it now needs a real building face to sit on that is actually built
+   and lit from progress 0 — the district towers below don't finish
+   rising until partway through the SKY/CLOUD PUNCH bands (see
+   APPEAR_LEAD in buildDescentDistricts), so mounting hero boards on
+   THEM would mean the boards outrun their own wall for the first few
+   scroll-percent. This is a small, always-visible, un-animated tower
+   standing nearer the SKY/CLOUD PUNCH camera than any district tower
+   — visible and fully formed the instant the page mounts, purely a
+   sign-mounting surface (reuses the shared building material so it
+   still reads as part of the same city). Static: no wake animation,
+   no InstancedMesh — one mesh, cheap, disposed with everything else.
+   ============================================================ */
+export function buildHeroSpire(
+  mats: Mats,
+): SceneObject & { anchor: LandmarkAnchor } {
+  const t = trackDisposables();
+  // VERIFY-LOOP FIX (08-27): first cut used height 7.8 — invisible at
+  // the literal hero (progress 0) screenshot because buildClouds' deck
+  // sits at y 8.3-9.4 and is FULLY OPAQUE at progress 0 (its fade only
+  // starts easing at progress 0.02), occluding everything below it
+  // from the SKY waypoint (camera y=10.5, above the deck, looking
+  // down). Raised so the spire's own tip clears the deck's topmost
+  // layer (9.4) — it reads as the first landmark spire breaking the
+  // cloud deck, mast-first, which is consistent with the "you open
+  // above a cloud deck" concept rather than fighting it.
+  const height = 11.5;
+  // ROUND 4 (08-27) — the fix that actually held: verified the real
+  // camera curve with THREE.CatmullRomCurve3.getPoint() directly
+  // (rather than hand-estimating) and it passes within ~2-2.5 world
+  // units of this spire's z through progress 0.15-0.30, closer than
+  // either round 2's (x=-2.3) or round 3's (x=-1.6) offset could
+  // out-clear while the mast kept its original 1.7x1.3 footprint —
+  // A/B-confirmed by screenshotting with the spire removed entirely
+  // (the giant dark near-clip wall vanished). Slimmed to a 0.55x0.55
+  // mast instead: still reads as an antenna/spire, but even a close
+  // pass no longer fills the frame. Billboards mount wider than the
+  // mast itself (the same overhang convention the district nameplates
+  // already use), so legibility doesn't depend on the mast's own width.
+  const geo = new THREE.BoxGeometry(0.55, 1, 0.55);
+  t.geometries.push(geo);
+  const mesh = new THREE.Mesh(geo, mats.building);
+  mesh.scale.set(1, height, 1);
+  mesh.position.set(-1.8, height / 2, 1.7);
+  const group = new THREE.Group();
+  group.add(mesh);
+  return {
+    group,
+    // Front-ish face, offset toward the corridor centreline (boards
+    // apply their own rotationY on top of this anchor to actually
+    // face the SKY/PUNCH camera — see AltitudeCanvas.tsx).
+    anchor: { x: -1.8, y: height, z: 1.7 + 0.3 },
+    update: () => {},
+    dispose: t.dispose,
   };
 }
 
