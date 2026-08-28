@@ -285,7 +285,15 @@ function drawSignTexture(
   }
 
   const tex = new THREE.CanvasTexture(canvas);
-  tex.anisotropy = 4;
+  // Crispness levers (owner text-quality pass, 08-28):
+  // - anisotropy 16: boards are almost always viewed at an angle; the
+  //   default/low anisotropy smears glyphs along the view axis.
+  // - SRGBColorSpace: under the filmic renderer an UNTAGGED canvas
+  //   texture is decoded as linear and renders visibly dimmer/washed
+  //   (same root cause the mist sprite fix documented) — text reads
+  //   grayer than drawn. Tagging restores the drawn contrast.
+  tex.anisotropy = 16;
+  tex.colorSpace = THREE.SRGBColorSpace;
   tex.needsUpdate = true;
   return tex;
 }
@@ -482,7 +490,15 @@ function drawBillboardTexture(
   }
 
   const tex = new THREE.CanvasTexture(canvas);
-  tex.anisotropy = 4;
+  // Crispness levers (owner text-quality pass, 08-28):
+  // - anisotropy 16: boards are almost always viewed at an angle; the
+  //   default/low anisotropy smears glyphs along the view axis.
+  // - SRGBColorSpace: under the filmic renderer an UNTAGGED canvas
+  //   texture is decoded as linear and renders visibly dimmer/washed
+  //   (same root cause the mist sprite fix documented) — text reads
+  //   grayer than drawn. Tagging restores the drawn contrast.
+  tex.anisotropy = 16;
+  tex.colorSpace = THREE.SRGBColorSpace;
   tex.needsUpdate = true;
   return tex;
 }

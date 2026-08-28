@@ -858,7 +858,11 @@ export default function AltitudeCanvas({
       // Scrim cards, which are sr-only (invisible) in 3D mode now, so
       // there is nothing left for a bright board to double-expose
       // against. These boards ARE the readable copy in 3D mode.
-      maxOpacity: 0.94,
+      // 0.985 (was 0.94): at oblique transit angles a 94%-opaque plate
+      // let bright fog-lit tower faces bleed through and wash the body
+      // copy gray (owner text-quality pass, 08-28). Near-solid plates =
+      // stable text contrast from every angle.
+      maxOpacity: 0.985,
       plate: "rgba(3,10,9,0.97)",
       border: "rgba(31,231,199,0.6)",
       bodyColor: C.body,
