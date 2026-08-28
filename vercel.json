@@ -1,10 +1,35 @@
 {
   "redirects": [
     {
+      "source": "/dashboard",
+      "destination": "https://skynet-command-dashboard.vercel.app",
+      "permanent": false
+    },
+    {
+      "source": "/dashboard/(.*)",
+      "destination": "https://skynet-command-dashboard.vercel.app/$1",
+      "permanent": false
+    },
+    {
       "source": "/(.*)",
-      "has": [{ "type": "host", "value": "waseemnasir.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "waseemnasir.com"
+        }
+      ],
       "destination": "https://www.waseemnasir.com/$1",
       "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/links",
+      "destination": "https://waseemnasir-links.vercel.app"
+    },
+    {
+      "source": "/links/(.*)",
+      "destination": "https://waseemnasir-links.vercel.app/$1"
     }
   ]
 }
