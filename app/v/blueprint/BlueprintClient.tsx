@@ -2288,7 +2288,7 @@ const FAQS = [
   },
   {
     q: "Do you work with clients outside your timezone?",
-    a: "Yes. Clients so far span the US, Europe, Australia, and Asia. Work is async-first over Slack or email, with calls scheduled to overlap your working hours.",
+    a: "Yes. Clients so far span the US, Europe, and Asia. Work is async-first over Slack or email, with calls scheduled to overlap your working hours.",
   },
 ];
 function Faq({ reduce }: { reduce: boolean }) {

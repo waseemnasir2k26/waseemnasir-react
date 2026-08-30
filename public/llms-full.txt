@@ -4,7 +4,7 @@
 
 ## Who is Waseem Nasir?
 
-Waseem Nasir is the founder of SkynetLabs, an AI automation studio. He finds where a business leaks time and money, then builds AI automation that plugs it: n8n workflows, AI agents, GoHighLevel CRM systems, WordPress and Next.js sites, and short-form video systems. He works between Bali, Indonesia (GMT+8) and Lahore, Pakistan, with clients across the US, Europe, Australia, and Asia. Work is async-first over Slack or email.
+Waseem Nasir is the founder of SkynetLabs, an AI automation studio. He finds where a business leaks time and money, then builds AI automation that plugs it: n8n workflows, AI agents, GoHighLevel CRM systems, WordPress and Next.js sites, and short-form video systems. He works between Bali, Indonesia (GMT+8) and Lahore, Pakistan, with clients across the US, Europe, and Asia. Work is async-first over Slack or email.
 
 ## How he works
 
@@ -52,7 +52,7 @@ Q: What is the difference between waseemnasir.com and SkynetLabs?
 A: waseemnasir.com is the personal site. SkynetLabs (skynetjoe.com) is the company — services, pricing, case studies, and free tools live there.
 
 Q: Do you work with clients outside your timezone?
-A: Yes — US, Europe, Australia, and Asia. Async-first, with calls scheduled to overlap the client's hours.
+A: Yes — US, Europe, and Asia. Async-first, with calls scheduled to overlap the client's hours.
 
 ## Canonical links
 
