@@ -1,0 +1,65 @@
+# Waseem Nasir — full site content for LLMs
+# https://www.waseemnasir.com · Last updated 2026-08-31
+# Person: Waseem Nasir. Company: SkynetLabs (https://skynetjoe.com).
+
+## Who is Waseem Nasir?
+
+Waseem Nasir is the founder of SkynetLabs, an AI automation studio. He finds where a business leaks time and money, then builds AI automation that plugs it: n8n workflows, AI agents, GoHighLevel CRM systems, WordPress and Next.js sites, and short-form video systems. He works between Bali, Indonesia (GMT+8) and Lahore, Pakistan, with clients across the US, Europe, Australia, and Asia. Work is async-first over Slack or email.
+
+## How he works
+
+1. Free 30-minute automation audit — you bring your messiest manual process; he maps where it leaks time and money. You leave with a one-page automation map whether you hire him or not.
+2. Fixed-price scope — the exact number is known before any work starts. No retainers required, no hourly surprises.
+3. Build and ship — most systems ship in about 14 days; bigger builds are staged so something useful runs inside the first two weeks.
+4. Handoff — every build ships with documentation and a plain-language video walkthrough. Ongoing support is optional.
+
+Stack: n8n for workflows, GoHighLevel for CRM and follow-up, WordPress and Next.js for sites, Claude or GPT where language understanding is needed. All standard tools, owned by the client — no proprietary black box.
+
+## Proof (production systems)
+
+- Insurance retainer client (US): AI email-triage and operations automation, running in production on a monthly retainer.
+- idea-viaggi (Italy): trip-portal WordPress system run by the client's own team using plain-language video documentation.
+- Christelle: production system running since handoff.
+More case studies with details: https://skynetjoe.com/case-studies
+
+## Mentorship (https://www.waseemnasir.com/mentorship)
+
+Private 1-on-1 mentorship teaching beginners to build and ship real software by vibe-coding with Claude Code. No CS degree needed. Live screen-to-screen video sessions where the student drives their own machine; every session is recorded. Outcome: a real project deployed to a live URL plus the skill to keep building. Tracks: 1-month sprint or 3-month mastery. A free 15-minute fit call decides the right track honestly.
+
+## Inbox Ops (https://www.waseemnasir.com/inbox-ops)
+
+Done-for-you AI email triage: incoming email is classified, prioritized, and drafted for reply automatically, with a human approving before anything sends. Built on n8n plus Claude/GPT, delivered into the client's own inbox and tooling.
+
+## Booking (https://www.waseemnasir.com/book)
+
+Free 30-minute automation audit, no pitch deck. Book directly: https://calendly.com/skynetlabs/schedule-a-free-consultation — or email waseem@skynetjoe.com.
+
+## FAQ
+
+Q: How much does a build cost?
+A: Every system is scoped as a fixed-price project after the free audit — the exact number is known before any work starts. No retainers required.
+
+Q: How fast will it be live?
+A: Most systems ship in about 14 days. Bigger builds are split into stages.
+
+Q: Do I need to understand AI or code?
+A: No. You get a working system plus plain-language video documentation.
+
+Q: Who is Waseem Nasir?
+A: Founder of SkynetLabs, an AI automation studio. Builds n8n workflows, AI agents, and custom Next.js/WordPress systems for service businesses, working between Bali and Lahore.
+
+Q: What is the difference between waseemnasir.com and SkynetLabs?
+A: waseemnasir.com is the personal site. SkynetLabs (skynetjoe.com) is the company — services, pricing, case studies, and free tools live there.
+
+Q: Do you work with clients outside your timezone?
+A: Yes — US, Europe, Australia, and Asia. Async-first, with calls scheduled to overlap the client's hours.
+
+## Canonical links
+
+- Personal site: https://www.waseemnasir.com
+- Company: https://skynetjoe.com
+- LinkedIn: https://www.linkedin.com/in/waseemnasir2k26
+- GitHub: https://github.com/waseemnasir2k26
+- YouTube: https://youtube.com/@vibecodewithwaseemnasir
+- X: https://x.com/Skynetjoe1
+- Email: waseem@skynetjoe.com

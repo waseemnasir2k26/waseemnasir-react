@@ -6,15 +6,21 @@ Waseem Nasir is the person; SkynetLabs is the company. For services, pricing, ca
 
 ## Pages
 
-- [Home](https://www.waseemnasir.com/): Who Waseem is, live client proof board, stack, gallery, and how to work with him.
+- [Home](https://www.waseemnasir.com/): Who Waseem is, live client proof board, stack, gallery, FAQ, and how to work with him.
 - [Blog](https://www.waseemnasir.com/blog): Field notes on running an automation agency with Claude Code from Bali.
 - [Mentorship](https://www.waseemnasir.com/mentorship): Private 1:1 Claude Code mentorship — learn to build and ship real software by vibe-coding, no CS degree needed.
+- [Inbox Ops](https://www.waseemnasir.com/inbox-ops): Done-for-you AI email triage system — how it works, what it costs to run, FAQ.
+- [Book a call](https://www.waseemnasir.com/book): Free 30-minute automation audit, booked directly on-site (Calendly).
 
 ## Business
 
-- [SkynetLabs](https://skynetjoe.com): Services, pricing, 26 free tools, case studies.
-- [Book a call](https://skynetjoe.com/discovery-call): Free discovery call.
+- [SkynetLabs](https://skynetjoe.com): Services, pricing, free tools, case studies.
+- [SkynetLabs FAQs](https://skynetjoe.com/faqs): 30 questions on pricing, process, n8n, AEO, and chatbots.
+
+## Full content
+
+- [llms-full.txt](https://www.waseemnasir.com/llms-full.txt): Expanded plain-text version of every page on this site.
 
 ## Notes
 
-This llms.txt follows the llmstxt.org draft specification. Last updated 2026-07-13. Maintained by Waseem Nasir.
+This llms.txt follows the llmstxt.org draft specification. Last updated 2026-08-31. Maintained by Waseem Nasir.

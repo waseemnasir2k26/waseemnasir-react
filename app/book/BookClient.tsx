@@ -58,7 +58,8 @@ const SHADOW = {
   md: "0 8px 24px rgba(8,40,38,0.08), 0 0 0 1px rgba(8,40,38,0.05)",
 };
 const EASE = [0.16, 1, 0.3, 1] as const;
-const CALENDLY_URL = "https://calendly.com/skynetlabs/schedule-a-free-consultation";
+const CALENDLY_URL =
+  "https://calendly.com/skynetlabs/schedule-a-free-consultation";
 const EMAIL = "mailto:waseem@skynetjoe.com";
 
 function Mono({
@@ -277,7 +278,11 @@ export default function BookClient() {
                     </h2>
                     <p
                       className="mt-2"
-                      style={{ color: C.mute, fontSize: "0.88rem", lineHeight: 1.55 }}
+                      style={{
+                        color: C.mute,
+                        fontSize: "0.88rem",
+                        lineHeight: 1.55,
+                      }}
                     >
                       {b.d}
                     </p>
@@ -308,7 +313,17 @@ export default function BookClient() {
                 className="text-center"
                 style={{ color: C.mute, fontSize: "0.9rem" }}
               >
-                Calendly not loading, or prefer email?{" "}
+                Calendly not loading?{" "}
+                <a
+                  href={CALENDLY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bk-link"
+                  style={{ color: C.accent, fontWeight: 600 }}
+                >
+                  Open the booking calendar directly
+                </a>
+                , or prefer email?{" "}
                 <a
                   href={EMAIL}
                   className="bk-link"
