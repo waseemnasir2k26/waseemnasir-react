@@ -1696,7 +1696,7 @@ function ProofPinned({ reduce }: { reduce: boolean }) {
                   color: C.ink,
                 }}
               >
-                Real systems, in production.
+                Shipped systems, running today.
               </h2>
               <p className="mt-4">
                 <Mono color={C.mute}>Named clients · specific outcomes</Mono>
@@ -2278,6 +2278,18 @@ const FAQS = [
     q: "What happens after handoff if something breaks?",
     a: "Every build ships with documentation and a video walkthrough, and ongoing support is available if you want it. The systems for the insurance retainer client and Christelle have been running in production since they shipped.",
   },
+  {
+    q: "Who is Waseem Nasir?",
+    a: "Waseem Nasir is the founder of SkynetLabs, an AI automation studio. He builds n8n workflows, AI agents, and custom Next.js and WordPress systems for service businesses, working between Bali (GMT+8) and Lahore.",
+  },
+  {
+    q: "What is the difference between waseemnasir.com and SkynetLabs?",
+    a: "waseemnasir.com is Waseem's personal site — who he is and how he works. SkynetLabs (skynetjoe.com) is the company: services, pricing, case studies, and free tools live there.",
+  },
+  {
+    q: "Do you work with clients outside your timezone?",
+    a: "Yes. Clients so far span the US, Europe, and Asia. Work is async-first over Slack or email, with calls scheduled to overlap your working hours.",
+  },
 ];
 function Faq({ reduce }: { reduce: boolean }) {
   const faqLd = {
@@ -2561,7 +2573,7 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
                     [CTA, "Book a free audit"],
                     ["https://www.linkedin.com/in/waseemnasir2k26", "LinkedIn"],
                     ["https://x.com/Skynetjoe1", "X (Twitter)"],
-                    ["https://youtube.com/@skynetlabs", "YouTube"],
+                    ["https://youtube.com/@vibecodewithwaseemnasir", "YouTube"],
                     ["https://github.com/waseemnasir2k26", "GitHub"],
                     ["https://skynetjoe.com", "skynetjoe.com"],
                   ],

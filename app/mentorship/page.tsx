@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import MentorshipClient from "./MentorshipClient";
+import { FAQ } from "./faq-data";
 
 const SITE = "https://www.waseemnasir.com";
 
@@ -54,12 +55,26 @@ const courseJsonLd = {
   ],
 };
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
 export default function MentorshipPage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <MentorshipClient />
     </>

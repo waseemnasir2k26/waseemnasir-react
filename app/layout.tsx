@@ -30,17 +30,15 @@ export const metadata: Metadata = {
   title: "Waseem Nasir — AI automation that runs your business",
   description:
     "I'm Waseem Nasir, founder of SkynetLabs. I find where your business leaks time and money, then build AI automation that plugs it. Book a free audit.",
-  keywords: [
-    "Waseem Nasir",
-    "SkynetLabs",
-    "AI automation",
-    "AI automation agency",
-    "business automation",
-    "n8n automation",
-    "AI agents",
-    "Shopify automation",
-    "founder",
-  ],
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
   openGraph: {
     title: "Waseem Nasir — AI automation that runs your business",
     description:
@@ -59,6 +57,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    site: "@Skynetjoe1",
+    creator: "@Skynetjoe1",
     title: "Waseem Nasir — AI automation that runs your business",
     description:
       "I find where your business leaks time and money, then build AI automation that plugs it. Book a free audit.",
@@ -70,14 +70,16 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
+  "@id": `${SITE}/#person`,
   name: "Waseem Nasir",
   jobTitle: "Founder & Automation Engineer",
   url: SITE,
   email: "mailto:waseem@skynetjoe.com",
+  // sameAs must match the visible footer links exactly — entity consolidation
   sameAs: [
     "https://www.linkedin.com/in/waseemnasir2k26",
     "https://x.com/Skynetjoe1",
-    "https://youtube.com/@skynetlabs",
+    "https://youtube.com/@vibecodewithwaseemnasir",
     "https://github.com/waseemnasir2k26",
     "https://skynetjoe.com",
   ],
@@ -93,6 +95,19 @@ const jsonLd = {
     name: "SkynetLabs",
     url: "https://skynetjoe.com",
   },
+};
+
+// WebSite entity — names the site for Knowledge Graph / sitelinks and ties it
+// to the Person via publisher. No SearchAction: the site has no search UI.
+const websiteLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${SITE}/#website`,
+  name: "Waseem Nasir",
+  alternateName: "Waseem Nasir — SkynetLabs founder",
+  url: SITE,
+  inLanguage: "en",
+  publisher: { "@id": `${SITE}/#person` },
 };
 
 export default function RootLayout({
@@ -123,6 +138,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
         />
       </body>
     </html>
