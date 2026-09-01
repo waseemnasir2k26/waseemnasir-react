@@ -291,6 +291,69 @@ export default function BookClient() {
               </div>
             </Reveal>
 
+            {/* Proof strip — SXO trust element on the conversion page. Only
+                checkable, already-published facts; no invented numbers. */}
+            <Reveal reduce={reduce} delay={0.18} className="mb-10">
+              <div
+                className="rounded-2xl px-6 py-5"
+                style={{
+                  background: C.accentTint,
+                  border: `1px solid ${C.hairline}`,
+                }}
+              >
+                <Mono color={C.pillInk}>Running in production right now</Mono>
+                <ul
+                  className="mt-3 grid gap-2 sm:grid-cols-3"
+                  style={{
+                    listStyle: "none",
+                    padding: 0,
+                    margin: "0.75rem 0 0",
+                    color: C.body,
+                    fontSize: "0.9rem",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  <li>
+                    <strong style={{ color: C.ink }}>
+                      US insurance retainer
+                    </strong>
+                    <br />
+                    AI email triage + ops automation, monthly retainer since
+                    launch.
+                  </li>
+                  <li>
+                    <strong style={{ color: C.ink }}>balibadminton.com</strong>
+                    <br />
+                    Booking platform with roster automation, live on a real
+                    database.
+                  </li>
+                  <li>
+                    <strong style={{ color: C.ink }}>idea-viaggi</strong>
+                    <br />
+                    Trip-portal system run by the client&apos;s own team via
+                    video docs.
+                  </li>
+                </ul>
+                <p
+                  className="mt-3"
+                  style={{
+                    color: C.mute,
+                    fontSize: "0.82rem",
+                    margin: "0.75rem 0 0",
+                  }}
+                >
+                  Details on each build:{" "}
+                  <a
+                    href="https://skynetjoe.com/case-studies"
+                    className="bk-link"
+                    style={{ color: C.accent, fontWeight: 600 }}
+                  >
+                    skynetjoe.com/case-studies
+                  </a>
+                </p>
+              </div>
+            </Reveal>
+
             <Reveal reduce={reduce} delay={0.2}>
               {/* Fixed min-height reserves the layout slot before Calendly's
                   script paints the iframe — prevents CLS on load. */}
