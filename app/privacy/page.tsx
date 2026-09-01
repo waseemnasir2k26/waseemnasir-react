@@ -26,7 +26,7 @@ export default function PrivacyPage() {
   return (
     <LegalLayout
       title="Privacy notice"
-      updated="25 July 2026"
+      updated="1 September 2026"
       intro="This page explains what happens to your information when you use this site, book a call, or buy mentorship. It is written to be read, not to be survived."
     >
       <div className="lg-note">
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
       <h3>Booking a call</h3>
       <p>
         Calls are booked through <strong>Calendly</strong>, which is embedded on
-        the booking page hosted at skynetjoe.com. When you book, Calendly
+        the booking page at /book on this site. When you book, Calendly
         collects your name, email address, time zone and any answers you type
         into the booking questions, and passes them on so the meeting can
         happen. Calendly operates as a separate service under its own privacy
@@ -70,11 +70,28 @@ export default function PrivacyPage() {
       </p>
       <h3>Just browsing</h3>
       <p>
-        This site does not run Google Analytics, the Meta Pixel, or any other
-        advertising or analytics tracker at the time of writing. There is no
-        cookie banner because there are no non-essential cookies to consent to.
-        Standard server logs are produced by the host as a normal part of
-        serving a web page.
+        This site does not run Google Analytics, the Meta Pixel, or any
+        advertising tracker. It does run one small, self-built funnel counter
+        (added 1 September 2026): on each page load, and when you click a
+        booking link or complete a booking, the browser sends the site name, the
+        event name, the page path (without any query string), the referring
+        website&rsquo;s domain, the booking step, and (on a click) the address of
+        the booking link you clicked to our own self-hosted n8n
+        server. No cookies, no local storage, no user or device identifier, no
+        fingerprinting; the counter stays silent if your browser sends a
+        Do-Not-Track or Global Privacy Control signal. Like any web request,
+        the receiving server sees your IP address in transit; it is not written
+        to the events table. Only those fields are
+        written to the events table, as aggregate counts that cannot be tied to
+        a person. The counter itself stores nothing on your device. Two other
+        things do: the Calendly embed on /book sets Calendly&rsquo;s own cookies
+        under Calendly&rsquo;s terms when that page loads, and the homepage
+        (and its /v/blueprint twin) keeps a small flag in localStorage remembering that you dismissed its
+        announcement bar. We do not currently show a cookie banner; because
+        Calendly&rsquo;s cookies are set by a third party on /book, EU/UK
+        visitors may be entitled to be asked first, and a consent gate for that
+        page is under evaluation. Standard server logs are produced by the host
+        as a normal part of serving a web page.
       </p>
 
       <h2>Why, and on what basis</h2>
@@ -106,6 +123,10 @@ export default function PrivacyPage() {
         </li>
         <li>
           <strong>Calendly</strong> — runs the call booking.
+        </li>
+        <li>
+          <strong>Our own n8n server</strong> (self-hosted on a Hostinger VPS)
+          — receives the anonymous funnel counts described above.
         </li>
         <li>
           <strong>Email and CRM</strong> — enquiries and client records are held
@@ -145,12 +166,13 @@ export default function PrivacyPage() {
         that is the Information Commissioner&rsquo;s Office.
       </p>
 
-      <h2>If analytics is switched on later</h2>
+      <h2>If more analytics is switched on later</h2>
       <p>
-        If measurement tools are added in future, non-essential cookies will not
-        be set before you have agreed to them, a cookie notice will appear, and
-        this page will be updated to name the tools and what they collect. That
-        has not happened yet.
+        If measurement tools that use cookies or identifiers are added in
+        future, non-essential cookies will not be set before you have agreed to
+        them, a cookie notice will appear, and this page will be updated to name
+        the tools and what they collect. The only measurement today is the
+        cookieless funnel counter described under &ldquo;Just browsing&rdquo;.
       </p>
 
       <h2>Changes</h2>

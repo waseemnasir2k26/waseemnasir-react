@@ -4,6 +4,7 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import ScrollProgress from "@/components/ScrollProgress";
 import MotionProvider from "@/components/MotionProvider";
+import SxoBeacon from "@/components/SxoBeacon";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -143,6 +144,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
         />
+        <SxoBeacon />
       </body>
     </html>
   );

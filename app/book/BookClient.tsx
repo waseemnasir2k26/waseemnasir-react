@@ -291,6 +291,72 @@ export default function BookClient() {
               </div>
             </Reveal>
 
+            {/* Proof strip — SXO trust element on the conversion page. Only
+                checkable, already-published facts; no invented numbers. */}
+            <Reveal reduce={reduce} delay={0.18} className="mb-10">
+              <div
+                className="rounded-2xl px-6 py-5"
+                style={{
+                  background: C.accentTint,
+                  border: `1px solid ${C.hairline}`,
+                }}
+              >
+                <Mono color={C.pillInk}>Running in production right now</Mono>
+                <ul
+                  className="mt-3 grid gap-2 sm:grid-cols-3"
+                  style={{
+                    listStyle: "none",
+                    padding: 0,
+                    color: C.body,
+                    fontSize: "0.9rem",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  <li>
+                    <strong style={{ color: C.ink }}>
+                      US insurance retainer client
+                    </strong>
+                    <br />
+                    AI email triage + a GoHighLevel ops rebuild, on a recurring
+                    retainer, in production since it shipped.
+                  </li>
+                  <li>
+                    <strong style={{ color: C.ink }}>
+                      <a
+                        href="https://balibadminton.com"
+                        className="bk-link"
+                        style={{ color: C.ink }}
+                      >
+                        balibadminton.com
+                      </a>
+                    </strong>
+                    <br />
+                    Session booking with seat and roster management — live at
+                    the link above.
+                  </li>
+                  <li>
+                    <strong style={{ color: C.ink }}>idea-viaggi</strong>
+                    <br />
+                    Trip-portal system run by the client&apos;s own team via
+                    video docs.
+                  </li>
+                </ul>
+                <p
+                  className="mt-3"
+                  style={{ color: C.mute, fontSize: "0.82rem" }}
+                >
+                  More on the insurance build:{" "}
+                  <a
+                    href="https://skynetjoe.com/case-studies/us-insurance-gohighlevel-rebuild"
+                    className="bk-link"
+                    style={{ color: C.accent, fontWeight: 600 }}
+                  >
+                    case study
+                  </a>
+                </p>
+              </div>
+            </Reveal>
+
             <Reveal reduce={reduce} delay={0.2}>
               {/* Fixed min-height reserves the layout slot before Calendly's
                   script paints the iframe — prevents CLS on load. */}
