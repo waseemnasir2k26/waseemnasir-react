@@ -81,12 +81,15 @@ export default function PrivacyPage() {
         fingerprinting; the counter stays silent if your browser sends a
         Do-Not-Track or Global Privacy Control signal. Only those fields are
         written to the events table, as aggregate counts that cannot be tied to
-        a person. The counter itself stores nothing on your device. The one
-        exception on this site is the Calendly embed on /book, which sets its
-        own cookies under Calendly&rsquo;s terms when that page loads. There is
-        no cookie banner because no advertising or analytics cookies are set.
-        Standard server logs are produced by the host as a normal part of
-        serving a web page.
+        a person. The counter itself stores nothing on your device. Two other
+        things do: the Calendly embed on /book sets Calendly&rsquo;s own cookies
+        under Calendly&rsquo;s terms when that page loads, and the homepage
+        keeps a small flag in localStorage remembering that you dismissed its
+        announcement bar. We do not currently show a cookie banner; because
+        Calendly&rsquo;s cookies are set by a third party on /book, EU/UK
+        visitors may be entitled to be asked first, and a consent gate for that
+        page is under evaluation. Standard server logs are produced by the host
+        as a normal part of serving a web page.
       </p>
 
       <h2>Why, and on what basis</h2>
