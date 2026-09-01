@@ -307,7 +307,6 @@ export default function BookClient() {
                   style={{
                     listStyle: "none",
                     padding: 0,
-                    margin: "0.75rem 0 0",
                     color: C.body,
                     fontSize: "0.9rem",
                     lineHeight: 1.5,
@@ -315,17 +314,25 @@ export default function BookClient() {
                 >
                   <li>
                     <strong style={{ color: C.ink }}>
-                      US insurance retainer
+                      US insurance retainer client
                     </strong>
                     <br />
-                    AI email triage + ops automation, monthly retainer since
-                    launch.
+                    AI email triage + a GoHighLevel ops rebuild, on a recurring
+                    retainer, in production since it shipped.
                   </li>
                   <li>
-                    <strong style={{ color: C.ink }}>balibadminton.com</strong>
+                    <strong style={{ color: C.ink }}>
+                      <a
+                        href="https://balibadminton.com"
+                        className="bk-link"
+                        style={{ color: C.ink }}
+                      >
+                        balibadminton.com
+                      </a>
+                    </strong>
                     <br />
-                    Booking platform with roster automation, live on a real
-                    database.
+                    Session booking with seat and roster management — live, with
+                    real bookings running through it.
                   </li>
                   <li>
                     <strong style={{ color: C.ink }}>idea-viaggi</strong>
@@ -336,19 +343,15 @@ export default function BookClient() {
                 </ul>
                 <p
                   className="mt-3"
-                  style={{
-                    color: C.mute,
-                    fontSize: "0.82rem",
-                    margin: "0.75rem 0 0",
-                  }}
+                  style={{ color: C.mute, fontSize: "0.82rem" }}
                 >
-                  Details on each build:{" "}
+                  More on the insurance build:{" "}
                   <a
-                    href="https://skynetjoe.com/case-studies"
+                    href="https://skynetjoe.com/case-studies/us-insurance-gohighlevel-rebuild"
                     className="bk-link"
                     style={{ color: C.accent, fontWeight: 600 }}
                   >
-                    skynetjoe.com/case-studies
+                    case study
                   </a>
                 </p>
               </div>
