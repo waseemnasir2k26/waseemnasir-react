@@ -79,7 +79,9 @@ export default function PrivacyPage() {
         the booking link you clicked to our own self-hosted n8n
         server. No cookies, no local storage, no user or device identifier, no
         fingerprinting; the counter stays silent if your browser sends a
-        Do-Not-Track or Global Privacy Control signal. Only those fields are
+        Do-Not-Track or Global Privacy Control signal. Like any web request,
+        the receiving server sees your IP address in transit; it is not written
+        to the events table. Only those fields are
         written to the events table, as aggregate counts that cannot be tied to
         a person. The counter itself stores nothing on your device. Two other
         things do: the Calendly embed on /book sets Calendly&rsquo;s own cookies
