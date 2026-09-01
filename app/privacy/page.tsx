@@ -84,7 +84,7 @@ export default function PrivacyPage() {
         a person. The counter itself stores nothing on your device. Two other
         things do: the Calendly embed on /book sets Calendly&rsquo;s own cookies
         under Calendly&rsquo;s terms when that page loads, and the homepage
-        keeps a small flag in localStorage remembering that you dismissed its
+        (and its /v/blueprint twin) keeps a small flag in localStorage remembering that you dismissed its
         announcement bar. We do not currently show a cookie banner; because
         Calendly&rsquo;s cookies are set by a third party on /book, EU/UK
         visitors may be entitled to be asked first, and a consent gate for that
