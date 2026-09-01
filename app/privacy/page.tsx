@@ -75,14 +75,18 @@ export default function PrivacyPage() {
         (added 1 September 2026): on each page load, and when you click a
         booking link or complete a booking, the browser sends the site name, the
         event name, the page path (without any query string), the referring
-        website&rsquo;s domain, and the booking step to our own self-hosted n8n
+        website&rsquo;s domain, the booking step, and (on a click) the address of
+        the booking link you clicked to our own self-hosted n8n
         server. No cookies, no local storage, no user or device identifier, no
         fingerprinting; the counter stays silent if your browser sends a
         Do-Not-Track or Global Privacy Control signal. Only those fields are
         written to the events table, as aggregate counts that cannot be tied to
-        a person. There is no cookie banner because nothing is stored on your
-        device. Standard server logs are produced by the host as a normal part
-        of serving a web page.
+        a person. The counter itself stores nothing on your device. The one
+        exception on this site is the Calendly embed on /book, which sets its
+        own cookies under Calendly&rsquo;s terms when that page loads. There is
+        no cookie banner because no advertising or analytics cookies are set.
+        Standard server logs are produced by the host as a normal part of
+        serving a web page.
       </p>
 
       <h2>Why, and on what basis</h2>

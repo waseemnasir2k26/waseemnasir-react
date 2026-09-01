@@ -19,7 +19,7 @@ const SITE = "waseemnasir";
 const ENDPOINT = "https://n8n.skynetjoe.com/webhook/sxo-event";
 
 const src = `(function(){var S=${JSON.stringify(SITE)},E=${JSON.stringify(ENDPOINT)},started=false,done=false;
-if(navigator.doNotTrack==='1'||window.doNotTrack==='1'||navigator.globalPrivacyControl===true)return;
+if(/^(1|yes)$/.test(String(navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack||''))||navigator.globalPrivacyControl===true)return;
 function host(u){try{return new URL(u).hostname.replace(/^www\\./,'')}catch(e){return ''}}
 function clean(s){return String(s||'').split('?')[0].split('#')[0].slice(0,200)}
 function send(ev,extra){try{var p={site:S,ev:ev,path:clean(location.pathname),ref:host(document.referrer)};

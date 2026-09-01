@@ -331,8 +331,8 @@ export default function BookClient() {
                       </a>
                     </strong>
                     <br />
-                    Session booking with seat and roster management — live, with
-                    real bookings running through it.
+                    Session booking with seat and roster management — live at
+                    the link above.
                   </li>
                   <li>
                     <strong style={{ color: C.ink }}>idea-viaggi</strong>
