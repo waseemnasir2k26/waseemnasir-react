@@ -6,11 +6,11 @@ import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useInView,
-  useReducedMotion,
   useScroll,
   useTransform,
   useMotionValueEvent,
 } from "framer-motion";
+import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import {
   Bricolage_Grotesque,
   Hanken_Grotesk,
@@ -224,7 +224,7 @@ function Reveal({
 const HOSTINGER_PROMO_KEY = "wn-hostinger-promo-v1";
 
 export default function Blueprint() {
-  const reduce = !!useReducedMotion();
+  const reduce = !!useSafeReducedMotion();
   const [bannerOpen, setBannerOpen] = useState(true);
   useEffect(() => {
     try {
@@ -2573,8 +2573,13 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
                     [CTA, "Book a free audit"],
                     ["https://www.linkedin.com/in/waseemnasir2k26", "LinkedIn"],
                     ["https://x.com/Skynetjoe1", "X (Twitter)"],
-                    ["https://youtube.com/@vibecodewithwaseemnasir", "YouTube"],
+                    [
+                      "https://www.youtube.com/@vibecodewithwaseemnasir",
+                      "YouTube",
+                    ],
                     ["https://github.com/waseemnasir2k26", "GitHub"],
+                    ["https://www.facebook.com/Waseemskynetjoe", "Facebook"],
+                    ["https://www.instagram.com/waseemnasir2k27", "Instagram"],
                     ["https://skynetjoe.com", "skynetjoe.com"],
                   ],
                 ],

@@ -464,6 +464,16 @@ span[aria-hidden] {
 
 /* ─── prefers-reduced-motion guard ─────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
+  /* Blanket CSS guard — applies on the FIRST paint, before React hydrates.
+     framer-motion's JS-driven motion is handled separately by the two-pass
+     MotionProvider + lib/useSafeReducedMotion (see React #418 fix 2026-09-06). */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
   .grain::after {
     animation: none;
   }

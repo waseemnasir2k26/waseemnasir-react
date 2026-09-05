@@ -28,9 +28,10 @@ const SITE = "https://www.waseemnasir.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
-  title: "Waseem Nasir — AI automation that runs your business",
+  title:
+    "Waseem Nasir — AI automation founder · n8n + Claude Code · Bali",
   description:
-    "I'm Waseem Nasir, founder of SkynetLabs. I find where your business leaks time and money, then build AI automation that plugs it. Book a free audit.",
+    "Waseem Nasir is the founder of SkynetLabs, an AI automation studio. He builds n8n and Claude Code systems for service businesses, from Bali. Book a free audit.",
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },
@@ -68,31 +69,79 @@ export const metadata: Metadata = {
   alternates: { canonical: SITE },
 };
 
+const HEADSHOT = "/img/pro/PORTRAIT-2026-05-08-black-kurta-soft-smile-wood-interior.jpg";
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   "@id": `${SITE}/#person`,
   name: "Waseem Nasir",
+  givenName: "Waseem",
+  familyName: "Nasir",
   jobTitle: "Founder & Automation Engineer",
+  description:
+    "AI automation founder — builds n8n and Claude Code systems for service businesses, from Bali.",
   url: SITE,
+  mainEntityOfPage: { "@id": `${SITE}/about#profilepage` },
+  image: {
+    "@type": "ImageObject",
+    url: `${SITE}${HEADSHOT}`,
+    width: 956,
+    height: 1700,
+    caption: "Waseem Nasir, founder of SkynetLabs",
+  },
   email: "mailto:waseem@skynetjoe.com",
-  // sameAs must match the visible footer links exactly — entity consolidation
+  // sameAs must match the visible footer links exactly — entity consolidation.
+  // One string per platform; YouTube in the www + lowercase-handle form.
+  // Company channels (@Skynetlabs2k25) belong to the Organization node on
+  // skynetjoe.com, never to this Person.
+  // TODO(waseem-ruling): X handle — this site says @Skynetjoe1, the GitHub
+  // profile says "waseemnasir". Pick one string, then update here + GitHub + X.
+  // TODO(waseem-ruling): company YouTube channel — @Skynetlabs2k25 vs
+  // @skynetlabs. Not listed here either way (Organization, not Person).
   sameAs: [
     "https://www.linkedin.com/in/waseemnasir2k26",
-    "https://x.com/Skynetjoe1",
-    "https://youtube.com/@vibecodewithwaseemnasir",
     "https://github.com/waseemnasir2k26",
+    "https://www.youtube.com/@vibecodewithwaseemnasir",
+    "https://x.com/Skynetjoe1",
+    "https://www.facebook.com/Waseemskynetjoe",
+    "https://www.instagram.com/waseemnasir2k27",
     "https://skynetjoe.com",
   ],
   knowsAbout: [
     "AI automation",
     "n8n",
+    "Claude Code",
+    "GoHighLevel",
+    "WhatsApp automation",
+    "Video pipelines",
     "Next.js",
     "Answer Engine Optimization",
     "Workflow design",
   ],
+  knowsLanguage: [
+    { "@type": "Language", name: "English", alternateName: "en" },
+    { "@type": "Language", name: "Urdu", alternateName: "ur" },
+  ],
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "COMSATS University Islamabad",
+    url: "https://www.comsats.edu.pk/",
+  },
+  homeLocation: {
+    "@type": "Place",
+    name: "Bali, Indonesia",
+    address: {
+      "@type": "PostalAddress",
+      addressRegion: "Bali",
+      addressCountry: "ID",
+    },
+  },
   worksFor: {
     "@type": "Organization",
+    // @id matches the Organization node served on skynetjoe.com (verified
+    // 2026-09-06: skynetjoe.com/#organization is present in its JSON-LD).
+    "@id": "https://skynetjoe.com/#organization",
     name: "SkynetLabs",
     url: "https://skynetjoe.com",
   },

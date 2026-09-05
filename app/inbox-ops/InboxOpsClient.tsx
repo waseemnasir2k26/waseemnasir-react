@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import {
+  motion,
+} from "framer-motion";
+import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import {
   Bricolage_Grotesque,
   Hanken_Grotesk,
@@ -250,7 +253,7 @@ const FAQS = [
 ];
 
 export default function InboxOpsClient() {
-  const reduce = !!useReducedMotion();
+  const reduce = !!useSafeReducedMotion();
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
