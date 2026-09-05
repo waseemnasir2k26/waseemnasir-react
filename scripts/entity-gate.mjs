@@ -34,9 +34,9 @@ const CANONICAL = {
 
 /** Any URL matching one of these belongs to that platform. */
 const MATCHERS = {
-  linkedin: /https?:\/\/[^\s"'`)]*linkedin\.com\/in\/[^\s"'`)]+/gi,
+  linkedin: /https?:\/\/[^\s"'`)\\]*linkedin\.com\/in\/[^\s"'`)\\]+/gi,
   github: /https?:\/\/(?:www\.)?github\.com\/[A-Za-z0-9_-]+(?![^\s"'`)]*\/)/gi,
-  youtube: /https?:\/\/[^\s"'`)]*youtube\.com\/@[^\s"'`)]+/gi,
+  youtube: /https?:\/\/[^\s"'`)\\]*youtube\.com\/@[^\s"'`)\\]+/gi,
   x: /https?:\/\/(?:www\.)?(?:x|twitter)\.com\/[A-Za-z0-9_]+/gi,
   facebook: /https?:\/\/[^\s"'`)]*facebook\.com\/[A-Za-z0-9_.-]+/gi,
   instagram: /https?:\/\/[^\s"'`)]*instagram\.com\/[A-Za-z0-9_.-]+/gi,
