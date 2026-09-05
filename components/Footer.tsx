@@ -4,6 +4,9 @@ import Reveal from "./Reveal";
 import { EMAIL, GITHUB, AGENCY, BOOKING } from "./site";
 
 const NAV_LINKS = [
+  // Entity home — /about is the ProfilePage the Person @id points at; without an
+  // inbound internal link it would be sitemap-only (critic round 1, 2026-09-06).
+  { label: "About", href: "/about", external: false },
   { label: "Book a call", href: BOOKING, external: true },
   { label: "Email", href: `mailto:${EMAIL}`, external: false },
   { label: "GitHub", href: GITHUB, external: true },

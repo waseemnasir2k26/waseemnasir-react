@@ -2563,7 +2563,10 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
                     ["/mentorship", "Mentorship"],
                     ["/inbox-ops", "Inbox Ops"],
                     ["/blog", "Blog"],
-                    ["#about", "About"],
+                    // Footer "About" points at the /about ProfilePage (the entity
+                    // home the Person @id references); the sticky nav keeps the
+                    // in-page #about anchor. Critic round 1, 2026-09-06.
+                    ["/about", "About"],
                     ["/book", "Book"],
                   ],
                 ],

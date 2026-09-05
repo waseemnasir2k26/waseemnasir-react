@@ -186,7 +186,7 @@ function Nav() {
               ["/#how", "Work"],
               ["/#proof", "Proof"],
               ["/blog", "Blog"],
-              ["/#about", "About"],
+              ["/about", "About"],
             ] as [string, string][]
           ).map(([href, label]) => (
             <Link
@@ -281,7 +281,7 @@ function SiteFooter() {
                   ["/#how", "Work"],
                   ["/#proof", "Proof"],
                   ["/blog", "Blog"],
-                  ["/#about", "About"],
+                  ["/about", "About"],
                 ],
               ],
               [
