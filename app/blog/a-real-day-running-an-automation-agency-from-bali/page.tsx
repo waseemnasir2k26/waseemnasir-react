@@ -11,6 +11,7 @@ import {
   Strong,
   PullQuote,
   SoftCTA,
+  RelatedLinks,
   C,
   CTA,
   SHADOW,
@@ -45,25 +46,24 @@ export const metadata: Metadata = {
 
 const articleJsonLd = {
   "@context": "https://schema.org",
-  "@type": "Article",
+  "@type": "BlogPosting",
   headline: post.title,
   description: post.description,
   datePublished: post.date,
   dateModified: post.date,
   image: `${SITE}${post.ogImage}`,
   mainEntityOfPage: { "@type": "WebPage", "@id": url },
+  // Single Person node for the whole site — resolves to the Person emitted by
+  // app/layout.tsx. Google recommends author.url / an author reference that
+  // points at a ProfilePage; ours is /about#profilepage.
   author: {
+    "@id": `${SITE}/#person`,
     "@type": "Person",
     name: "Waseem Nasir",
-    url: SITE,
-    jobTitle: "Founder & Automation Engineer",
-    worksFor: {
-      "@type": "Organization",
-      name: "SkynetLabs",
-      url: "https://skynetjoe.com",
-    },
+    url: `${SITE}/about`,
   },
   publisher: {
+    "@id": `${SITE}/#person`,
     "@type": "Person",
     name: "Waseem Nasir",
     url: SITE,
@@ -303,8 +303,11 @@ export default function StoryPost() {
 
             <P>
               I never lost that instinct. I just changed the tools. The
-              spreadsheets became n8n flows and booking front-ends and inbox
-              triage bots, and the firm became a few clients a month, scattered
+              spreadsheets became n8n flows and booking front-ends and{" "}
+              <Link href="/inbox-ops" className="bp-link" style={{ color: C.accent }}>
+                inbox triage bots
+              </Link>
+              , and the firm became a few clients a month, scattered
               across a handful of time zones. But the actual skill is the same
               one I learned doing payroll: sitting with how a business really
               runs, finding the part that&apos;s quietly bleeding time, and
@@ -319,6 +322,24 @@ export default function StoryPost() {
               it.
             </P>
           </div>
+
+          <RelatedLinks
+            items={[
+              [
+                "/inbox-ops",
+                "Inbox Ops Autopilot — the 9-step map for a mailbox that sorts itself",
+              ],
+              [
+                "/mentorship",
+                "1:1 Claude Code mentorship — learn to build the systems yourself",
+              ],
+              [
+                "/blog/edited-10-travel-vlogs-in-one-night-with-claude-code",
+                "We edited 10 travel vlogs in one night with Claude Code",
+              ],
+              ["/book", "Book a free 30-minute automation audit"],
+            ]}
+          />
 
           {/* single soft CTA */}
           <div className="mt-12">

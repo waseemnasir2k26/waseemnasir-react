@@ -290,8 +290,13 @@ function SiteFooter() {
                   [CTA, "Book a free audit"],
                   ["https://www.linkedin.com/in/waseemnasir2k26", "LinkedIn"],
                   ["https://x.com/Skynetjoe1", "X (Twitter)"],
-                  ["https://youtube.com/@skynetlabs", "YouTube"],
+                  [
+                    "https://www.youtube.com/@vibecodewithwaseemnasir",
+                    "YouTube",
+                  ],
                   ["https://github.com/waseemnasir2k26", "GitHub"],
+                  ["https://www.facebook.com/Waseemskynetjoe", "Facebook"],
+                  ["https://www.instagram.com/waseemnasir2k27", "Instagram"],
                   ["https://skynetjoe.com", "skynetjoe.com"],
                 ],
               ],
@@ -565,5 +570,42 @@ export function SoftCTA({
         </Link>
       </div>
     </div>
+  );
+}
+
+/* ─── Related links ──────────────────────────────────────────────────────────
+   Internal-link block. The 2026-09-05 SEO audit found both posts linked only to
+   /, /blog, /privacy and /terms — the money pages (/mentorship, /book,
+   /inbox-ops) got zero equity from the only long-form content on the site.
+   Every post now carries three or more internal links via this component.
+   ────────────────────────────────────────────────────────────────────────── */
+export function RelatedLinks({
+  items,
+  title = "Keep reading",
+}: {
+  items: [string, string][];
+  title?: string;
+}) {
+  return (
+    <nav
+      aria-label={title}
+      className="mt-14 border-t pt-8"
+      style={{ borderColor: C.hairline }}
+    >
+      <Mono color={C.mute}>{title}</Mono>
+      <ul className="mt-4 flex flex-col gap-3">
+        {items.map(([href, label]) => (
+          <li key={href}>
+            <Link
+              href={href}
+              className="bp-link"
+              style={{ color: C.accent, fontSize: "1rem" }}
+            >
+              {label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }

@@ -1,4 +1,18 @@
 {
+  "rewrites": [
+    {
+      "source": "/links",
+      "destination": "https://waseemnasir-links.vercel.app"
+    },
+    {
+      "source": "/links/",
+      "destination": "https://waseemnasir-links.vercel.app"
+    },
+    {
+      "source": "/links/:path*",
+      "destination": "https://waseemnasir-links.vercel.app/:path*"
+    }
+  ],
   "redirects": [
     {
       "source": "/hanna",

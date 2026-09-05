@@ -3,7 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { motion, useReducedMotion, useInView } from "framer-motion";
+import {
+  motion,
+  useInView,
+} from "framer-motion";
+import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 /* ============================================================
    /mentorship — 1:1 Claude Code & AI vibe-coding mentorship.
@@ -179,7 +183,7 @@ function Reveal({
   delay?: number;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = useSafeReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   return (

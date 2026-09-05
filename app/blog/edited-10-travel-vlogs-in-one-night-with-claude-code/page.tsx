@@ -11,6 +11,7 @@ import {
   Strong,
   StepList,
   SoftCTA,
+  RelatedLinks,
   C,
   SHADOW,
 } from "../_ui";
@@ -45,25 +46,28 @@ export const metadata: Metadata = {
 
 const articleJsonLd = {
   "@context": "https://schema.org",
-  "@type": "NewsArticle",
+  "@type": "BlogPosting",
   headline: post.title,
   description: post.description,
   datePublished: post.date,
   dateModified: post.date,
   image: `${SITE}${post.ogImage}`,
   mainEntityOfPage: { "@type": "WebPage", "@id": url },
+  // Single Person node for the whole site — resolves to the Person emitted by
+  // app/layout.tsx. Google recommends author.url / an author reference that
+  // points at a ProfilePage; ours is /about#profilepage.
   author: {
+    "@id": `${SITE}/#person`,
+    "@type": "Person",
+    name: "Waseem Nasir",
+    url: `${SITE}/about`,
+  },
+  publisher: {
+    "@id": `${SITE}/#person`,
     "@type": "Person",
     name: "Waseem Nasir",
     url: SITE,
-    jobTitle: "Founder & Automation Engineer",
-    worksFor: {
-      "@type": "Organization",
-      name: "SkynetLabs",
-      url: "https://skynetjoe.com",
-    },
   },
-  publisher: { "@type": "Person", name: "Waseem Nasir", url: SITE },
 };
 
 export default function NewsPost() {
@@ -228,7 +232,38 @@ export default function NewsPost() {
               bottleneck, a founder or a small team can actually keep a channel
               fed — because the boring part runs itself.
             </P>
+
+            <P>
+              If you want to drive Claude Code like this yourself rather than
+              hire it out, that is exactly what I teach in{" "}
+              <Link
+                href="/mentorship"
+                className="bp-link"
+                style={{ color: C.accent }}
+              >
+                1:1 mentorship
+              </Link>
+              .
+            </P>
           </div>
+
+          <RelatedLinks
+            items={[
+              [
+                "/mentorship",
+                "1:1 Claude Code mentorship — build pipelines like this yourself",
+              ],
+              [
+                "/inbox-ops",
+                "Inbox Ops Autopilot — the same idea applied to a mailbox",
+              ],
+              [
+                "/blog/a-real-day-running-an-automation-agency-from-bali",
+                "What a real day of running an automation agency from Bali looks like",
+              ],
+              ["/book", "Book a free 30-minute automation audit"],
+            ]}
+          />
 
           <div className="mt-12">
             <SoftCTA

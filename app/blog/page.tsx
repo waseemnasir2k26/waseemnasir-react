@@ -35,9 +35,10 @@ const blogJsonLd = {
   name: "Waseem Nasir — Blog",
   url: `${SITE}/blog`,
   author: {
+    "@id": `${SITE}/#person`,
     "@type": "Person",
     name: "Waseem Nasir",
-    url: SITE,
+    url: `${SITE}/about`,
   },
   blogPost: POSTS.map((p) => ({
     "@type": "BlogPosting",

@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import Script from "next/script";
-import { motion, useReducedMotion } from "framer-motion";
+import {
+  motion,
+} from "framer-motion";
+import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import {
   Bricolage_Grotesque,
   Hanken_Grotesk,
@@ -130,7 +133,7 @@ const BULLETS = [
 ];
 
 export default function BookClient() {
-  const reduce = useReducedMotion() ?? false;
+  const reduce = useSafeReducedMotion();
 
   return (
     <>

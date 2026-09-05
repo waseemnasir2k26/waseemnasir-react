@@ -7,19 +7,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
       url: SITE,
-      lastModified: new Date("2026-08-31"),
+      lastModified: new Date("2026-09-06"),
       changeFrequency: "monthly",
       priority: 1,
     },
     {
+      // Entity home — ProfilePage -> Person. Highest-priority non-root URL.
+      url: `${SITE}/about`,
+      lastModified: new Date("2026-09-06"),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
       url: `${SITE}/blog`,
-      lastModified: new Date("2026-07-04"),
-      changeFrequency: "weekly",
+      lastModified: new Date("2026-09-06"),
+      changeFrequency: "monthly",
       priority: 0.8,
     },
     {
       url: `${SITE}/mentorship`,
-      lastModified: new Date("2026-07-13"),
+      lastModified: new Date("2026-09-06"),
       changeFrequency: "monthly",
       priority: 0.9,
     },
