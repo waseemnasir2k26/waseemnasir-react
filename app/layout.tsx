@@ -95,8 +95,10 @@ const jsonLd = {
   // One string per platform; YouTube in the www + lowercase-handle form.
   // Company channels (@Skynetlabs2k25) belong to the Organization node on
   // skynetjoe.com, never to this Person.
-  // TODO(waseem-ruling): X handle — this site says @Skynetjoe1, the GitHub
-  // profile says "waseemnasir". Pick one string, then update here + GitHub + X.
+  // RULED 2026-09-06 (Waseem, R11 option A): the canonical X handle is
+  // @Skynetjoe1 everywhere. GitHub profile twitter_username was repointed
+  // from "waseemnasir" to "Skynetjoe1" the same day; skynetjoe.com's
+  // SITE.social.twitter moved off x.com/skynetlabs to match.
   // TODO(waseem-ruling): company YouTube channel — @Skynetlabs2k25 vs
   // @skynetlabs. Not listed here either way (Organization, not Person).
   sameAs: [

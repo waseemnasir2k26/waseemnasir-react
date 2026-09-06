@@ -25,8 +25,8 @@ const CANONICAL = {
   linkedin: "https://www.linkedin.com/in/waseemnasir2k26",
   github: "https://github.com/waseemnasir2k26",
   youtube: "https://www.youtube.com/@vibecodewithwaseemnasir",
-  // TODO(waseem-ruling): X handle — site says @Skynetjoe1, GitHub profile says
-  // "waseemnasir". One string, then update here + GitHub + X.
+  // RULED 2026-09-06 (Waseem, R11 option A): @Skynetjoe1 is canonical on every
+  // surface. GitHub profile + skynetjoe.com repointed to match the same day.
   x: "https://x.com/Skynetjoe1",
   facebook: "https://www.facebook.com/Waseemskynetjoe",
   instagram: "https://www.instagram.com/waseemnasir2k27",
