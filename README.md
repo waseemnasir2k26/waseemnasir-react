@@ -2,6 +2,10 @@
 
 Next.js 14 personal site for **Waseem Nasir**, founder of [SkynetLabs](https://www.skynetjoe.com) — an AI automation studio building voice AI agents, AI video pipelines, and n8n systems.
 
+## Status
+
+Last reviewed: September 2026 · release v2026.09
+
 **Live:** [www.waseemnasir.com](https://www.waseemnasir.com)
 
 ---
