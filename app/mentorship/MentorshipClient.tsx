@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import WhatsAppCta from "@/components/WhatsAppCta";
 import Link from "next/link";
 import { useRef } from "react";
 import {
@@ -284,10 +285,13 @@ export default function MentorshipClient() {
             >
               Waseem Nasir
             </Link>
-            <BookButton
-              label="Book a free fit call"
-              className="!px-5 !py-2.5"
-            />
+            <div className="flex items-center gap-2">
+              <WhatsAppCta />
+              <BookButton
+                label="Book a free fit call"
+                className="!px-5 !py-2.5"
+              />
+            </div>
           </div>
         </nav>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import WhatsAppCta from "@/components/WhatsAppCta";
 import Script from "next/script";
 import {
   motion,
@@ -197,6 +198,8 @@ export default function BookClient() {
                 FOUNDER · SKYNETLABS
               </span>
             </Link>
+            <div className="flex items-center gap-2">
+            <WhatsAppCta />
             <a
               href={EMAIL}
               className="hidden sm:inline-flex items-center rounded-full font-semibold"
@@ -210,6 +213,7 @@ export default function BookClient() {
             >
               Email instead
             </a>
+            </div>
           </div>
         </header>
 

@@ -10,6 +10,7 @@
    ============================================================ */
 
 import Link from "next/link";
+import WhatsAppCta from "@/components/WhatsAppCta";
 import {
   Bricolage_Grotesque,
   Hanken_Grotesk,
@@ -199,21 +200,24 @@ function Nav() {
             </Link>
           ))}
         </nav>
-        <Link
-          href={CTA}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bp-cta inline-flex items-center rounded-full font-semibold transition-opacity hover:opacity-90"
-          style={{
-            background: C.accent,
-            color: "#fff",
-            fontSize: "0.85rem",
-            padding: "0.5rem 1.1rem",
-            boxShadow: SHADOW.sm,
-          }}
-        >
-          Book a call
-        </Link>
+        <div className="flex items-center gap-2">
+          <WhatsAppCta />
+          <Link
+            href={CTA}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bp-cta inline-flex items-center rounded-full font-semibold transition-opacity hover:opacity-90"
+            style={{
+              background: C.accent,
+              color: "#fff",
+              fontSize: "0.85rem",
+              padding: "0.5rem 1.1rem",
+              boxShadow: SHADOW.sm,
+            }}
+          >
+            Book a call
+          </Link>
+        </div>
       </div>
     </header>
   );
