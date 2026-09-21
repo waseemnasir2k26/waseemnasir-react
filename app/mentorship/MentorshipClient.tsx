@@ -269,8 +269,8 @@ export default function MentorshipClient() {
         className="relative z-10"
         style={{ background: BG, color: TEXT }}
       >
-        {/* ── nav ── */}
-        <nav
+        {/* ── nav (header landmark, like the other pages) ── */}
+        <header
           className="sticky top-0 z-50 backdrop-blur-md"
           style={{
             background: "rgba(10,10,12,0.72)",
@@ -293,10 +293,10 @@ export default function MentorshipClient() {
               />
             </div>
           </div>
-        </nav>
+        </header>
 
         {/* ── hero ── */}
-        <header className="relative overflow-hidden">
+        <section className="relative overflow-hidden">
           <div
             className="pointer-events-none absolute inset-0"
             aria-hidden
@@ -393,7 +393,7 @@ export default function MentorshipClient() {
               </div>
             </Reveal>
           </div>
-        </header>
+        </section>
 
         {/* ── empathy strip ── */}
         <section
