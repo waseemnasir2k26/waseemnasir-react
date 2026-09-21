@@ -213,7 +213,7 @@ function Nav() {
 
         {/* CTA button — solid brass so text is always legible */}
         <a
-          href="https://skynetjoe.com/discovery-call"
+          href="https://skynetjoe.com/contact"
           className="rounded-full px-4 py-2 text-sm font-semibold transition-transform hover:scale-[1.04] active:scale-95"
           style={{
             background: BRASS,
@@ -340,7 +340,7 @@ function Hero({ reduce }: { reduce: boolean }) {
           >
             {/* Primary — solid brass, dark ink text — AA on every viewport */}
             <a
-              href="https://skynetjoe.com/discovery-call"
+              href="https://skynetjoe.com/contact"
               className="group inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-base font-semibold transition-transform hover:scale-[1.04] active:scale-95"
               style={{
                 background: BRASS,
@@ -1312,7 +1312,7 @@ function CTA() {
               </p>
               {/* Solid brass button — dark ink text, unambiguously AA */}
               <a
-                href="https://skynetjoe.com/discovery-call"
+                href="https://skynetjoe.com/contact"
                 className="mt-10 inline-flex items-center gap-2 rounded-full px-8 py-4 text-lg font-semibold transition-transform hover:scale-[1.04] active:scale-95"
                 style={{
                   background: BRASS,
@@ -1386,7 +1386,7 @@ function Footer() {
           aria-label="Footer navigation"
         >
           <a
-            href="https://skynetjoe.com/discovery-call"
+            href="https://skynetjoe.com/contact"
             className="transition-colors hover:text-white"
           >
             Book a call

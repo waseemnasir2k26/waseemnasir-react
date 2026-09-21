@@ -31,7 +31,7 @@ export const SHADOW = {
 export const EASE = [0.16, 1, 0.3, 1] as const;
 
 /* Verbatim from BlueprintClient.tsx — never edit these numbers here. */
-export const CTA = "https://skynetjoe.com/discovery-call";
+export const CTA = "https://skynetjoe.com/contact";
 export const H1 =
   "Every hour your team works by hand, your business leaks money.";
 export const KICKER =

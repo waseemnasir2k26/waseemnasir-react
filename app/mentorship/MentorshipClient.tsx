@@ -16,7 +16,7 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
    Real proof only — no fabricated testimonials or student counts.
    ============================================================ */
 
-const CTA = "https://skynetjoe.com/discovery-call";
+const CTA = "https://skynetjoe.com/contact";
 const EMAIL = "waseembali2k26@gmail.com";
 const GITHUB = "https://github.com/waseemnasir2k26";
 const AGENCY = "https://skynetjoe.com";

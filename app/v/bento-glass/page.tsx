@@ -51,7 +51,7 @@ const GLASS_BORDER = "rgba(255,255,255,0.07)";
 
 /* ── constants ── */
 const IMG = (f: string) => `/img/pro/${f}`;
-const CTA = "https://skynetjoe.com/discovery-call";
+const CTA = "https://skynetjoe.com/contact";
 
 /* ── proof numbers (real only) ── */
 const PROOF = [

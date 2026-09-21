@@ -50,7 +50,7 @@ const SPRING_DRIFT = {
 const SPRING_SNAP = { type: "spring", stiffness: 300, damping: 26 } as const;
 
 const IMG = (f: string) => `/img/pro/${f}`;
-const CTA = "https://skynetjoe.com/discovery-call";
+const CTA = "https://skynetjoe.com/contact";
 
 /* ============================================================
    HORIZONTAL TRACK DATA

@@ -153,7 +153,7 @@ function Nav() {
 
         {/* CTA pill */}
         <a
-          href="https://skynetjoe.com/discovery-call"
+          href="https://skynetjoe.com/contact"
           className="inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5"
           style={{
             background: ACCENT2,
@@ -242,7 +242,7 @@ function Hero({ reduce }: { reduce: boolean }) {
             className="mt-9 flex flex-wrap items-center gap-4"
           >
             <a
-              href="https://skynetjoe.com/discovery-call"
+              href="https://skynetjoe.com/contact"
               className="group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-white"
               style={{
                 background: ACCENT,
@@ -905,7 +905,7 @@ function AboutSection({ reduce }: { reduce: boolean }) {
 
           <motion.a
             variants={rise}
-            href="https://skynetjoe.com/discovery-call"
+            href="https://skynetjoe.com/contact"
             className="group mt-8 inline-flex items-center gap-2 text-sm font-semibold"
             style={{ color: ACCENT }}
           >
@@ -1072,7 +1072,7 @@ function CTASection() {
           </p>
 
           <a
-            href="https://skynetjoe.com/discovery-call"
+            href="https://skynetjoe.com/contact"
             className="group mt-10 inline-flex items-center gap-2 rounded-full px-8 py-4 text-sm font-semibold"
             style={{
               background: ACCENT,
@@ -1123,7 +1123,7 @@ function CTASection() {
 /* ─────────────────────────────── FOOTER ─────────────────────────────── */
 function Footer() {
   const links = [
-    ["https://skynetjoe.com/discovery-call", "Book a call"],
+    ["https://skynetjoe.com/contact", "Book a call"],
     ["mailto:waseembali2k26@gmail.com", "Email"],
     ["https://github.com/waseemnasir2k26", "GitHub"],
     ["https://skynetjoe.com", "skynetjoe.com"],

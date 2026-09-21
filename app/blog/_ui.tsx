@@ -57,7 +57,7 @@ export const SHADOW = {
   md: "0 8px 24px rgba(8,40,38,0.08), 0 0 0 1px rgba(8,40,38,0.05)",
   lg: "0 24px 48px rgba(8,40,38,0.10), 0 0 0 1px rgba(8,40,38,0.05)",
 };
-export const CTA = "https://skynetjoe.com/discovery-call";
+export const CTA = "https://skynetjoe.com/contact";
 export const IMG = (f: string) => `/img/pro/${f}`;
 
 /* ─── Mono label ─── */

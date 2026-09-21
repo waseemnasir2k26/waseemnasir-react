@@ -35,7 +35,7 @@ export const C = {
   glassFillDim: "rgba(17,126,115,0.05)",
 } as const;
 
-export const CTA_URL = "https://skynetjoe.com/discovery-call";
+export const CTA_URL = "https://skynetjoe.com/contact";
 
 /* H1 + subhead — verbatim, mirrored from components/skyline/tokens.ts. */
 export const H1 =

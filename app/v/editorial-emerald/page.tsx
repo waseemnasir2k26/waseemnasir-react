@@ -24,7 +24,7 @@ const MUTED = "#6B6F6A"; // muted text
 
 const IMG = "/img/pro/";
 
-const CTA = "https://skynetjoe.com/discovery-call";
+const CTA = "https://skynetjoe.com/contact";
 const EMAIL = "mailto:waseembali2k26@gmail.com";
 const GITHUB = "https://github.com/waseemnasir2k26";
 const SITE = "https://skynetjoe.com";

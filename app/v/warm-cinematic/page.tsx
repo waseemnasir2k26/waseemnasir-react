@@ -101,7 +101,7 @@ const PROOF = [
   { n: "2019", l: "building since" },
 ];
 
-const CTA = "https://skynetjoe.com/discovery-call";
+const CTA = "https://skynetjoe.com/contact";
 
 /* ================================================================== */
 /*  HORIZONTAL SPINE (desktop) — vertical wheel drives X              */

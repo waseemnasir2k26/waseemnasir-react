@@ -40,7 +40,7 @@ const OXBLOOD = "#5A1A1A";
 const CARAMEL = "#B07D4E";
 const HAIRLINE = "rgba(43,29,20,0.10)";
 
-const CTA = "https://skynetjoe.com/discovery-call";
+const CTA = "https://skynetjoe.com/contact";
 
 const PROOF = ["180+ workflows", "40+ sites", "9 countries", "since 2019"];
 

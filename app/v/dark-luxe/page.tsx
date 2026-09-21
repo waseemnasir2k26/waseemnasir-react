@@ -23,7 +23,7 @@ const ACCENT2 = "#E8D6B0"; // pale gold
 const HAIRLINE = "rgba(203,169,104,0.28)";
 
 const IMG = (f: string) => `/img/pro/${f}`;
-const CTA = "https://skynetjoe.com/discovery-call";
+const CTA = "https://skynetjoe.com/contact";
 
 /* ---- Museum rail — 9 portrait-forward frames ---- */
 const RAIL: { src: string; cap: string }[] = [

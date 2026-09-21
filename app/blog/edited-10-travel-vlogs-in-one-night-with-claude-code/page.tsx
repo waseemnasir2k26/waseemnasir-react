@@ -18,7 +18,7 @@ import {
 import { getPost } from "../posts";
 
 const SITE = "https://www.waseemnasir.com";
-const VIDEO_LINK = "https://skynetjoe.com/discovery-call";
+const VIDEO_LINK = "https://skynetjoe.com/contact";
 const post = getPost("edited-10-travel-vlogs-in-one-night-with-claude-code")!;
 const url = `${SITE}/blog/${post.slug}`;
 

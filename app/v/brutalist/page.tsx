@@ -23,7 +23,7 @@ const INK = "#0A0A0A";
 const RED = "#E2231A";
 
 const IMG = (f: string) => `/img/pro/${f}`;
-const CTA = "https://skynetjoe.com/discovery-call";
+const CTA = "https://skynetjoe.com/contact";
 
 /* ---- photos ---- */
 const HERO =

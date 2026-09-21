@@ -62,7 +62,7 @@ const GRAD = `linear-gradient(100deg,${CHAMP} 0%,${BRONZE} 48%,${PALE} 100%)`;
 const GRAD_SOFT = `linear-gradient(100deg,${CHAMP},${BRONZE} 55%,${PALE})`;
 
 const IMG = (f: string) => `/img/pro/${f}`;
-const CTA_URL = "https://skynetjoe.com/discovery-call";
+const CTA_URL = "https://skynetjoe.com/contact";
 
 /* ── Spring presets ── */
 const SP = { type: "spring", stiffness: 115, damping: 18, mass: 0.85 } as const;

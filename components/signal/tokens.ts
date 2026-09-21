@@ -22,7 +22,7 @@ export const C = {
   onDeep: "#EAF4F1",
 } as const;
 
-export const CTA_URL = "https://skynetjoe.com/discovery-call";
+export const CTA_URL = "https://skynetjoe.com/contact";
 
 /* H1 + subhead — verbatim from the live homepage (mirrors
    components/orbit/tokens.ts, itself mirrored from

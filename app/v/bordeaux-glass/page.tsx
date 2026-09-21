@@ -221,7 +221,7 @@ function Nav() {
         </div>
 
         <a
-          href="https://skynetjoe.com/discovery-call"
+          href="https://skynetjoe.com/contact"
           className="rounded-full px-4 py-2 text-sm font-semibold transition-transform hover:scale-[1.04] active:scale-95"
           style={{ background: GRAD, color: TEXT }}
         >
@@ -343,7 +343,7 @@ function Hero({ reduce }: { reduce: boolean }) {
             className="mt-9 flex flex-wrap items-center gap-4"
           >
             <a
-              href="https://skynetjoe.com/discovery-call"
+              href="https://skynetjoe.com/contact"
               className="group inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-base font-semibold transition-transform hover:scale-[1.04] active:scale-95"
               style={{ background: GRAD, color: TEXT }}
             >
@@ -1273,7 +1273,7 @@ function CTA() {
                 what it&apos;d take to make it disappear.
               </p>
               <a
-                href="https://skynetjoe.com/discovery-call"
+                href="https://skynetjoe.com/contact"
                 className="mt-10 inline-flex items-center gap-2 rounded-full px-8 py-4 text-lg font-semibold transition-transform hover:scale-[1.04] active:scale-95"
                 style={{ background: GRAD, color: TEXT }}
               >
@@ -1334,7 +1334,7 @@ function Footer() {
           aria-label="Footer navigation"
         >
           <a
-            href="https://skynetjoe.com/discovery-call"
+            href="https://skynetjoe.com/contact"
             className="transition-colors hover:text-white"
           >
             Book a call

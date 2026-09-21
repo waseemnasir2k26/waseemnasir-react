@@ -61,7 +61,7 @@ export const WARM = {
   lampBright: "#F0B15C",
 } as const;
 
-export const CTA_URL = "https://skynetjoe.com/discovery-call";
+export const CTA_URL = "https://skynetjoe.com/contact";
 
 /* H1 + subhead.
 

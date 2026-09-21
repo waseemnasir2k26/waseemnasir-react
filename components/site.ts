@@ -1,4 +1,4 @@
-export const BOOKING = "https://skynetjoe.com/discovery-call";
+export const BOOKING = "https://skynetjoe.com/contact";
 export const EMAIL = "waseembali2k26@gmail.com";
 export const GITHUB = "https://github.com/waseemnasir2k26";
 export const AGENCY = "https://skynetjoe.com";

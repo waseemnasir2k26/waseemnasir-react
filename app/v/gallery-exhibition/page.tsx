@@ -24,7 +24,7 @@ const ACCENT = "#5C5043"; // deep taupe for interactive / emphasis
 const WHITE = "#FFFFFF";
 
 const IMG = (f: string) => `/img/pro/${f}`;
-const CTA = "https://skynetjoe.com/discovery-call";
+const CTA = "https://skynetjoe.com/contact";
 
 /* ============================================================
    PHOTO SELECTIONS  (22 total)

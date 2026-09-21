@@ -44,7 +44,7 @@ const HAIRLINE = "rgba(43,29,20,0.10)";
 const HAIRLINE_MED = "rgba(43,29,20,0.18)";
 
 const IMG = (f: string) => `/img/pro/${f}`;
-const CTA = "https://skynetjoe.com/discovery-call";
+const CTA = "https://skynetjoe.com/contact";
 
 /* ─── Spring presets ─── */
 const SP_GENTLE = {
