@@ -270,6 +270,10 @@ export default function Blueprint() {
         }
         .bp-tile:active { transform: scale(0.985); }
         .bp-cta:active { transform: scale(0.97); }
+        .bp-cta-outline:active { transform: scale(0.97); }
+        @media (hover:hover) and (pointer:fine){
+          .bp-cta-outline:hover { background: ${C.accentTint}; }
+        }
         /* Trust cards: accent left-border + detail reveal on hover */
         @media (hover:hover) and (pointer:fine){
           .bp-trust-card { transition: transform .22s ease-out, box-shadow .22s ease-out, border-left-color .22s ease-out; border-left: 3px solid transparent; }
@@ -682,13 +686,14 @@ function Nav({
             href={CTA}
             target="_blank"
             rel="noopener noreferrer"
-            className="bp-cta inline-flex items-center rounded-full font-semibold transition-opacity hover:opacity-90"
+            className="bp-cta-outline inline-flex items-center justify-center rounded-full font-semibold transition-colors"
             style={{
-              background: C.accent,
-              color: "#fff",
+              background: "transparent",
+              color: C.accent,
+              border: `1px solid ${C.accent}`,
               fontSize: "0.85rem",
               padding: "0.5rem 1.1rem",
-              boxShadow: SHADOW.sm,
+              minHeight: 40,
             }}
           >
             Book a call
@@ -2698,20 +2703,24 @@ function MobileCTABar() {
         boxShadow: SHADOW.md,
       }}
     >
-      <Link
-        href={CTA}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bp-cta flex w-full items-center justify-center rounded-full font-semibold"
-        style={{
-          background: C.accent,
-          color: "#fff",
-          fontSize: "0.95rem",
-          minHeight: 46,
-        }}
-      >
-        Book a free audit
-      </Link>
+      <div className="flex w-full items-stretch gap-2">
+        <WhatsAppCta alwaysLabel className="flex-1" />
+        <Link
+          href={CTA}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bp-cta-outline flex flex-1 items-center justify-center rounded-full font-semibold"
+          style={{
+            background: "transparent",
+            color: C.accent,
+            border: `1px solid ${C.accent}`,
+            fontSize: "0.95rem",
+            minHeight: 46,
+          }}
+        >
+          Book a call
+        </Link>
+      </div>
     </div>
   );
 }

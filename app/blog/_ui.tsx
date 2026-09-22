@@ -128,6 +128,10 @@ function ScopeStyle() {
         background:${C.accent}; transform:scaleX(0); transform-origin:left; transition:transform .16s ease; }
       .bp-link:hover::after { transform:scaleX(1); }
       .bp-cta:active { transform: scale(0.97); }
+      .bp-cta-outline:active { transform: scale(0.97); }
+      @media (hover:hover) and (pointer:fine){
+        .bp-cta-outline:hover { background: ${C.accentTint}; }
+      }
       @media (hover:hover) and (pointer:fine){
         .bp-postcard { transition: transform .22s ease-out, box-shadow .22s ease-out, border-color .22s ease-out; }
         .bp-postcard:hover { transform: translateY(-4px); box-shadow:${SHADOW.md}; border-color: rgba(17,126,115,0.28); }
@@ -206,13 +210,14 @@ function Nav() {
             href={CTA}
             target="_blank"
             rel="noopener noreferrer"
-            className="bp-cta inline-flex items-center rounded-full font-semibold transition-opacity hover:opacity-90"
+            className="bp-cta-outline inline-flex items-center justify-center rounded-full font-semibold transition-colors"
             style={{
-              background: C.accent,
-              color: "#fff",
+              background: "transparent",
+              color: C.accent,
+              border: `1px solid ${C.accent}`,
               fontSize: "0.85rem",
               padding: "0.5rem 1.1rem",
-              boxShadow: SHADOW.sm,
+              minHeight: 40,
             }}
           >
             Book a call

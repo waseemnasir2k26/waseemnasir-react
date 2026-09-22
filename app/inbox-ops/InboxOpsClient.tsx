@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import {
-  motion,
-} from "framer-motion";
+import WhatsAppCta from "@/components/WhatsAppCta";
+import { motion } from "framer-motion";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import {
   Bricolage_Grotesque,
@@ -62,6 +61,8 @@ const SHADOW = {
 };
 const EASE = [0.16, 1, 0.3, 1] as const;
 const LINKEDIN_DM = "https://www.linkedin.com/in/waseemnasir2k26";
+/** Header "Book a call" — same booking destination as every other header. */
+const BOOK_CTA = "https://skynetjoe.com/contact";
 const EMAIL = "mailto:waseem@skynetjoe.com";
 
 /* ─── Reusable bits (self-contained duplicates of the blueprint idiom) ─── */
@@ -341,8 +342,24 @@ export default function InboxOpsClient() {
                 FOUNDER · SKYNETLABS
               </span>
             </Link>
-            <div className="hidden sm:block">
-              <PrimaryCTA />
+            <div className="flex items-center gap-2">
+              <WhatsAppCta />
+              <Link
+                href={BOOK_CTA}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-full font-semibold transition-colors"
+                style={{
+                  background: "transparent",
+                  color: C.accent,
+                  border: `1px solid ${C.accent}`,
+                  fontSize: "0.85rem",
+                  padding: "0.5rem 1.1rem",
+                  minHeight: 40,
+                }}
+              >
+                Book a call
+              </Link>
             </div>
           </div>
         </header>

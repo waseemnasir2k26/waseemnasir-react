@@ -4,10 +4,7 @@ import Image from "next/image";
 import WhatsAppCta from "@/components/WhatsAppCta";
 import Link from "next/link";
 import { useRef } from "react";
-import {
-  motion,
-  useInView,
-} from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 /* ============================================================
@@ -288,7 +285,8 @@ export default function MentorshipClient() {
             <div className="flex items-center gap-2">
               <WhatsAppCta />
               <BookButton
-                label="Book a free fit call"
+                label="Book a call"
+                variant="ghost"
                 className="!px-5 !py-2.5"
               />
             </div>

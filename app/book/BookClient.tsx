@@ -3,9 +3,7 @@
 import Link from "next/link";
 import WhatsAppCta from "@/components/WhatsAppCta";
 import Script from "next/script";
-import {
-  motion,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import {
   Bricolage_Grotesque,
@@ -199,20 +197,21 @@ export default function BookClient() {
               </span>
             </Link>
             <div className="flex items-center gap-2">
-            <WhatsAppCta />
-            <a
-              href={EMAIL}
-              className="hidden sm:inline-flex items-center rounded-full font-semibold"
-              style={{
-                background: C.card,
-                color: C.accent,
-                border: `1px solid ${C.hairline}`,
-                fontSize: "0.85rem",
-                padding: "0.5rem 1.1rem",
-              }}
-            >
-              Email instead
-            </a>
+              <WhatsAppCta />
+              <a
+                href="#scheduler"
+                className="inline-flex items-center justify-center rounded-full font-semibold"
+                style={{
+                  background: "transparent",
+                  color: C.accent,
+                  border: `1px solid ${C.accent}`,
+                  fontSize: "0.85rem",
+                  padding: "0.5rem 1.1rem",
+                  minHeight: 40,
+                }}
+              >
+                Book a call
+              </a>
             </div>
           </div>
         </header>
@@ -368,9 +367,11 @@ export default function BookClient() {
               {/* Fixed min-height reserves the layout slot before Calendly's
                   script paints the iframe — prevents CLS on load. */}
               <div
+                id="scheduler"
                 className="calendly-inline-widget rounded-2xl overflow-hidden"
                 data-url={CALENDLY_URL}
                 style={{
+                  scrollMarginTop: 80,
                   minWidth: 320,
                   minHeight: 700,
                   height: 700,
