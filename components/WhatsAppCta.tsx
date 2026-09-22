@@ -33,7 +33,7 @@ export default function WhatsAppCta({
         background: "#25D366",
         color: ink,
         fontSize: "0.85rem",
-        minHeight: 40,
+        minHeight: 44,
         minWidth: 40,
         padding: "0.5rem 0.9rem",
       }}

@@ -222,8 +222,8 @@ function BookButton({
             }
           : {
               background: "transparent",
-              color: TEXT,
-              border: `1px solid ${HAIRLINE}`,
+              color: ACCENT,
+              border: `1px solid ${ACCENT}`,
             }
       }
     >

@@ -207,7 +207,7 @@ export default function BookClient() {
                   border: `1px solid ${C.accent}`,
                   fontSize: "0.85rem",
                   padding: "0.5rem 1.1rem",
-                  minHeight: 40,
+                  minHeight: 44,
                 }}
               >
                 Book a call
