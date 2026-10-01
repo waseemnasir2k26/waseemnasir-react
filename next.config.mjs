@@ -37,5 +37,11 @@ const nextConfig = {
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
+  // /contact hard-404s here — the booking page is /book. Every in-repo CTA
+  // already points at skynetjoe.com/contact, so this only catches typed and
+  // externally-linked hits that would otherwise dead-end. Verified 2026-10-01.
+  async redirects() {
+    return [{ source: "/contact", destination: "/book", permanent: true }];
+  },
 };
 export default nextConfig;
