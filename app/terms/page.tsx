@@ -8,8 +8,9 @@ const SITE = "https://www.waseemnasir.com";
  * render as "[NEEDS WASEEM]" in the page body). The first three are
  * load-bearing for a live paid product; answer them, then flip robots to index:
  *   1. Registered trading entity + company number + address
- *   2. Payment provider (+ instalments on the 3-month track? sales tax/VAT?)
- *   3. Refund policy AND how the UK/EU statutory cancellation right is handled
+ *   2. (Payment provider: ruled 2026-10-07 -- Fiverr. Still open: instalments
+ *      on the 3-month track, sales tax/VAT)
+ *   3. (Cancellation/refunds: ruled 2026-10-07 -- Fiverr's process.)
  *   4. Rescheduling / no-show rule you will actually enforce
  *   5. Governing law + forum (follows from 1)
  * Until 3 is set, the conduct section commits to pro-rata refunds as the
@@ -29,7 +30,7 @@ export default function TermsPage() {
   return (
     <LegalLayout
       title="Terms"
-      updated="25 July 2026"
+      updated="7 October 2026"
       intro="These terms cover the 1:1 mentorship sold on this site and general use of the site itself. Plain language on purpose — if something here is unclear, ask before you buy."
     >
       <div className="lg-note">
@@ -89,28 +90,16 @@ export default function TermsPage() {
         Prices are in US dollars and shown on the mentorship page. Payment is
         due before sessions begin unless agreed otherwise in writing.{" "}
         Payment plans are available on the three-month track, as stated on the
-        mentorship page. <em>Not yet specified:</em> the payment provider and
-        whether any local sales tax or VAT is added. Ask and you will be told
-        before any payment is taken.
+        mentorship page. Payments for the mentorship are taken through Fiverr.{" "}
+        <em>Not yet specified:</em> whether any local sales tax or VAT is
+        added. Ask and you will be told before any payment is taken.
       </p>
 
       <h2>Cancellation and refunds</h2>
       <p>
-        <em>Not yet specified</em>, and it is the most important gap on this
-        page. Two things are still to be set out:
+        Cancellations and refunds for the mentorship follow
+        Fiverr&rsquo;s order cancellation and resolution process.
       </p>
-      <ul>
-        <li>
-          The refund policy itself — for instance, a full refund before the first
-          session, and a pro-rata refund for unused sessions after that.
-        </li>
-        <li>
-          How the statutory cancellation right that UK and EU
-          consumers normally have for a period after buying a service online is
-          handled, including whether a customer who asks to start immediately is
-          asked to acknowledge that beginning early affects that right.
-        </li>
-      </ul>
       <p>
         Where local consumer law gives you stronger rights than this page does,
         that law applies.
