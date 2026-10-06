@@ -90,15 +90,20 @@ export default function TermsPage() {
         Prices are in US dollars and shown on the mentorship page. Payment is
         due before sessions begin unless agreed otherwise in writing.{" "}
         Payment plans are available on the three-month track, as stated on the
-        mentorship page. Payments for the mentorship are taken through Fiverr.{" "}
+        mentorship page. Payment is arranged after your fit call. Where a
+        mentorship package is bought through Fiverr, Fiverr takes the payment
+        under its own terms.{" "}
         <em>Not yet specified:</em> whether any local sales tax or VAT is
         added. Ask and you will be told before any payment is taken.
       </p>
 
       <h2>Cancellation and refunds</h2>
       <p>
-        Cancellations and refunds for the mentorship follow
-        Fiverr&rsquo;s order cancellation and resolution process.
+        Where a mentorship package is bought through Fiverr, cancellations and
+        refunds follow Fiverr&rsquo;s order cancellation and resolution process.
+        For a package arranged directly, <em>not yet specified:</em> ask and
+        you will be told the cancellation and refund terms in writing before
+        any payment is taken.
       </p>
       <p>
         Where local consumer law gives you stronger rights than this page does,
@@ -129,9 +134,8 @@ export default function TermsPage() {
       <p>
         Either of us may end the arrangement if the other behaves abusively or
         makes the work impossible. If the mentorship is ended for that reason,
-        unused sessions are refunded pro rata — the interim position until the
-        cancellation section above is finalised, and it will not be applied less
-        favourably than that.
+        unused sessions are refunded pro rata, or through Fiverr&rsquo;s process
+        where the package was bought there.
       </p>
 
       <h2>Limits</h2>

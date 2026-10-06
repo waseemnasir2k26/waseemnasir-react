@@ -1,7 +1,7 @@
 /* ============================================================
    BLOG · shared chrome + prose primitives
    Matches the LIVE "blueprint" design system 1:1 (see
-   app/v/blueprint/page.tsx): light paper canvas, smoky jade-teal
+   components/home/BlueprintClient.tsx): light paper canvas, smoky jade-teal
    accent, ink-jade depth, Bricolage Grotesque + Hanken Grotesk +
    JetBrains Mono, node/blueprint motifs.
 
