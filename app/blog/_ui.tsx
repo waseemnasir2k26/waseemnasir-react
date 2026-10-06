@@ -562,8 +562,6 @@ export function SoftCTA({
         </p>
         <Link
           href={href}
-          target="_blank"
-          rel="noopener noreferrer"
           className="bp-cta inline-flex shrink-0 items-center rounded-full font-semibold transition-opacity hover:opacity-90"
           style={{
             background: C.accentTint,

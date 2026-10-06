@@ -13,8 +13,7 @@ const SITE = "https://www.waseemnasir.com";
  *   3. (Cancellation/refunds: ruled 2026-10-07 -- Fiverr's process.)
  *   4. Rescheduling / no-show rule you will actually enforce
  *   5. Governing law + forum (follows from 1)
- * Until 3 is set, the conduct section commits to pro-rata refunds as the
- * interim floor, so the clause is not empty.
+ * The conduct section keeps pro-rata refunds for packages arranged directly.
  */
 export const metadata: Metadata = {
   title: "Terms | Waseem Nasir",

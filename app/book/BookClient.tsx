@@ -270,6 +270,13 @@ export default function BookClient() {
                 business does by hand, find where it leaks time or money, and
                 decide together if automation is worth building.
               </p>
+              <p
+                className="mt-3 max-w-[52ch]"
+                style={{ color: C.body, fontSize: "0.95rem", lineHeight: 1.6 }}
+              >
+                Here for a mentorship fit call or an Inbox Ops census? Same
+                calendar, same 30 minutes. Say which in the booking notes.
+              </p>
             </Reveal>
 
             <Reveal reduce={reduce} delay={0.16} className="mt-10">
