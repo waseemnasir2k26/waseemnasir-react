@@ -24,7 +24,7 @@ More case studies with details: https://skynetjoe.com/case-studies
 
 ## Mentorship (https://www.waseemnasir.com/mentorship)
 
-Private 1-on-1 mentorship teaching beginners to build and ship real software by vibe-coding with Claude Code. No CS degree needed. Live screen-to-screen video sessions where the student drives their own machine; every session is recorded. Outcome: a real project deployed to a live URL plus the skill to keep building. Tracks: 1-month sprint or 3-month mastery. A free 15-minute fit call decides the right track honestly.
+Private 1-on-1 mentorship teaching beginners to build and ship real software by vibe-coding with Claude Code. No CS degree needed. Live screen-to-screen video sessions where the student drives their own machine; every session is recorded. Outcome: a real project deployed to a live URL plus the skill to keep building. Tracks: 1-month sprint or 3-month mastery. A free 30-minute fit call decides the right track honestly.
 
 ## Inbox Ops (https://www.waseemnasir.com/inbox-ops)
 

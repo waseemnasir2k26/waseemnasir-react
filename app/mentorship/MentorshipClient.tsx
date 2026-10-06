@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
+import { MENTORSHIP_FIVERR_URL } from "@/components/site";
 
 /* ============================================================
    /mentorship — 1:1 Claude Code & AI vibe-coding mentorship.
@@ -14,8 +15,8 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
    Real proof only — no fabricated testimonials or student counts.
    ============================================================ */
 
-const CTA = "https://skynetjoe.com/contact";
-const EMAIL = "waseembali2k26@gmail.com";
+const CTA = "/book";
+const EMAIL = "waseem@skynetjoe.com";
 const GITHUB = "https://github.com/waseemnasir2k26";
 const AGENCY = "https://skynetjoe.com";
 const IMG = (f: string) => `/img/pro/${f}`;
@@ -101,7 +102,7 @@ interface Tier {
   blurb: string;
   features: string[];
   featured?: boolean;
-  cta: string;
+  fiverrCta: string;
 }
 
 const TIERS: Tier[] = [
@@ -118,7 +119,7 @@ const TIERS: Tier[] = [
       "A clear roadmap for what to learn next",
       "Recording of the session to keep",
     ],
-    cta: "Book a Kickstart",
+    fiverrCta: "Get Kickstart on Fiverr — $199",
   },
   {
     name: "1-Month Sprint",
@@ -133,7 +134,7 @@ const TIERS: Tier[] = [
       "Prompting, plan mode & reading diffs",
       "Session recordings + notes",
     ],
-    cta: "Start the Sprint",
+    fiverrCta: "Get the Sprint on Fiverr — $800",
   },
   {
     name: "3-Month Mastery",
@@ -152,7 +153,7 @@ const TIERS: Tier[] = [
       "Works out to ~$667/mo — save vs monthly",
     ],
     featured: true,
-    cta: "Apply for Mastery",
+    fiverrCta: "Get Mastery on Fiverr — $2,000",
   },
 ];
 
@@ -201,17 +202,20 @@ function BookButton({
   label,
   variant = "solid",
   className = "",
+  href = CTA,
+  external = false,
 }: {
   label: string;
   variant?: "solid" | "ghost";
   className?: string;
+  href?: string;
+  external?: boolean;
 }) {
   const solid = variant === "solid";
   return (
     <Link
-      href={CTA}
-      target="_blank"
-      rel="noopener noreferrer"
+      href={href}
+      {...(external ? { target: "_blank", rel: "noopener" } : {})}
       className={`inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold tracking-wide transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0C] ${className}`}
       style={
         solid
@@ -331,7 +335,7 @@ export default function MentorshipClient() {
               </Reveal>
               <Reveal delay={0.18}>
                 <div className="mt-9 flex flex-wrap items-center gap-4">
-                  <BookButton label="Book a free 15-min fit call" />
+                  <BookButton label="Book a free 30-min fit call" />
                   <Link
                     href="#pricing"
                     className="text-sm font-medium underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 rounded px-2 py-1"
@@ -558,7 +562,7 @@ export default function MentorshipClient() {
               className="mt-4 max-w-xl text-sm leading-relaxed"
               style={{ color: MUTED }}
             >
-              Every track starts with a free 15-minute fit call so we both know
+              Every track starts with a free 30-minute fit call so we both know
               it&apos;s right before you commit. Spots are limited — I only take
               a handful of 1:1 students at a time.
             </p>
@@ -659,11 +663,21 @@ export default function MentorshipClient() {
                   </ul>
 
                   <div className="mt-8">
-                    <BookButton
-                      label={t.cta}
-                      variant={t.featured ? "solid" : "ghost"}
-                      className="w-full"
-                    />
+                    {MENTORSHIP_FIVERR_URL ? (
+                      <BookButton
+                        label={t.fiverrCta}
+                        href={MENTORSHIP_FIVERR_URL}
+                        external
+                        variant={t.featured ? "solid" : "ghost"}
+                        className="w-full"
+                      />
+                    ) : (
+                      <BookButton
+                        label="Book the free fit call"
+                        variant={t.featured ? "solid" : "ghost"}
+                        className="w-full"
+                      />
+                    )}
                   </div>
                 </div>
               </Reveal>
@@ -677,6 +691,14 @@ export default function MentorshipClient() {
               Prices in USD. Payment plans available on the 3-month track — ask
               on your fit call.
             </p>
+            {MENTORSHIP_FIVERR_URL && (
+              <p
+                className="mt-3 text-center text-xs"
+                style={{ color: MUTED, fontFamily: MONO }}
+              >
+                Checkout, payment protection and refunds are handled by Fiverr.
+              </p>
+            )}
           </Reveal>
         </section>
 
@@ -873,7 +895,7 @@ export default function MentorshipClient() {
                 className="mx-auto mt-5 max-w-xl text-base leading-relaxed"
                 style={{ color: MUTED }}
               >
-                Book a free 15-minute fit call. We&apos;ll talk about what you
+                Book a free 30-minute fit call. We&apos;ll talk about what you
                 want to build, and I&apos;ll tell you honestly if this is right
                 for you.
               </p>

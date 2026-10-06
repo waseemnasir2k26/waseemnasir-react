@@ -62,7 +62,7 @@ const SHADOW = {
 const EASE = [0.16, 1, 0.3, 1] as const;
 const LINKEDIN_DM = "https://www.linkedin.com/in/waseemnasir2k26";
 /** Header "Book a call" — same booking destination as every other header. */
-const BOOK_CTA = "https://skynetjoe.com/contact";
+const BOOK_CTA = "/book";
 const EMAIL = "mailto:waseem@skynetjoe.com";
 
 /* ─── Reusable bits (self-contained duplicates of the blueprint idiom) ─── */
@@ -124,9 +124,7 @@ function Reveal({
 function PrimaryCTA({ className = "" }: { className?: string }) {
   return (
     <Link
-      href={LINKEDIN_DM}
-      target="_blank"
-      rel="noopener noreferrer"
+      href={BOOK_CTA}
       className={`inline-flex items-center rounded-full font-semibold transition-opacity hover:opacity-90 ${className}`}
       style={{
         background: C.accent,
@@ -136,8 +134,34 @@ function PrimaryCTA({ className = "" }: { className?: string }) {
         boxShadow: SHADOW.md,
       }}
     >
-      DM me &ldquo;inbox&rdquo; on LinkedIn
+      Book a 20-min inbox census call
     </Link>
+  );
+}
+
+function LinkedInCTA({
+  onDark = false,
+  className = "",
+}: {
+  onDark?: boolean;
+  className?: string;
+}) {
+  return (
+    <a
+      href={LINKEDIN_DM}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`inline-flex items-center rounded-full font-semibold ${className}`}
+      style={{
+        background: onDark ? "rgba(234,244,241,0.12)" : C.card,
+        color: onDark ? "#FFFFFF" : C.accent,
+        border: `1px solid ${onDark ? "rgba(234,244,241,0.28)" : C.hairline}`,
+        fontSize: "0.95rem",
+        padding: "0.8rem 1.6rem",
+      }}
+    >
+      DM me &ldquo;inbox&rdquo; on LinkedIn
+    </a>
   );
 }
 
@@ -346,8 +370,6 @@ export default function InboxOpsClient() {
               <WhatsAppCta />
               <Link
                 href={BOOK_CTA}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center rounded-full font-semibold transition-colors"
                 style={{
                   background: "transparent",
@@ -421,6 +443,7 @@ export default function InboxOpsClient() {
               className="mt-9 flex flex-wrap items-center gap-4"
             >
               <PrimaryCTA />
+              <LinkedInCTA />
               <SecondaryCTA />
             </Reveal>
           </div>
@@ -754,6 +777,7 @@ export default function InboxOpsClient() {
               className="mt-9 flex flex-wrap items-center justify-center gap-4"
             >
               <PrimaryCTA />
+              <LinkedInCTA onDark />
               <SecondaryCTA onDark />
             </Reveal>
           </div>
