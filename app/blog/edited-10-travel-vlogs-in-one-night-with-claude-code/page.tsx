@@ -23,7 +23,7 @@ const post = getPost("edited-10-travel-vlogs-in-one-night-with-claude-code")!;
 const url = `${SITE}/blog/${post.slug}`;
 
 export const metadata: Metadata = {
-  title: `${post.title} | Waseem Nasir`,
+  title: "10 vlogs edited in one night with Claude Code | Waseem Nasir",
   description: post.description,
   alternates: { canonical: url },
   openGraph: {

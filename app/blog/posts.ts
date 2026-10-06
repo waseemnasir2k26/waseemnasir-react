@@ -35,7 +35,7 @@ export const POSTS: PostMeta[] = [
     excerpt:
       "Pre-dawn cafe, an Italian travel plugin stuck behind a hosting firewall, agents building while I film, and a rule I don't break: no eight-hour days. An honest walk through one working day — and how an accounting-firm job led here.",
     description:
-      "An honest, first-person account of one working day running an AI automation agency from Bali — a client fire, the quiet build, the real cost, and the accounting-firm background that led to it.",
+      "An honest account of one working day running an AI automation agency from Bali — a client fire, the quiet build, and the real cost.",
     ogImage:
       "/img/pro/CAFE-WORK-2026-06-02-night-cafe-typing-backlit-keyboard-candid.jpg",
     ogAlt:
@@ -52,7 +52,7 @@ export const POSTS: PostMeta[] = [
     excerpt:
       "Ten Ubud vlogs and their teasers, cut, captioned, and rendered in a single night — driven from the terminal with Claude Code and an ffmpeg NVENC pipeline. Here's exactly how the system works, in three steps.",
     description:
-      "Ten Ubud travel vlogs plus teasers, edited and rendered in one night using Claude Code and an ffmpeg NVENC pipeline. A concrete look at how the video-editing system works in three steps.",
+      "Ten Ubud travel vlogs plus teasers, edited and rendered in one night with Claude Code and an ffmpeg NVENC pipeline, in three steps.",
     ogImage:
       "/img/pro/CAFE-WORK-2026-03-30-dual-laptop-analytics-dashboard-coffee.jpg",
     ogAlt:

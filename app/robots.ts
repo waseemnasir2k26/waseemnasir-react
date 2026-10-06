@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
 
-// keep duplicate / internal design pages out of the index so they
-// don't dilute the homepage's ranking signals
-const DISALLOW = ["/v/", "/variants", "/brand"];
+// /v/* and /variants are gone (301 -> /), so they no longer need a Disallow.
+// /brand stays out of the index.
+const DISALLOW = ["/brand"];
 const ALLOW = ["/"];
 
 // Named AI/answer-engine crawlers get an explicit allow block. The wildcard
@@ -57,6 +57,5 @@ export default function robots(): MetadataRoute.Robots {
       })),
     ],
     sitemap: "https://www.waseemnasir.com/sitemap.xml",
-    host: "https://www.waseemnasir.com",
   };
 }

@@ -574,6 +574,16 @@ function AnnouncementBar({ onDismiss }: { onDismiss: () => void }) {
   );
 }
 
+const NAV_LINKS: [string, string][] = [
+  ["#how", "Work"],
+  ["#proof", "Proof"],
+  ["/mentorship", "Mentorship"],
+  ["/inbox-ops", "Inbox Ops"],
+  ["/blog", "Blog"],
+  ["#about", "About"],
+  ["/book", "Book"],
+];
+
 /* ──────────────────────────────────────────────────────────────
    NAV — only glass surface; opaque fallback; CTA always present
    ────────────────────────────────────────────────────────────── */
@@ -585,7 +595,16 @@ function Nav({
   onDismissBanner: () => void;
 }) {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -659,17 +678,7 @@ function Nav({
           </span>
         </a>
         <nav className="hidden items-center gap-8 md:flex" aria-label="Primary">
-          {(
-            [
-              ["#how", "Work"],
-              ["#proof", "Proof"],
-              ["/mentorship", "Mentorship"],
-              ["/inbox-ops", "Inbox Ops"],
-              ["/blog", "Blog"],
-              ["#about", "About"],
-              ["/book", "Book"],
-            ] as [string, string][]
-          ).map(([href, label]) => (
+          {NAV_LINKS.map(([href, label]) => (
             <a
               key={href}
               href={href}
@@ -682,6 +691,30 @@ function Nav({
         </nav>
         <div className="flex items-center gap-2">
           <WhatsAppCta />
+          <button
+            type="button"
+            className="md:hidden inline-flex items-center justify-center rounded-full"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setMenuOpen((o) => !o)}
+            style={{
+              border: `1px solid ${C.hairline}`,
+              background: C.card,
+              color: C.ink,
+              minHeight: 44,
+              minWidth: 44,
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+              <path
+                d={menuOpen ? "M4 4l10 10M14 4L4 14" : "M3 5h12M3 9h12M3 13h12"}
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
           <Link
             href={CTA}
             className="bp-cta-outline inline-flex items-center justify-center rounded-full font-semibold transition-colors"
@@ -698,6 +731,29 @@ function Nav({
           </Link>
         </div>
       </div>
+      {menuOpen && (
+        <nav
+          id="mobile-menu"
+          aria-label="Mobile"
+          className="md:hidden"
+          style={{ background: C.canvas, borderTop: `1px solid ${C.hairline}` }}
+        >
+          <ul className="mx-auto max-w-[1200px] px-5 py-2 sm:px-6">
+            {NAV_LINKS.map(([href, label]) => (
+              <li key={href}>
+                <a
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center font-medium"
+                  style={{ color: C.ink, fontSize: "1rem", minHeight: 48 }}
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
     </header>
   );
 }

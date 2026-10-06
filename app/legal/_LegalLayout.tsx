@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 /**
  * Shared shell for the legal pages (/privacy, /terms).
  *
- * Palette is lifted from app/v/blueprint/BlueprintClient.tsx so these pages sit
+ * Palette is lifted from components/home/BlueprintClient.tsx so these pages sit
  * inside the same design system as the site root rather than looking bolted on.
  *
  * NOTE: <style> content is passed via dangerouslySetInnerHTML on purpose. JSX

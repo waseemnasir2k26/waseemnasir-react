@@ -62,6 +62,12 @@ const SHADOW = {
 const EASE = [0.16, 1, 0.3, 1] as const;
 const CALENDLY_URL =
   "https://calendly.com/skynetlabs/schedule-a-free-consultation";
+// hide_gdpr_banner=1: Calendly's cookie banner covered the day picker on mobile.
+const CALENDLY_EMBED_URL = `${CALENDLY_URL}?hide_gdpr_banner=1`;
+
+type CalendlyGlobal = {
+  initInlineWidget?: (opts: { url: string; parentElement: Element }) => void;
+};
 const EMAIL = "mailto:waseem@skynetjoe.com";
 
 function Mono({
@@ -138,15 +144,23 @@ export default function BookClient() {
     <>
       {/*
         NOTE: widget.js (lazyOnload) scans the DOM for .calendly-inline-widget
-        exactly once, on first load of this page. All current links to /book
-        are plain <a> tags (full page load), so this works. Do NOT link to
-        /book via next/link client-side navigation without also calling
-        window.Calendly?.initInlineWidget({...}) on mount, or the embed will
-        render as an empty box.
+        exactly once, on first load of the script. Booking CTAs now link here
+        with next/link (client-side navigation), so the script may already be
+        loaded when this page mounts: onReady (fires on every mount) inits the
+        widget explicitly, guarded so it never double-inits a container that
+        widget.js already filled.
       */}
       <Script
         src="https://assets.calendly.com/assets/external/widget.js"
         strategy="lazyOnload"
+        onReady={() => {
+          const el = document.getElementById("scheduler");
+          const cal = (window as unknown as { Calendly?: CalendlyGlobal })
+            .Calendly;
+          if (el && !el.querySelector("iframe") && cal?.initInlineWidget) {
+            cal.initInlineWidget({ url: CALENDLY_EMBED_URL, parentElement: el });
+          }
+        }}
       />
 
       <main
@@ -369,7 +383,7 @@ export default function BookClient() {
               <div
                 id="scheduler"
                 className="calendly-inline-widget rounded-2xl overflow-hidden"
-                data-url={CALENDLY_URL}
+                data-url={CALENDLY_EMBED_URL}
                 style={{
                   scrollMarginTop: 80,
                   minWidth: 320,

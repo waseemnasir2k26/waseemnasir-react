@@ -5,10 +5,9 @@ import { FAQ } from "./faq-data";
 const SITE = "https://www.waseemnasir.com";
 
 export const metadata: Metadata = {
-  title:
-    "1:1 Claude Code Mentorship — Learn to Vibe-Code Real Software | Waseem Nasir",
+  title: "1:1 Claude Code Mentorship | Waseem Nasir",
   description:
-    "Private 1-on-1 mentorship for beginners. Learn to build and ship real apps by vibe-coding with Claude Code — live, hands-on, no CS degree needed. 1-month sprint or 3-month mastery track.",
+    "Private 1-on-1 mentorship for beginners. Learn to build and ship real apps by vibe-coding with Claude Code — live, hands-on, no CS degree needed.",
   alternates: { canonical: `${SITE}/mentorship` },
   openGraph: {
     title: "1:1 Claude Code Mentorship — Vibe-Code Real Software",
@@ -39,6 +38,17 @@ const courseJsonLd = {
     name: "Waseem Nasir",
     url: SITE,
   },
+  offers: [
+    { name: "Kickstart (single 90-minute session)", price: "199" },
+    { name: "1-Month Sprint", price: "800" },
+    { name: "3-Month Mastery", price: "2000" },
+  ].map((o) => ({
+    "@type": "Offer",
+    name: o.name,
+    price: o.price,
+    priceCurrency: "USD",
+    url: `${SITE}/mentorship`,
+  })),
   hasCourseInstance: [
     {
       "@type": "CourseInstance",

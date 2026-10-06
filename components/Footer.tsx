@@ -7,7 +7,7 @@ const NAV_LINKS = [
   // Entity home — /about is the ProfilePage the Person @id points at; without an
   // inbound internal link it would be sitemap-only (critic round 1, 2026-09-06).
   { label: "About", href: "/about", external: false },
-  { label: "Book a call", href: BOOKING, external: true },
+  { label: "Book a call", href: BOOKING, external: false },
   { label: "Email", href: `mailto:${EMAIL}`, external: false },
   { label: "GitHub", href: GITHUB, external: true },
   { label: "SkynetLabs", href: AGENCY, external: true },
@@ -64,7 +64,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="shell mt-10 flex flex-col gap-1 text-xs text-mute/70">
-          <span>
+          <span suppressHydrationWarning>
             © {new Date().getFullYear()} Waseem Nasir. Built from scratch — no
             template.
           </span>

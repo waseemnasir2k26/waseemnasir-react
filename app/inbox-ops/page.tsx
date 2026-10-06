@@ -6,7 +6,7 @@ const SITE = "https://www.waseemnasir.com";
 export const metadata: Metadata = {
   title: "Inbox Ops Autopilot — the 9-step map | Waseem Nasir",
   description:
-    "The exact 9-step map for getting a small business out of its own mailbox: census, taxonomy, kill list, routing, AI classifier, draft layer, escalation, digest, drift review. $2,750 setup, $395/mo run.",
+    "The 9-step map for getting a small business out of its own mailbox: census, routing, AI classifier, drafts, digest. $2,750 setup, $395/mo run.",
   alternates: { canonical: `${SITE}/inbox-ops` },
   openGraph: {
     title: "Inbox Ops Autopilot — the 9-step map",
