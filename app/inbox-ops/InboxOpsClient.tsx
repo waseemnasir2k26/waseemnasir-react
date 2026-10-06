@@ -134,7 +134,7 @@ function PrimaryCTA({ className = "" }: { className?: string }) {
         boxShadow: SHADOW.md,
       }}
     >
-      Book a 20-min inbox census call
+      Book a 30-min inbox census call
     </Link>
   );
 }
