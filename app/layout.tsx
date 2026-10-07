@@ -5,6 +5,8 @@ import SmoothScroll from "@/components/SmoothScroll";
 import ScrollProgress from "@/components/ScrollProgress";
 import MotionProvider from "@/components/MotionProvider";
 import SxoBeacon from "@/components/SxoBeacon";
+import NewsletterPopup from "@/components/NewsletterPopup";
+import "@/components/newsletter-popup.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -196,6 +198,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
         />
         <SxoBeacon />
+        {/* Newsletter popup — one per browser, sign-ups go to HQ via /api/subscribe (2026-10-07). */}
+        <NewsletterPopup site="waseemnasir" />
       </body>
     </html>
   );
