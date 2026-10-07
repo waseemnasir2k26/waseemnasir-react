@@ -83,6 +83,12 @@ export default function NewsletterPopup({
     let fired = false;
     const fire = () => {
       if (fired) return;
+      // Never on top of another dialog or an undecided consent bar: Esc or a
+      // backdrop click meant for them would otherwise snooze this for 14 days.
+      if (document.querySelector('[role="dialog"], [data-consent-bar]') !== null) {
+        window.setTimeout(fire, 8000);
+        return;
+      }
       fired = true;
       try {
         window.sessionStorage.setItem(SHARED_POPUP_KEY, "1");
@@ -232,25 +238,22 @@ export default function NewsletterPopup({
 
             {status === "success" ? (
               <div className="nlp-body">
-                <p className="nlp-eyebrow">You&apos;re in</p>
+                <p className="nlp-eyebrow">You&apos;re on the list</p>
                 <h2 id="nlp-title" className="nlp-title">
-                  Thanks{firstName.trim() ? `, ${firstName.trim()}` : ""}. First
-                  one lands Friday.
+                  Thanks{firstName.trim() ? `, ${firstName.trim()}` : ""}. You&apos;ll get the first issue when it launches.
                 </h2>
                 <p className="nlp-lede">
-                  One email a week. Builds, workflows, the tools that actually
-                  paid off. Reply to any of them and it reaches me.
+                  Builds, workflows, the tools that actually paid off. Reply to any issue and it reaches me; reply &ldquo;stop&rdquo; and you are removed.
                 </p>
               </div>
             ) : (
               <form className="nlp-body" onSubmit={submit} noValidate>
-                <p className="nlp-eyebrow">Free, every Friday</p>
+                <p className="nlp-eyebrow">Free email list · launching soon</p>
                 <h2 id="nlp-title" className="nlp-title">
                   We ship a lot. Get the best of it in one email.
                 </h2>
                 <p className="nlp-lede">
-                  New AI videos, free n8n workflows, site teardowns and the
-                  services we add. No spam, unsubscribe in one click.
+                  New AI videos, free n8n workflows, site teardowns and the services we add. Join now and you are in the first send. No spam; reply &ldquo;stop&rdquo; to any email and you are off the list.
                 </p>
 
                 <div className="nlp-row">
@@ -342,7 +345,7 @@ export default function NewsletterPopup({
                   </button>
                 </div>
                 <p className="nlp-fine">
-                  Fridays. Unsubscribe anytime.{" "}
+                  Occasional, not weekly. Leave anytime.{" "}
                   <a href="/privacy-policy">Privacy</a>
                 </p>
               </form>
