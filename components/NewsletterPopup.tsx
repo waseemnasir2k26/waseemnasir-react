@@ -66,7 +66,8 @@ export default function NewsletterPopup({
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [error, setError] = useState<string | null>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
+    const cardRef = useRef<HTMLDivElement>(null);
+  const shownAtRef = useRef<number>(0);
 
   // ── trigger ──
   useEffect(() => {
@@ -82,8 +83,10 @@ export default function NewsletterPopup({
     }
         let fired = false;
     let retry: number | undefined;
-    const fire = () => {
+        const fire = () => {
       if (fired) return;
+      if (BLOCKED.some((re) => re.test(window.location.pathname))) return;
+      if (readDone()) return;
       // Never on top of another dialog or an undecided consent bar: Esc or a
       // backdrop click meant for them would otherwise snooze this for 14 days.
             if (document.querySelector('[role="dialog"], [data-consent-bar]') !== null) {
@@ -96,6 +99,7 @@ export default function NewsletterPopup({
       } catch {
         /* ignore */
       }
+            shownAtRef.current = Date.now();
       setShow(true);
     };
     const t = window.setTimeout(fire, DELAY_MS);
@@ -117,7 +121,10 @@ export default function NewsletterPopup({
     const first = cardRef.current?.querySelector<HTMLElement>("input,button");
     first?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") snooze();
+            if (e.key === "Escape") {
+        if (Date.now() - shownAtRef.current < 1500) return; // grace after open
+        snooze();
+      }
       if (e.key === "Tab" && cardRef.current) {
         const f = cardRef.current.querySelectorAll<HTMLElement>(
           'input,button,select,[href],[tabindex]:not([tabindex="-1"])',
