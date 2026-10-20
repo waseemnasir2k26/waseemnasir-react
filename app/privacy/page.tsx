@@ -78,8 +78,8 @@ export default function PrivacyPage() {
         &ldquo;stop&rdquo; or writing to waseem@skynetjoe.com works too, and
         is handled by hand within 7 days. After you leave, a minimal
         &ldquo;do not email&rdquo; record is kept so you are not added back;
-        ask us to delete everything and the sign-up record in our dashboard
-        is erased as well.
+        ask us to delete everything and the sign-up record is erased from
+        both our dashboard and Brevo.
         &ldquo;Not right now&rdquo; stores a 14-day snooze in your browser and
         nothing else.
       </p>
@@ -133,7 +133,9 @@ export default function PrivacyPage() {
         <li>
           <strong>To send the email list you joined</strong> — your consent,
           given when you submit the sign-up card. You can withdraw it at any
-          time by unsubscribing.
+          time by unsubscribing. After you leave, the minimal &ldquo;do not
+          email&rdquo; record is kept on the basis of a legitimate interest in
+          not emailing you again.
         </li>
         <li>
           <strong>To keep records for tax and accounting</strong> — a legal
@@ -166,7 +168,8 @@ export default function PrivacyPage() {
         </li>
         <li>
           <strong>Brevo</strong> (EU, France) — email-sending service; receives
-          the same email-list sign-up details from our dashboard, sends the
+          the same email-list sign-up details (plus which site and form you
+          joined from) from our dashboard, sends the
           welcome email, the welcome series and the list emails, and records
           opens and link clicks on them.
         </li>
