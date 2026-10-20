@@ -26,7 +26,7 @@ export default function PrivacyPage() {
   return (
     <LegalLayout
       title="Privacy notice"
-      updated="7 October 2026"
+      updated="20 October 2026"
       intro="This page explains what happens to your information when you use this site, book a call, or buy mentorship. It is written to be read, not to be survived."
     >
       <div className="lg-note">
@@ -67,10 +67,12 @@ export default function PrivacyPage() {
         it collects your email address, optionally your first name and the
         topic you picked, plus the page you were on. The address is stored in
         our own operations dashboard (hq.skynetjoe.com, self-hosted on a
-        Hostinger VPS) and is used only to send that email once the list goes
-        live. Nothing has been sent yet; the first issue goes out when the list
-        launches. To leave the list at any time, reply to any email or write to
-        waseem@skynetjoe.com and the address is removed within 7 days.
+        Hostinger VPS) and passed to Brevo, the email service that sends the
+        list emails. You get a welcome email straight away and a short welcome
+        series (three more emails over two weeks), then only occasional emails.
+        To leave the list at any time, use the unsubscribe link in any list
+        email, reply to any email, or write to waseem@skynetjoe.com and the
+        address is removed within 7 days.
         &ldquo;Not right now&rdquo; stores a 14-day snooze in your browser and
         nothing else.
       </p>
@@ -147,6 +149,11 @@ export default function PrivacyPage() {
           <strong>Our own operations dashboard</strong> (hq.skynetjoe.com,
           self-hosted on the same Hostinger VPS) — stores email-list sign-ups
           (email, optional first name, chosen topic, page).
+        </li>
+        <li>
+          <strong>Brevo</strong> (EU, France) — email-sending service; receives
+          the same email-list sign-up details from our dashboard and sends the
+          welcome email, the welcome series and the list emails.
         </li>
         <li>
           <strong>Email and CRM</strong> — enquiries and client records are held
