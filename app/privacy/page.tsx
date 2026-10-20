@@ -67,13 +67,15 @@ export default function PrivacyPage() {
         it collects your email address, optionally your first name and the
         topic you picked, plus the page you were on. The address is stored in
         our own operations dashboard (hq.skynetjoe.com, self-hosted on a
-        rented server in France) and passed to Brevo, the email service that sends the
-        list emails. You will get a welcome email when you join and a short
-        welcome series (up to three more emails over two weeks), then only
-        occasional emails. To leave the list at any time, use the unsubscribe
-        link in the series and newsletter emails, reply &ldquo;stop&rdquo; to
-        any email (including the welcome email), or write to
-        waseem@skynetjoe.com and the address is removed within 7 days.
+        server rented from Contabo in France) and passed to Brevo, the email
+        service that sends the list emails. You will get a welcome email when
+        you join, three more over the next two weeks, then only occasional
+        emails. Brevo records whether these emails are opened and which links
+        are clicked, so we can see what is useful. Every list email has a
+        one-click unsubscribe link, which stops all list emails at once; our
+        dashboard keeps only the sign-up record and never emails you itself.
+        You can also reply &ldquo;stop&rdquo; to any email or write to
+        waseem@skynetjoe.com, and the address is removed within 7 days.
         &ldquo;Not right now&rdquo; stores a 14-day snooze in your browser and
         nothing else.
       </p>
@@ -150,7 +152,7 @@ export default function PrivacyPage() {
           <strong>Calendly</strong> — runs the call booking.
         </li>
         <li>
-          <strong>Our own n8n server</strong> (self-hosted on a rented server in France)
+          <strong>Our own n8n server</strong> (self-hosted on a server rented from Contabo in France)
           — receives the anonymous funnel counts described above.
         </li>
         <li>
@@ -160,8 +162,9 @@ export default function PrivacyPage() {
         </li>
         <li>
           <strong>Brevo</strong> (EU, France) — email-sending service; receives
-          the same email-list sign-up details from our dashboard and sends the
-          welcome email, the welcome series and the list emails.
+          the same email-list sign-up details from our dashboard, sends the
+          welcome email, the welcome series and the list emails, and records
+          opens and link clicks on them.
         </li>
         <li>
           <strong>Email and CRM</strong> — enquiries and client records are held
