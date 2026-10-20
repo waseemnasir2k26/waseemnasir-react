@@ -71,11 +71,15 @@ export default function PrivacyPage() {
         service that sends the list emails. You will get a welcome email when
         you join, three more over the next two weeks, then only occasional
         emails. Brevo records whether these emails are opened and which links
-        are clicked, so we can see what is useful. Every list email has a
-        one-click unsubscribe link, which stops all list emails at once; our
-        dashboard keeps only the sign-up record and never emails you itself.
-        You can also reply &ldquo;stop&rdquo; to any email or write to
-        waseem@skynetjoe.com, and the address is removed within 7 days.
+        are clicked, so we can see what is useful. The topic you pick decides
+        which links the welcome email sends you; nothing else is tailored.
+        Every list email has a one-click unsubscribe link, which stops all list
+        emails immediately; our dashboard never emails you itself. Replying
+        &ldquo;stop&rdquo; or writing to waseem@skynetjoe.com works too, and
+        is handled by hand within 7 days. After you leave, a minimal
+        &ldquo;do not email&rdquo; record is kept so you are not added back;
+        ask us to delete everything and the sign-up record in our dashboard
+        is erased as well.
         &ldquo;Not right now&rdquo; stores a 14-day snooze in your browser and
         nothing else.
       </p>
@@ -196,7 +200,10 @@ export default function PrivacyPage() {
         Enquiries that do not turn into work are kept while there is a live
         conversation and then cleared. Client and mentorship records are kept
         for as long as needed to deliver the work and then for the period tax
-        rules require. <em>Not yet specified:</em> the exact retention
+        rules require. Email-list sign-ups are kept until you leave the list;
+        after that only the minimal &ldquo;do not email&rdquo; record described
+        above is kept, unless you ask for full deletion.{" "}
+        <em>Not yet specified:</em> the exact retention
         period and the applicable tax jurisdiction.
       </p>
 

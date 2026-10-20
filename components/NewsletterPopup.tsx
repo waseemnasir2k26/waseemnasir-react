@@ -363,7 +363,7 @@ export default function NewsletterPopup({
                   </button>
                 </div>
                 <p className="nlp-fine">
-                  A welcome email plus 3 more over 2 weeks, then occasional. Leave anytime.{" "}
+                  From Waseem at SkynetLabs, sent via Brevo, which tracks opens and clicks. A welcome email plus 3 more over 2 weeks, then occasional. Leave anytime.{" "}
                   <a href={site === "waseemnasir" ? "/privacy" : "/privacy-policy"}>Privacy</a>
                 </p>
               </form>
