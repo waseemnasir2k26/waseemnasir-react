@@ -23,7 +23,6 @@ NEW = [
     "PORTRAIT-2026-05-24-aframe-villas-smile-blue-polo.jpg",
     "PORTRAIT-2026-05-24-profile-sunglasses-jungle-ridge.jpg",
     "PORTRAIT-2026-05-24-river-rock-smile-palms-sunglasses.jpg",
-    "PORTRAIT-2026-05-18-standing-full-body-black-kurta-poster-wall.jpg",
     "PORTRAIT-lakefront-railing-adidas-hoodie-cap.jpg",
     "PORTRAIT-mural-closeup-cream-relaxed-tee.jpg",
     "PORTRAIT-snow-portrait-beanie-adidas-front-smile.jpg",
