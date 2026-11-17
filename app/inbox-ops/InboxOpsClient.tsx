@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import WhatsAppCta from "@/components/WhatsAppCta";
+import NetworkRow from "@/components/NetworkRow";
 import { motion } from "framer-motion";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import {
@@ -814,6 +815,7 @@ export default function InboxOpsClient() {
                 </Mono>
               </div>
             </div>
+            <NetworkRow color={C.mute} className="mt-6" />
           </div>
         </footer>
       </main>

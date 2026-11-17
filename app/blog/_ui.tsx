@@ -16,6 +16,7 @@ import {
   Hanken_Grotesk,
   JetBrains_Mono,
 } from "next/font/google";
+import NetworkRow from "@/components/NetworkRow";
 
 /* ─── Fonts (self-hosted at build via next/font/google) ─── */
 const display = Bricolage_Grotesque({
@@ -340,6 +341,7 @@ function SiteFooter() {
             ))}
           </nav>
         </div>
+        <NetworkRow color={C.mute} className="mt-12" />
         <div
           className="mt-16 flex flex-col items-start justify-between gap-3 border-t pt-6 sm:flex-row sm:items-center"
           style={{ borderColor: C.hairline }}

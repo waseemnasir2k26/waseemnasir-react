@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import WhatsAppCta from "@/components/WhatsAppCta";
+import NetworkRow from "@/components/NetworkRow";
 import Script from "next/script";
 import { motion } from "framer-motion";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
@@ -464,6 +465,7 @@ export default function BookClient() {
                 </Mono>
               </div>
             </div>
+            <NetworkRow color={C.mute} className="mt-6" />
           </div>
         </footer>
       </main>

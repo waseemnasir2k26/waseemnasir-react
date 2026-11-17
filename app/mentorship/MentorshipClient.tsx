@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import WhatsAppCta from "@/components/WhatsAppCta";
+import NetworkRow from "@/components/NetworkRow";
 import Link from "next/link";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
@@ -980,6 +981,9 @@ export default function MentorshipClient() {
                 Privacy
               </a>
             </div>
+          </div>
+          <div className="mx-auto max-w-6xl px-6 pb-10">
+            <NetworkRow color={MUTED} />
           </div>
         </footer>
       </main>
