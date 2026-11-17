@@ -18,6 +18,7 @@ import {
   JetBrains_Mono,
 } from "next/font/google";
 import NetworkRow from "@/components/NetworkRow";
+import { RATINGS } from "@/lib/reviews";
 
 /* ============================================================
    VARIANT: blueprint
@@ -225,7 +226,13 @@ function Reveal({
    ============================================================ */
 const HOSTINGER_PROMO_KEY = "wn-hostinger-promo-v1";
 
-export default function Blueprint({ latest }: { latest?: ReactNode }) {
+export default function Blueprint({
+  latest,
+  reviews,
+}: {
+  latest?: ReactNode;
+  reviews?: ReactNode;
+}) {
   const reduce = !!useSafeReducedMotion();
   const [bannerOpen, setBannerOpen] = useState(true);
   useEffect(() => {
@@ -352,6 +359,7 @@ export default function Blueprint({ latest }: { latest?: ReactNode }) {
         <Nav bannerOpen={bannerOpen} onDismissBanner={dismissBanner} />
         <Hero reduce={reduce} />
         <Trust reduce={reduce} />
+        {reviews}
         <How reduce={reduce} />
         <Stack reduce={reduce} />
         {/* Proof: pinned scrollytelling deck on desktop w/ motion; classic grid on
@@ -850,6 +858,32 @@ function Hero({ reduce }: { reduce: boolean }) {
               style={{ color: C.accent, fontSize: "0.95rem" }}
             >
               See the work ↓
+            </a>
+          </motion.div>
+          {/* Real public ratings — Fiverr agency + Google */}
+          <motion.div
+            {...stagger(3)}
+            className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1.5"
+          >
+            <a
+              href={RATINGS.fiverr.url}
+              target="_blank"
+              rel="noopener"
+              aria-label="Rated 4.8 out of 5 from 320 reviews on Fiverr (SkynetLabs)"
+              className="bp-link font-mono"
+              style={{ color: C.pillInk, fontSize: "0.72rem", letterSpacing: "0.03em" }}
+            >
+              ★ {RATINGS.fiverr.rating} · {RATINGS.fiverr.count} reviews on Fiverr (SkynetLabs)
+            </a>
+            <a
+              href={RATINGS.google.url}
+              target="_blank"
+              rel="noopener"
+              aria-label="Rated 4.7 out of 5 from 16 Google reviews"
+              className="bp-link font-mono"
+              style={{ color: C.pillInk, fontSize: "0.72rem", letterSpacing: "0.03em" }}
+            >
+              ★ {RATINGS.google.rating} · {RATINGS.google.count} Google reviews
             </a>
           </motion.div>
           <motion.div
