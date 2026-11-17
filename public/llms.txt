@@ -8,6 +8,10 @@ Waseem Nasir is the person; SkynetLabs is the company. For services, pricing, ca
 
 - [Home](https://www.waseemnasir.com/): Who Waseem is, live client proof board, stack, gallery, FAQ, and how to work with him.
 - [Blog](https://www.waseemnasir.com/blog): Field notes on running an automation agency with Claude Code from Bali.
+- [Why I publish my n8n workflows for free](https://www.waseemnasir.com/blog/why-i-publish-my-n8n-workflows-for-free): What I share in the free n8n series, what I keep back, and what the free route costs your time.
+- [Why I never let AI send a customer reply without a human check](https://www.waseemnasir.com/blog/why-i-never-let-ai-send-a-customer-reply-without-a-human-check): The AI drafts, a person sends.
+- [What I automate first in a small business](https://www.waseemnasir.com/blog/what-i-automate-first-in-a-small-business): Leaks, then repeats, then reports.
+- [My Claude Code setup for client work](https://www.waseemnasir.com/blog/my-claude-code-setup-for-client-work): Rules file, memory, subagents and a deploy gate.
 - [Mentorship](https://www.waseemnasir.com/mentorship): Private 1:1 Claude Code mentorship — learn to build and ship real software by vibe-coding, no CS degree needed.
 - [Inbox Ops](https://www.waseemnasir.com/inbox-ops): Done-for-you AI email triage system — how it works, what it costs to run, FAQ.
 - [Book a call](https://www.waseemnasir.com/book): Free 30-minute automation audit, booked directly on-site (Calendly).
@@ -23,4 +27,4 @@ Waseem Nasir is the person; SkynetLabs is the company. For services, pricing, ca
 
 ## Notes
 
-This llms.txt follows the llmstxt.org draft specification. Last updated 2026-08-31. Maintained by Waseem Nasir.
+This llms.txt follows the llmstxt.org draft specification. Last updated 2026-11-17. Maintained by Waseem Nasir.

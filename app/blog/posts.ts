@@ -127,6 +127,23 @@ export const POSTS: PostMeta[] = [
     ogAlt:
       "Waseem Nasir working on a laptop at a rooftop cafe with mountains and clouds behind",
   },
+  {
+    slug: "why-i-publish-my-n8n-workflows-for-free",
+    title: "Why I publish my n8n workflows for free",
+    date: "2026-11-17",
+    dateLabel: "November 17, 2026",
+    readingTime: "5 min read",
+    tag: "Founder story",
+    kind: "STORY",
+    excerpt:
+      "I show my n8n workflows in a free series and people ask if I am giving away what I sell. My reasoning, what I keep back, what the free route really costs you, and where to start.",
+    description:
+      "Why I publish my n8n workflows for free: what I share, what I do not, what the free route costs your time, and how to start with one small workflow.",
+    ogImage:
+      "/img/pro/CAFE-WORK-2026-03-30-dual-laptop-analytics-dashboard-coffee.jpg",
+    ogAlt:
+      "Waseem Nasir at a dual-laptop setup with coffee, building and testing workflows",
+  },
 ];
 
 export function getPost(slug: string): PostMeta | undefined {

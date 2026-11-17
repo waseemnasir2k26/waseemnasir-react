@@ -15,7 +15,7 @@ import {
   SHADOW,
 } from "./_ui";
 import { POSTS, type PostMeta } from "./posts";
-import type { Block } from "./_content/types";
+import type { Block, Faq } from "./_content/types";
 
 const SITE = "https://www.waseemnasir.com";
 const WA_NUMBER = "+62 813 1607 7185";
@@ -75,6 +75,18 @@ function jsonLd(post: PostMeta) {
   };
 }
 
+function faqLd(faq: Faq[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+}
+
 function renderBlock(b: Block, i: number) {
   switch (b.t) {
     case "lead":
@@ -117,10 +129,12 @@ export function ArticlePage({
   post,
   body,
   related,
+  faq,
 }: {
   post: PostMeta;
   body: Block[];
   related: [string, string][];
+  faq?: Faq[];
 }) {
   return (
     <>
@@ -128,6 +142,12 @@ export function ArticlePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(post)) }}
       />
+      {faq && faq.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd(faq)) }}
+        />
+      )}
       <BlogShell>
         <article className="mx-auto max-w-[760px] px-5 pt-14 sm:px-6 sm:pt-20">
           <div className="flex items-center gap-3">
@@ -206,6 +226,27 @@ export function ArticlePage({
 
           <div className="mt-10 flex flex-col gap-6">
             {body.map(renderBlock)}
+
+            {faq && faq.length > 0 && (
+              <section aria-label="Frequently asked questions" className="flex flex-col gap-6">
+                <H2>Questions people ask</H2>
+                {faq.map((f) => (
+                  <div key={f.q} className="flex flex-col gap-2">
+                    <h3
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontWeight: 600,
+                        fontSize: "1.2rem",
+                        color: C.ink,
+                      }}
+                    >
+                      {f.q}
+                    </h3>
+                    <P>{f.a}</P>
+                  </div>
+                ))}
+              </section>
+            )}
 
             <div
               className="mt-4"
