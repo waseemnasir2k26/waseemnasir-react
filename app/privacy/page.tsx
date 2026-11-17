@@ -60,6 +60,20 @@ export default function PrivacyPage() {
         happen. Calendly operates as a separate service under its own privacy
         terms.
       </p>
+      <h3>Joining the email list</h3>
+      <p>
+        A small sign-up card may appear once per browser offering an occasional
+        email about new builds, free workflows and services. If you fill it in,
+        it collects your email address, optionally your first name and the
+        topic you picked, plus the page you were on. The address is stored in
+        our own operations dashboard (hq.skynetjoe.com, self-hosted on a
+        Hostinger VPS) and is used only to send that email once the list goes
+        live. Nothing has been sent yet; the first issue goes out when the list
+        launches. To leave the list at any time, reply to any email or write to
+        waseem@skynetjoe.com and the address is removed within 7 days.
+        &ldquo;Not right now&rdquo; stores a 14-day snooze in your browser and
+        nothing else.
+      </p>
       <h3>Buying mentorship</h3>
       <p>
         If you buy a mentorship package, the information needed to deliver and
@@ -128,6 +142,11 @@ export default function PrivacyPage() {
         <li>
           <strong>Our own n8n server</strong> (self-hosted on a Hostinger VPS)
           — receives the anonymous funnel counts described above.
+        </li>
+        <li>
+          <strong>Our own operations dashboard</strong> (hq.skynetjoe.com,
+          self-hosted on the same Hostinger VPS) — stores email-list sign-ups
+          (email, optional first name, chosen topic, page).
         </li>
         <li>
           <strong>Email and CRM</strong> — enquiries and client records are held
