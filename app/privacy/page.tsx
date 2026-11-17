@@ -64,10 +64,9 @@ export default function PrivacyPage() {
       <p>
         If you buy a mentorship package, the information needed to deliver and
         bill for it is processed — typically your name, email address and
-        payment confirmation. Mentorship checkout happens on{" "}
-        <strong>Fiverr</strong>, which handles the transaction and the payment
-        under its own terms. Card details are handled by Fiverr and are never
-        stored on this site.
+        payment confirmation. Where a package is bought through{" "}
+        <strong>Fiverr</strong>, Fiverr handles the transaction and the payment
+        under its own terms. Card details are never stored on this site.
       </p>
       <h3>Just browsing</h3>
       <p>
@@ -139,8 +138,8 @@ export default function PrivacyPage() {
           WhatsApp under its own terms.
         </li>
         <li>
-          <strong>Fiverr</strong> — mentorship checkout happens on Fiverr, which
-          processes the order and payment.
+          <strong>Fiverr</strong> — if you buy a mentorship package through
+          Fiverr, it processes the order and payment.
         </li>
       </ul>
       <p>

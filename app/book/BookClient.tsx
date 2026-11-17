@@ -62,8 +62,9 @@ const SHADOW = {
 const EASE = [0.16, 1, 0.3, 1] as const;
 const CALENDLY_URL =
   "https://calendly.com/skynetlabs/schedule-a-free-consultation";
-// hide_gdpr_banner=1: Calendly's cookie banner covered the day picker on mobile.
-const CALENDLY_EMBED_URL = `${CALENDLY_URL}?hide_gdpr_banner=1`;
+// Calendly's own cookie banner stays visible: it is the only consent prompt
+// EU/UK visitors get for the embed (see /privacy).
+const CALENDLY_EMBED_URL = CALENDLY_URL;
 
 type CalendlyGlobal = {
   initInlineWidget?: (opts: { url: string; parentElement: Element }) => void;
