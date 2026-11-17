@@ -87,7 +87,8 @@ export default function PrivacyPage() {
         things do: the Calendly embed on /book sets Calendly&rsquo;s own cookies
         under Calendly&rsquo;s terms when that page loads, and the homepage
         keeps a small flag in localStorage remembering that you dismissed its
-        announcement bar. We do not currently show a cookie banner; because
+        announcement bar. This site does not show a cookie banner of its own (Calendly may show
+        its own consent prompt inside the booking widget); because
         Calendly&rsquo;s cookies are set by a third party on /book, EU/UK
         visitors may be entitled to be asked first, and a consent gate for that
         page is under evaluation. Standard server logs are produced by the host
@@ -140,6 +141,11 @@ export default function PrivacyPage() {
         <li>
           <strong>Fiverr</strong> — if you buy a mentorship package through
           Fiverr, it processes the order and payment.
+        </li>
+        <li>
+          <strong>Payment processor for a package arranged directly</strong> —{" "}
+          <em>not yet specified.</em> You will be told who takes the payment
+          before any payment is taken.
         </li>
       </ul>
       <p>

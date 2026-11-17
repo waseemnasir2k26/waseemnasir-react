@@ -10,10 +10,12 @@ const SITE = "https://www.waseemnasir.com";
  *   1. Registered trading entity + company number + address
  *   2. (Payment provider: ruled 2026-10-07 -- Fiverr. Still open: instalments
  *      on the 3-month track, sales tax/VAT)
- *   3. (Cancellation/refunds: ruled 2026-10-07 -- Fiverr's process.)
+ *   3. Cancellation/refunds: Fiverr's process when bought on Fiverr (ruled
+ *      2026-10-07). Still open: terms for a package arranged directly.
  *   4. Rescheduling / no-show rule you will actually enforce
  *   5. Governing law + forum (follows from 1)
- * The conduct section keeps pro-rata refunds for packages arranged directly.
+ * The conduct section keeps pro-rata refunds when the arrangement is ended
+ * for abuse.
  */
 export const metadata: Metadata = {
   title: "Terms | Waseem Nasir",
