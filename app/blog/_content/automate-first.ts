@@ -43,7 +43,7 @@ export const body: Block[] = [
   },
   {
     t: "p",
-    text: "It also taught me that the costly problem is seldom the interesting one. It's whatever quietly fails every week while everyone is too busy to look. Since 2019 I've worked on that kind of problem for clients in clinics, travel, real estate and freight, and I take on only a few projects a month so I can stay hands-on with each.",
+    text: "It also taught me that the costly problem is seldom the interesting one. It's whatever quietly fails every week while everyone is too busy to look.",
   },
   { t: "h2", text: "One build, then the next" },
   {

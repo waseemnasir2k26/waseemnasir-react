@@ -102,13 +102,13 @@ export const POSTS: PostMeta[] = [
     tag: "Plan",
     kind: "PLAN",
     excerpt:
-      "Trades are the direction I am choosing next, not a long client list. Here is the honest plan, why I picked it, and the three first builds I would offer.",
+      "Trades are the direction I am choosing next, not a long client list. Here is the honest plan: why I picked it, what I would ask on the first call, what I would measure, and what I would refuse to build.",
     description:
-      "An honest plan for building automations for trades and local service businesses: why I am focusing there and the three first builds I would offer.",
+      "An honest plan for building automations for trades and local service businesses: why I am focusing there, how I would start with a first client, and a two-number check you can do today.",
     ogImage:
-      "/img/pro/CAFE-WORK-2026-03-29-closeup-laptop-sunglasses-valley-view.jpg",
+      "/img/pro/CAFE-WORK-2026-06-05-garden-cafe-blue-polo-smile-laptop.jpg",
     ogAlt:
-      "Waseem Nasir working on a laptop with a valley view behind him in Bali",
+      "Waseem Nasir smiling at a laptop in a garden cafe",
   },
 ];
 
