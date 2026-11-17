@@ -58,7 +58,7 @@ export const SHADOW = {
   md: "0 8px 24px rgba(8,40,38,0.08), 0 0 0 1px rgba(8,40,38,0.05)",
   lg: "0 24px 48px rgba(8,40,38,0.10), 0 0 0 1px rgba(8,40,38,0.05)",
 };
-export const CTA = "https://skynetjoe.com/contact";
+export const CTA = "/book";
 export const IMG = (f: string) => `/img/pro/${f}`;
 
 /* ─── Mono label ─── */
@@ -208,8 +208,6 @@ function Nav() {
           <WhatsAppCta />
           <Link
             href={CTA}
-            target="_blank"
-            rel="noopener noreferrer"
             className="bp-cta-outline inline-flex items-center justify-center rounded-full font-semibold transition-colors"
             style={{
               background: "transparent",

@@ -72,7 +72,7 @@ const SHADOW = {
   lg: "0 24px 48px rgba(8,40,38,0.10), 0 0 0 1px rgba(8,40,38,0.05)",
 };
 const IMG = (f: string) => `/img/pro/${f}`;
-const CTA = "https://skynetjoe.com/contact";
+const CTA = "/book";
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 /* ─── Section index registry (drives the node-ribbon) ─── */
@@ -684,8 +684,6 @@ function Nav({
           <WhatsAppCta />
           <Link
             href={CTA}
-            target="_blank"
-            rel="noopener noreferrer"
             className="bp-cta-outline inline-flex items-center justify-center rounded-full font-semibold transition-colors"
             style={{
               background: "transparent",
@@ -776,8 +774,6 @@ function Hero({ reduce }: { reduce: boolean }) {
             <Magnet reduce={reduce}>
               <Link
                 href={CTA}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="bp-cta inline-flex items-center rounded-full font-semibold transition-opacity hover:opacity-90"
                 style={{
                   background: C.accent,
@@ -1514,8 +1510,6 @@ function DentalTile() {
       </div>
       <Link
         href={CTA}
-        target="_blank"
-        rel="noopener noreferrer"
         className="bp-link shrink-0 font-semibold"
         style={{ color: C.accent, fontSize: "0.92rem" }}
       >
@@ -1592,8 +1586,6 @@ function CaseCard({ c, reduce }: { c: Case; reduce: boolean }) {
         <div className="bp-proof-view mt-3">
           <a
             href={CTA}
-            target="_blank"
-            rel="noopener noreferrer"
             className="font-mono uppercase"
             style={{
               color: C.accent,
@@ -2429,8 +2421,6 @@ function Convert({ reduce }: { reduce: boolean }) {
             <Magnet reduce={reduce}>
               <Link
                 href={CTA}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="bp-cta inline-flex items-center rounded-full font-semibold transition-opacity hover:opacity-90"
                 style={{
                   background: C.accentTint,
@@ -2707,8 +2697,6 @@ function MobileCTABar() {
         <WhatsAppCta alwaysLabel className="flex-1" />
         <Link
           href={CTA}
-          target="_blank"
-          rel="noopener noreferrer"
           className="bp-cta-outline flex flex-1 items-center justify-center rounded-full font-semibold"
           style={{
             background: "transparent",

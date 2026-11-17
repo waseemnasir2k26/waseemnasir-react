@@ -19,7 +19,7 @@ export const FAQ = [
   },
   {
     q: "What if I'm not sure which tier fits?",
-    a: "Book the free fit call. We talk for 15 minutes, I tell you honestly whether this is right for you and which track makes sense. No pressure.",
+    a: "Book the free fit call. We talk for 30 minutes, I tell you honestly whether this is right for you and which track makes sense. No pressure.",
   },
   {
     q: "What tools do I need?",
