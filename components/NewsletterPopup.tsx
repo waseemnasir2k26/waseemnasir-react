@@ -1,0 +1,355 @@
+"use client";
+
+/**
+ * NewsletterPopup — one friendly email-capture card per visitor.
+ *
+ * Ruling 2026-10-07 (Waseem): interrupting popups were switched off 2026-05-29;
+ * this ONE comes back, newsletter-only, on every site. Rules:
+ *   - Fires once per browser (localStorage), after 45 s on the page OR 55 %
+ *     scroll, whichever first. Never on /contact, /thank-you, /lp/*, legal
+ *     pages, or while another popup already fired this session
+ *     (shared "skynet-popup-fired" key kept for the retired popups).
+ *   - "Not right now" snoozes for 14 days; a successful subscribe never shows
+ *     it again. ?popup=off disables it for QA.
+ *   - Posts to /api/lead-capture with source "newsletter" (GHL → Resend → disk
+ *     sink, honeypot, rate-limit) AND mirrors to HQ via the same route
+ *     (server-side, see lib/hq-subscriber.ts). Success only after the server
+ *     confirms a write.
+ *   - Zero third-party requests. Keyboard: Esc closes, focus trapped inside.
+ */
+
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+
+const DONE_KEY = "sj_newsletter"; // "subscribed" | ISO snooze-until
+const SHARED_POPUP_KEY = "skynet-popup-fired";
+const SNOOZE_DAYS = 14;
+const DELAY_MS = 45_000;
+const SCROLL_PCT = 0.55;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const BLOCKED = [
+  /^\/contact/,
+  /^\/thank-you/,
+  /^\/lp\//,
+  /^\/privacy/,
+  /^\/terms/,
+  /^\/book/,
+];
+
+function readDone(): "subscribed" | "snoozed" | null {
+  try {
+    const v = window.localStorage.getItem(DONE_KEY);
+    if (!v) return null;
+    if (v === "subscribed") return "subscribed";
+    return Date.parse(v) > Date.now() ? "snoozed" : null;
+  } catch {
+    return null;
+  }
+}
+
+export default function NewsletterPopup({
+  site,
+}: {
+  /** "skynetjoe" | "waseemnasir" — sent as part of `source`. */
+  site: string;
+}) {
+  const pathname = usePathname() || "/";
+  const reduce = useReducedMotion();
+  const [show, setShow] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
+  const [interest, setInterest] = useState<string>("");
+  const [hp, setHp] = useState("");
+  const [status, setStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [error, setError] = useState<string | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // ── trigger ──
+  useEffect(() => {
+    if (BLOCKED.some((re) => re.test(pathname))) return;
+    if (typeof window === "undefined") return;
+    if (new URLSearchParams(window.location.search).get("popup") === "off")
+      return;
+    if (readDone()) return;
+    try {
+      if (window.sessionStorage.getItem(SHARED_POPUP_KEY) === "1") return;
+    } catch {
+      /* ignore */
+    }
+    let fired = false;
+    const fire = () => {
+      if (fired) return;
+      fired = true;
+      try {
+        window.sessionStorage.setItem(SHARED_POPUP_KEY, "1");
+      } catch {
+        /* ignore */
+      }
+      setShow(true);
+    };
+    const t = window.setTimeout(fire, DELAY_MS);
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (max > 0 && window.scrollY / max >= SCROLL_PCT) fire();
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [pathname]);
+
+  // ── keyboard + focus ──
+  useEffect(() => {
+    if (!show) return;
+    const first = cardRef.current?.querySelector<HTMLElement>("input,button");
+    first?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") snooze();
+      if (e.key === "Tab" && cardRef.current) {
+        const f = cardRef.current.querySelectorAll<HTMLElement>(
+          'input,button,select,[href],[tabindex]:not([tabindex="-1"])',
+        );
+        if (!f.length) return;
+        const a = f[0];
+        const z = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === a) {
+          e.preventDefault();
+          z.focus();
+        } else if (!e.shiftKey && document.activeElement === z) {
+          e.preventDefault();
+          a.focus();
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show]);
+
+  const snooze = () => {
+    try {
+      const until = new Date(Date.now() + SNOOZE_DAYS * 864e5).toISOString();
+      window.localStorage.setItem(DONE_KEY, until);
+    } catch {
+      /* ignore */
+    }
+    setShow(false);
+  };
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (status === "submitting") return;
+    const em = email.trim();
+    if (!EMAIL_RE.test(em) || em.length > 254) {
+      setError("That email doesn't look right.");
+      return;
+    }
+    setError(null);
+    setStatus("submitting");
+    try {
+      const res = await fetch(site === "waseemnasir" ? "/api/subscribe" : "/api/lead-capture", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: em,
+          source: `newsletter-${site}`,
+          capturedAt: new Date().toISOString(),
+          _honeypot: hp,
+          newsletter: {
+            firstName: firstName.trim().slice(0, 80) || undefined,
+            interest: interest || undefined,
+            page: pathname,
+          },
+        }),
+      });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        setStatus("error");
+        setError(
+          res.status === 400 && body?.error
+            ? body.error
+            : "Couldn't save that. Email waseem@skynetjoe.com and I'll add you by hand.",
+        );
+        return;
+      }
+      try {
+        window.localStorage.setItem(DONE_KEY, "subscribed");
+      } catch {
+        /* ignore */
+      }
+      setStatus("success");
+      window.setTimeout(() => setShow(false), 2600);
+    } catch {
+      setStatus("error");
+      setError("Network hiccup. Try again in a moment.");
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          className="nlp-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={snooze}
+        >
+          <motion.div
+            ref={cardRef}
+            className="nlp-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="nlp-title"
+            initial={reduce ? false : { y: 28, scale: 0.97, opacity: 0 }}
+            animate={{ y: 0, scale: 1, opacity: 1 }}
+            exit={reduce ? undefined : { y: 16, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 320, damping: 28 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="nlp-x"
+              onClick={snooze}
+              aria-label="Close"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+            </button>
+
+            <div className="nlp-art" aria-hidden="true">
+              <span className="nlp-orb nlp-orb-a" />
+              <span className="nlp-orb nlp-orb-b" />
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" /><path d="M19 17l.8 2.2L22 20l-2.2.8L19 23l-.8-2.2L16 20l2.2-.8z" /></svg>
+            </div>
+
+            {status === "success" ? (
+              <div className="nlp-body">
+                <p className="nlp-eyebrow">You&apos;re in</p>
+                <h2 id="nlp-title" className="nlp-title">
+                  Thanks{firstName.trim() ? `, ${firstName.trim()}` : ""}. First
+                  one lands Friday.
+                </h2>
+                <p className="nlp-lede">
+                  One email a week. Builds, workflows, the tools that actually
+                  paid off. Reply to any of them and it reaches me.
+                </p>
+              </div>
+            ) : (
+              <form className="nlp-body" onSubmit={submit} noValidate>
+                <p className="nlp-eyebrow">Free, every Friday</p>
+                <h2 id="nlp-title" className="nlp-title">
+                  We ship a lot. Get the best of it in one email.
+                </h2>
+                <p className="nlp-lede">
+                  New AI videos, free n8n workflows, site teardowns and the
+                  services we add. No spam, unsubscribe in one click.
+                </p>
+
+                <div className="nlp-row">
+                  <label className="nlp-field">
+                    <span>First name</span>
+                    <input
+                      type="text"
+                      name="firstName"
+                      autoComplete="given-name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="Waseem"
+                      maxLength={80}
+                    />
+                  </label>
+                  <label className="nlp-field nlp-field-grow">
+                    <span>Email</span>
+                    <input
+                      type="email"
+                      name="email"
+                      autoComplete="email"
+                      inputMode="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@business.com"
+                      aria-invalid={error ? "true" : undefined}
+                    />
+                  </label>
+                </div>
+
+                <fieldset className="nlp-chips">
+                  <legend>What are you here for?</legend>
+                  {[
+                    ["ai-video", "AI video"],
+                    ["automation", "Automation"],
+                    ["websites", "Websites"],
+                    ["everything", "All of it"],
+                  ].map(([v, l]) => (
+                    <label
+                      key={v}
+                      className={`nlp-chip${interest === v ? " is-on" : ""}`}
+                    >
+                      <input
+                        type="radio"
+                        name="interest"
+                        value={v}
+                        checked={interest === v}
+                        onChange={() => setInterest(v)}
+                      />
+                      {l}
+                    </label>
+                  ))}
+                </fieldset>
+
+                {/* honeypot */}
+                <div className="nlp-hp" aria-hidden="true">
+                  <label>
+                    Website
+                    <input
+                      type="text"
+                      name="website"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={hp}
+                      onChange={(e) => setHp(e.target.value)}
+                    />
+                  </label>
+                </div>
+
+                {error && (
+                  <p className="nlp-error" role="alert">
+                    {error}
+                  </p>
+                )}
+
+                <div className="nlp-actions">
+                  <button
+                    type="submit"
+                    className="nlp-btn"
+                    disabled={status === "submitting"}
+                  >
+                    {status === "submitting"
+                      ? "Saving…"
+                      : "Subscribe, it's free"}
+                  </button>
+                  <button type="button" className="nlp-later" onClick={snooze}>
+                    Not right now
+                  </button>
+                </div>
+                <p className="nlp-fine">
+                  Fridays. Unsubscribe anytime.{" "}
+                  <a href="/privacy-policy">Privacy</a>
+                </p>
+              </form>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
