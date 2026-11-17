@@ -26,10 +26,8 @@ export default function NetworkRow({
   style?: CSSProperties;
 }) {
   return (
-    <p
-      className={`flex flex-wrap items-center gap-x-4 gap-y-1 ${className}`}
-      style={{ color, fontSize: 12, ...style }}
-    >
+    <div className={className} style={{ color, fontSize: 12, ...style }}>
+    <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
       <span>SkynetLabs network:</span>
       {NETWORK_LINKS.map((l) => (
         <a
@@ -43,5 +41,20 @@ export default function NetworkRow({
         </a>
       ))}
     </p>
+    <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+      <span>
+        WhatsApp:{" "}
+        <a href="https://wa.me/6281316077185" className="hover:underline" style={{ color: "inherit" }}>
+          +62 813 1607 7185
+        </a>{" "}
+        (Indonesia) ·{" "}
+        <a href="https://wa.me/923001001957" className="hover:underline" style={{ color: "inherit" }}>
+          +92 300 1001957
+        </a>{" "}
+        (Pakistan)
+      </span>
+      <span>Registered in Pakistan as SkynetJoe LLP and in Indonesia.</span>
+    </p>
+    </div>
   );
 }
