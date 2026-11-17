@@ -23,7 +23,7 @@ const post = getPost("a-real-day-running-an-automation-agency-from-bali")!;
 const url = `${SITE}/blog/${post.slug}`;
 
 export const metadata: Metadata = {
-  title: `${post.title} | Waseem Nasir`,
+  title: "A Day Running an Automation Agency from Bali | Waseem Nasir",
   description: post.description,
   alternates: { canonical: url },
   openGraph: {

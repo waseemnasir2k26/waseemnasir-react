@@ -27,10 +27,9 @@ const ONE_LINER =
   "AI automation founder — builds n8n and Claude Code systems for service businesses, from Bali.";
 
 export const metadata: Metadata = {
-  title:
-    "About Waseem Nasir — founder of SkynetLabs | AI automation, from Bali",
+  title: "About Waseem Nasir — SkynetLabs Founder in Bali",
   description:
-    "Who Waseem Nasir is: founder of SkynetLabs, an AI automation studio. He builds n8n and Claude Code systems for service businesses, from Bali. Background, what he builds, and where to find him.",
+    "Who Waseem Nasir is: founder of SkynetLabs, an AI automation studio. He builds n8n and Claude Code systems for service businesses, from Bali.",
   alternates: { canonical: url },
   openGraph: {
     title: "About Waseem Nasir — founder of SkynetLabs",
