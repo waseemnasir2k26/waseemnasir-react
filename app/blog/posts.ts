@@ -58,6 +58,58 @@ export const POSTS: PostMeta[] = [
     ogAlt:
       "Waseem Nasir at a dual-laptop setup running an editing and analytics pipeline over coffee",
   },
+  {
+    slug: "what-i-automate-first-in-a-small-business",
+    title:
+      "What I automate first in a small business (and why it's the boring stuff)",
+    date: "2026-11-05",
+    dateLabel: "November 5, 2026",
+    readingTime: "5 min read",
+    tag: "Founder story",
+    kind: "STORY",
+    excerpt:
+      "New business owners ask for something clever. I start with leaks, then repeats, then reports, and I start with one small automation, not ten. Here is the order I use and where it comes from.",
+    description:
+      "Why I start small-business automation with missed inquiries, repeated tasks and only then reports, and why I begin with one small automation instead of ten.",
+    ogImage:
+      "/img/pro/CAFE-WORK-2026-05-22-bali-terrace-typing-laptop-latte-sunglasses.jpg",
+    ogAlt:
+      "Waseem Nasir typing on a laptop at a terrace cafe in Bali with a latte beside him",
+  },
+  {
+    slug: "why-i-never-let-ai-send-a-customer-reply-without-a-human-check",
+    title: "Why I never let AI send a customer reply without a human check",
+    date: "2026-11-05",
+    dateLabel: "November 5, 2026",
+    readingTime: "5 min read",
+    tag: "Founder story",
+    kind: "STORY",
+    excerpt:
+      "The AI can draft the reply. A person approves it before it goes out. Here is the thinking behind that one rule, what I still let run on its own, and what happens when a step breaks.",
+    description:
+      "Why every AI-written customer message I build gets approved by a person first, what can safely stay automatic, and how to plan for failure.",
+    ogImage:
+      "/img/pro/CAFE-WORK-2026-02-27-olive-track-jacket-coffee-laptop-tea-sign.jpg",
+    ogAlt:
+      "Waseem Nasir at a cafe table with a laptop and coffee, reviewing messages",
+  },
+  {
+    slug: "why-i-build-automations-for-trades-and-small-local-businesses",
+    title: "Why I build automations for trades and small local businesses",
+    date: "2026-11-05",
+    dateLabel: "November 5, 2026",
+    readingTime: "5 min read",
+    tag: "Founder story",
+    kind: "STORY",
+    excerpt:
+      "The owner is up a ladder or under a sink when the customer reaches out. That gap is the problem I want to work on, and an honest account of where I am with it.",
+    description:
+      "Why I build missed-call, reminder and quote automations for roofers, plumbers, HVAC and other local trades, and how an accounting background shaped it.",
+    ogImage:
+      "/img/pro/CAFE-WORK-2026-03-29-closeup-laptop-sunglasses-valley-view.jpg",
+    ogAlt:
+      "Waseem Nasir working on a laptop with a valley view behind him in Bali",
+  },
 ];
 
 export function getPost(slug: string): PostMeta | undefined {
