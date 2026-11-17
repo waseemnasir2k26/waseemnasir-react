@@ -110,8 +110,33 @@ export const POSTS: PostMeta[] = [
     ogAlt:
       "Waseem Nasir smiling at a laptop in a garden cafe",
   },
+  {
+    slug: "my-claude-code-setup-for-client-work",
+    title: "My Claude Code setup for running client work",
+    date: "2026-11-10",
+    dateLabel: "November 10, 2026",
+    readingTime: "5 min read",
+    tag: "Playbook",
+    kind: "PLAYBOOK",
+    excerpt:
+      "A rules file, a file-based memory, four reviewer subagents, plan mode and a ship gate that blocks deploys. Plus three real failures and the rule each one became.",
+    description:
+      "How I run client work in Claude Code: rules file, memory, subagents, plan mode and a deploy gate, plus three real failures and the rules they became.",
+    ogImage:
+      "/img/pro/CAFE-WORK-2026-03-29-rooftop-cafe-laptop-mountain-clouds.jpg",
+    ogAlt:
+      "Waseem Nasir working on a laptop at a rooftop cafe with mountains and clouds behind",
+  },
 ];
 
 export function getPost(slug: string): PostMeta | undefined {
   return POSTS.find((p) => p.slug === slug);
+}
+
+/** Newest first; ties keep registry order. */
+export function latestPosts(n: number): PostMeta[] {
+  return POSTS.map((p, i) => ({ p, i }))
+    .sort((a, b) => (a.p.date < b.p.date ? 1 : a.p.date > b.p.date ? -1 : a.i - b.i))
+    .slice(0, n)
+    .map((x) => x.p);
 }

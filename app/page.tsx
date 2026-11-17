@@ -4,7 +4,8 @@
  * (/v/blueprint and /variants were taken down 2026-10-07 and redirect here.)
  */
 import BlueprintClient from "@/components/home/BlueprintClient";
+import LatestArticles from "@/components/home/LatestArticles";
 
 export default function HomePage() {
-  return <BlueprintClient />;
+  return <BlueprintClient latest={<LatestArticles />} />;
 }

@@ -68,7 +68,10 @@ export const metadata: Metadata = {
       "I find where your business leaks time and money, then build AI automation that plugs it. Book a free audit.",
     images: ["/og.jpg"],
   },
-  alternates: { canonical: SITE },
+  alternates: {
+    canonical: SITE,
+    types: { "application/rss+xml": `${SITE}/rss.xml` },
+  },
 };
 
 const HEADSHOT = "/img/pro/PORTRAIT-2026-05-08-black-kurta-soft-smile-wood-interior.jpg";

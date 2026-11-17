@@ -3,7 +3,7 @@
 import Image from "next/image";
 import WhatsAppCta from "@/components/WhatsAppCta";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   motion,
   useInView,
@@ -225,7 +225,7 @@ function Reveal({
    ============================================================ */
 const HOSTINGER_PROMO_KEY = "wn-hostinger-promo-v1";
 
-export default function Blueprint() {
+export default function Blueprint({ latest }: { latest?: ReactNode }) {
   const reduce = !!useSafeReducedMotion();
   const [bannerOpen, setBannerOpen] = useState(true);
   useEffect(() => {
@@ -375,6 +375,7 @@ export default function Blueprint() {
         <About reduce={reduce} />
         <Gallery reduce={reduce} />
         <Faq reduce={reduce} />
+        {latest}
         <Convert reduce={reduce} />
         <SiteFooter reduce={reduce} />
         <MobileCTABar />

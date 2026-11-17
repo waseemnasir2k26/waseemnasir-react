@@ -14,13 +14,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       // Entity home — ProfilePage -> Person. Highest-priority non-root URL.
       url: `${SITE}/about`,
-      lastModified: new Date("2026-09-06"),
+      lastModified: new Date("2026-11-10"),
       changeFrequency: "monthly",
       priority: 0.9,
     },
     {
       url: `${SITE}/blog`,
-      lastModified: new Date("2026-09-06"),
+      lastModified: new Date("2026-11-10"),
       changeFrequency: "monthly",
       priority: 0.8,
     },

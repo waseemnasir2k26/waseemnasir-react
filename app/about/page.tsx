@@ -68,9 +68,42 @@ const profileJsonLd = {
   url,
   name: "Waseem Nasir",
   dateCreated: "2026-09-06",
-  dateModified: "2026-09-06",
+  dateModified: "2026-11-10",
   mainEntity: { "@id": `${SITE}/#person` },
   isPartOf: { "@id": `${SITE}/#website` },
+};
+
+/* Companies I run (CON-08). One SkynetLabs Organization @id network-wide
+   (D1); only the 4-field stub is published here, never the full node. */
+const ORG_ID = "https://skynetjoe.com/#organization";
+const companiesJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Companies Waseem Nasir runs",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      item: {
+        "@type": "Organization",
+        "@id": ORG_ID,
+        name: "SkynetLabs",
+        url: "https://skynetjoe.com/",
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      item: {
+        "@type": "Organization",
+        "@id": "https://skynetlabsai.com/#org",
+        name: "SkynetLabs AI",
+        url: "https://skynetlabsai.com/",
+        parentOrganization: { "@id": ORG_ID },
+        founder: { "@id": `${SITE}/#person` },
+      },
+    },
+  ],
 };
 
 const TIMELINE: [string, string][] = [
@@ -107,6 +140,10 @@ export default function AboutPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(companiesJsonLd) }}
       />
       <BlogShell>
         <article className="mx-auto max-w-[760px] px-5 pt-14 sm:px-6 sm:pt-20">
@@ -187,6 +224,65 @@ export default function AboutPage() {
                 </div>
               ))}
             </div>
+
+            <H2>Companies I run</H2>
+            <P>
+              <Strong>SkynetLabs</Strong> is one company with two websites.{" "}
+              <a
+                href="https://skynetjoe.com/"
+                className="bp-link"
+                style={{ color: C.accent }}
+              >
+                SkynetLabs Agency
+              </a>{" "}
+              (skynetjoe.com) is where I do AI automation, websites and answer
+              engine optimisation for service businesses.{" "}
+              <a
+                href="https://skynetlabs.si/"
+                className="bp-link"
+                style={{ color: C.accent }}
+              >
+                SkynetLabs
+              </a>{" "}
+              (skynetlabs.si) is the Bali AI-audit consultancy, for owners who
+              want to know what to automate before they spend anything. My role
+              in both is founder.
+            </P>
+            <P>
+              <a
+                href="https://skynetlabsai.com/"
+                className="bp-link"
+                style={{ color: C.accent }}
+              >
+                SkynetLabs AI
+              </a>{" "}
+              (skynetlabsai.com) is a SkynetLabs product brand: an AI front desk
+              for home-service trades in Australia and the US, with a person
+              approving every reply before it goes out. My role there is also
+              founder.
+            </P>
+            <P>
+              For the record, SkynetLabs is registered in Pakistan as SkynetJoe
+              LLP, and I operate it from Indonesia.
+            </P>
+
+            <H2>How I work</H2>
+            <P>
+              I take a few projects a month and stay hands-on with each one, so
+              the person you talk to on the first call is the person who builds
+              the system. Anything that writes words a customer will read stays
+              a draft until a human approves it. Anything that runs on its own
+              gets limits on steps, time and spend, and a way to switch it off.
+              I write up how I run this day to day in the{" "}
+              <Link
+                href="/blog/my-claude-code-setup-for-client-work"
+                className="bp-link"
+                style={{ color: C.accent }}
+              >
+                Claude Code setup post
+              </Link>
+              .
+            </P>
 
             <H2>Background</H2>
             <P>
