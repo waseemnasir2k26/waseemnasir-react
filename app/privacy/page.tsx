@@ -8,7 +8,7 @@ const SITE = "https://www.waseemnasir.com";
  * render as "[NEEDS WASEEM]" in the page body, which put notes addressed to
  * Waseem in front of buyers). Answer these, then flip robots to index:
  *   1. Registered trading entity + company number + country + postal address
- *   2. Payment provider for the mentorship
+ *   2. (Payment provider for the mentorship: ruled 2026-10-07 -- Fiverr)
  *   3. Data retention period + applicable tax jurisdiction
  */
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function PrivacyPage() {
   return (
     <LegalLayout
       title="Privacy notice"
-      updated="1 September 2026"
+      updated="7 October 2026"
       intro="This page explains what happens to your information when you use this site, book a call, or buy mentorship. It is written to be read, not to be survived."
     >
       <div className="lg-note">
@@ -64,9 +64,10 @@ export default function PrivacyPage() {
       <p>
         If you buy a mentorship package, the information needed to deliver and
         bill for it is processed — typically your name, email address and
-        payment confirmation. <em>Not yet specified:</em> which payment
-        provider handles the transaction. Card details are handled by that
-        provider and are never stored on this site.
+        payment confirmation. Mentorship checkout happens on{" "}
+        <strong>Fiverr</strong>, which handles the transaction and the payment
+        under its own terms. Card details are handled by Fiverr and are never
+        stored on this site.
       </p>
       <h3>Just browsing</h3>
       <p>
@@ -86,7 +87,7 @@ export default function PrivacyPage() {
         a person. The counter itself stores nothing on your device. Two other
         things do: the Calendly embed on /book sets Calendly&rsquo;s own cookies
         under Calendly&rsquo;s terms when that page loads, and the homepage
-        (and its /v/blueprint twin) keeps a small flag in localStorage remembering that you dismissed its
+        keeps a small flag in localStorage remembering that you dismissed its
         announcement bar. We do not currently show a cookie banner; because
         Calendly&rsquo;s cookies are set by a third party on /book, EU/UK
         visitors may be entitled to be asked first, and a consent gate for that
@@ -133,7 +134,13 @@ export default function PrivacyPage() {
           in a mailbox and, for client work, a customer-relationship tool.
         </li>
         <li>
-          <em>Not yet specified:</em> the payment provider.
+          <strong>WhatsApp (Meta)</strong> — clicking the WhatsApp button on
+          this site opens WhatsApp, and anything you send there is handled by
+          WhatsApp under its own terms.
+        </li>
+        <li>
+          <strong>Fiverr</strong> — mentorship checkout happens on Fiverr, which
+          processes the order and payment.
         </li>
       </ul>
       <p>
