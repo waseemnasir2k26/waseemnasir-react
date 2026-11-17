@@ -35,7 +35,7 @@ export const body: Block[] = [
   { t: "h2", text: "Plan mode before anything multi-file" },
   {
     t: "p",
-    text: "For anything that touches more than a file or two, I switch to plan mode first. In plan mode Claude reads and proposes, and makes no edits until I approve. You enter it with Shift+Tab. On client work the approved plan doubles as the written scope of what I said I would do, which has saved me an argument or two.",
+    text: "For anything that touches more than a file or two, I switch to plan mode first. In plan mode Claude reads and proposes, and makes no edits until I approve. You enter it with Shift+Tab. On client work the approved plan doubles as the written scope of what I said I would do.",
   },
   { t: "h2", text: "The ship gate: a judge that is not me" },
   {
@@ -49,7 +49,7 @@ export const body: Block[] = [
   { t: "h2", text: "Loops need limits" },
   {
     t: "p",
-    text: "Any automation that runs on its own, whether a scheduled workflow or a recurring agent, gets three caps before it goes live: a step limit, a time limit and a spend limit. It also gets a circuit breaker, which for me is a plain file. If the file exists, the loop stops. A file is crude, and that is the point: I can create it from my phone without opening a single dashboard.",
+    text: "Any automation that runs on its own, whether a scheduled workflow or a recurring agent, gets three caps before it goes live: a step limit, a time limit and a spend limit. It also gets a circuit breaker, which for me is a plain file. If the file exists, the loop stops. A file is crude, and that is the point: I can create it with one command without opening a dashboard.",
   },
   {
     t: "p",
