@@ -1,8 +1,12 @@
 /* NewsletterPopup — cream kit. One card, centred, phone-safe. */
 .nlp-backdrop {
+  --nlp-cream: #faf7f0;
+  --nlp-ink: #1a1a1a;
+  --nlp-ink2: #3a3a36;
+  --nlp-rust: #c66b3f;
   position: fixed;
   inset: 0;
-  z-index: 1200;
+  z-index: 2000; /* above any host-site bar or launcher */
   background: rgba(26, 26, 26, 0.55);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
@@ -13,9 +17,9 @@
 .nlp-card {
   position: relative;
   width: min(100%, 520px);
-  background: var(--cream-3, #faf7f0);
-  color: var(--ink, #1a1a1a);
-  border: 1px solid var(--ink, #1a1a1a);
+  background: var(--nlp-cream);
+  color: var(--nlp-ink);
+  border: 1px solid var(--nlp-ink);
   border-radius: 18px;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
   overflow: hidden;
@@ -29,21 +33,21 @@
   border-radius: 50%;
   border: 1px solid rgba(26, 26, 26, 0.18);
   background: rgba(250, 247, 240, 0.9);
-  color: var(--ink, #1a1a1a);
+  color: var(--nlp-ink);
   display: grid;
   place-items: center;
   cursor: pointer;
   z-index: 2;
 }
 .nlp-x:hover {
-  background: var(--ink, #1a1a1a);
-  color: var(--cream-3, #faf7f0);
+  background: var(--nlp-ink);
+  color: var(--nlp-cream);
 }
 .nlp-art {
   position: relative;
   height: 96px;
-  background: var(--ink, #1a1a1a);
-  color: var(--cream-3, #faf7f0);
+  background: var(--nlp-ink);
+  color: var(--nlp-cream);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -60,7 +64,7 @@
   height: 160px;
   left: -40px;
   top: -70px;
-  background: var(--terracotta, #c66b3f);
+  background: var(--nlp-rust);
 }
 .nlp-orb-b {
   width: 200px;
@@ -92,7 +96,7 @@
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--terracotta, #c66b3f);
+  color: var(--nlp-rust);
 }
 .nlp-title {
   margin: 0 0 10px;
@@ -106,7 +110,7 @@
   margin: 0 0 18px;
   font-size: 15px;
   line-height: 1.5;
-  color: var(--ink-2, #3a3a36);
+  color: var(--nlp-ink2);
 }
 .nlp-row {
   display: flex;
@@ -127,13 +131,13 @@
   font-size: 10.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink-2, #3a3a36);
+  color: var(--nlp-ink2);
 }
 .nlp-field input {
   width: 100%;
   padding: 12px 13px;
   font: 500 15px/1.2 var(--font-sans, Inter, system-ui, sans-serif);
-  color: var(--ink, #1a1a1a);
+  color: var(--nlp-ink);
   background: #fff;
   border: 1px solid rgba(26, 26, 26, 0.22);
   border-radius: 10px;
@@ -143,7 +147,7 @@
     box-shadow 0.15s;
 }
 .nlp-field input:focus {
-  border-color: var(--terracotta, #c66b3f);
+  border-color: var(--nlp-rust);
   box-shadow: 0 0 0 3px rgba(198, 107, 63, 0.18);
 }
 .nlp-field input[aria-invalid="true"] {
@@ -164,7 +168,7 @@
   font-size: 10.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink-2, #3a3a36);
+  color: var(--nlp-ink2);
 }
 .nlp-chip {
   position: relative;
@@ -189,9 +193,9 @@
   box-shadow: 0 0 0 3px rgba(198, 107, 63, 0.3);
 }
 .nlp-chip.is-on {
-  background: var(--ink, #1a1a1a);
-  border-color: var(--ink, #1a1a1a);
-  color: var(--cream-3, #faf7f0);
+  background: var(--nlp-ink);
+  border-color: var(--nlp-ink);
+  color: var(--nlp-cream);
 }
 .nlp-hp {
   position: absolute;
@@ -216,7 +220,7 @@
   padding: 14px 20px;
   border: 0;
   border-radius: 12px;
-  background: var(--terracotta, #c66b3f);
+  background: var(--nlp-rust);
   color: #fff;
   font: 700 15px/1 var(--font-display, var(--font-sans, Inter, system-ui, sans-serif));
   cursor: pointer;
@@ -236,7 +240,7 @@
 .nlp-later {
   border: 0;
   background: none;
-  color: var(--ink-2, #3a3a36);
+  color: var(--nlp-ink2);
   font: 500 14px/1 var(--font-sans, Inter, system-ui, sans-serif);
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -246,7 +250,7 @@
 .nlp-fine {
   margin: 12px 0 0;
   font-size: 12px;
-  color: var(--ink-2, #3a3a36);
+  color: var(--nlp-ink2);
 }
 .nlp-fine a {
   color: inherit;
@@ -269,4 +273,51 @@
   .nlp-orb {
     animation: none;
   }
+}
+
+/* Host-site resets: the card owns its typography regardless of the page theme. */
+.nlp-card,
+.nlp-card p,
+.nlp-card h2,
+.nlp-card label,
+.nlp-card legend,
+.nlp-card span {
+  color: var(--nlp-ink);
+  text-shadow: none;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.nlp-card .nlp-eyebrow,
+.nlp-card .nlp-field span,
+.nlp-card .nlp-chips legend {
+  text-transform: uppercase;
+}
+.nlp-card .nlp-eyebrow {
+  color: var(--nlp-rust);
+  letter-spacing: 0.18em;
+}
+.nlp-card .nlp-field span,
+.nlp-card .nlp-chips legend {
+  letter-spacing: 0.12em;
+  color: var(--nlp-ink2);
+}
+.nlp-card .nlp-lede,
+.nlp-card .nlp-fine,
+.nlp-card .nlp-later {
+  color: var(--nlp-ink2);
+}
+.nlp-card .nlp-chip {
+  color: var(--nlp-ink);
+  background: #fff;
+  opacity: 1;
+}
+.nlp-card .nlp-chip.is-on {
+  color: var(--nlp-cream);
+  background: var(--nlp-ink);
+}
+.nlp-card .nlp-btn {
+  color: #fff;
+}
+.nlp-card .nlp-error {
+  color: #b4322e;
 }
