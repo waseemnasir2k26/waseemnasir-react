@@ -2603,6 +2603,22 @@ function SiteFooter({ reduce }: { reduce: boolean }) {
                 waseem@skynetjoe.com
               </a>
             </div>
+            {/* Hostinger partner badge (official asset from the Agency Hub) */}
+            <a
+              href="https://www.hostinger.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-block"
+              aria-label="SkynetLabs is a Hostinger Partner"
+            >
+              <Image
+                src="/badges/hostinger-partner.svg"
+                alt="Hostinger Partner"
+                width={160}
+                height={60}
+                unoptimized
+              />
+            </a>
           </Reveal>
           <Reveal reduce={reduce} y={12} delay={0.06}>
             <nav
