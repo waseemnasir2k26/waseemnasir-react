@@ -112,7 +112,7 @@ const TIMELINE: [string, string][] = [
     "Accounting firms — payroll runs, QuickBooks, reconciliations. Where the instinct started: most of the work a business does is not thinking, it is copying.",
   ],
   [
-    "Since 2019",
+    "Since 2018",
     "Building automation for clients. 180+ workflows built, 40+ sites shipped, 9 countries served — the four numbers this site publishes, and the only ones it will.",
   ],
   [
@@ -167,7 +167,7 @@ export default function AboutPage() {
           <Lead>
             Waseem Nasir is the founder of SkynetLabs, an AI automation studio.
             He builds n8n and Claude Code systems for service businesses, from
-            Bali. He has been building automation for clients since 2019, across
+            Bali. He has been building automation for clients since 2018, across
             nine countries, and works hands-on with a few projects a month
             rather than running a team.
           </Lead>

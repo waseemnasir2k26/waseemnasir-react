@@ -7,7 +7,7 @@ export const body: Block[] = [
   },
   {
     t: "p",
-    text: "First, where I stand. Since 2019 my client work has been in clinics, travel, real estate and freight, plus a few other small service businesses, and I take on only a few projects a month so I stay hands-on with each. Trades are a direction I'm choosing now. I don't have a list of trade clients to point at, and I won't pretend to.",
+    text: "First, where I stand. Since 2018 my client work has been in clinics, travel, real estate and freight, plus a few other small service businesses, and I take on only a few projects a month so I stay hands-on with each. Trades are a direction I'm choosing now. I don't have a list of trade clients to point at, and I won't pretend to.",
   },
   { t: "h2", text: "Why trades" },
   {

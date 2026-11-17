@@ -76,7 +76,7 @@ export default function About() {
             From Pakistan to Bali,
             <br />
             <span className="serif-italic text-accent2">
-              building since 2019.
+              building since 2018.
             </span>
           </h2>
 

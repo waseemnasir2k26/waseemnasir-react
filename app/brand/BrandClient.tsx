@@ -136,7 +136,7 @@ const TYPE_SAMPLES: {
     size: "0.75rem",
     weight: 500,
     fam: MONO,
-    sample: "INDEPENDENT FOUNDER · SINCE 2019",
+    sample: "INDEPENDENT FOUNDER · SINCE 2018",
   },
 ];
 

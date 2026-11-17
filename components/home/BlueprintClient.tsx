@@ -927,7 +927,7 @@ function Hero({ reduce }: { reduce: boolean }) {
                 letterSpacing: "0.06em",
               }}
             >
-              180+ workflows · 40+ sites · 9 countries · since 2019
+              180+ workflows · 40+ sites · 9 countries · since 2018
             </span>
           </motion.div>
         </div>
@@ -2047,7 +2047,7 @@ function About({ reduce }: { reduce: boolean }) {
             >
               <Mono color={C.pillInk} className="!tracking-[0.06em]">
                 Waseem Nasir · Founder, SkynetLabs · 180+ workflows built since
-                2019
+                2018
               </Mono>
             </figcaption>
           </figure>

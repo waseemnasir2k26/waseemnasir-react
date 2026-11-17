@@ -786,7 +786,7 @@ export default function MentorshipClient() {
                 automation agency where Claude Code does the heavy lifting on
                 client work: websites, AI workflows, automations. I&apos;ve
                 shipped 40+ sites and 180+ automations for clients across 9
-                countries, in practice since 2019.
+                countries, in practice since 2018.
               </p>
               <p
                 className="mt-4 text-sm leading-relaxed"
@@ -804,7 +804,7 @@ export default function MentorshipClient() {
                   ["180+", "automations built"],
                   ["40+", "sites shipped"],
                   ["9", "countries served"],
-                  ["2019", "in practice since"],
+                  ["2018", "in practice since"],
                 ].map(([v, l]) => (
                   <div key={l}>
                     <div
