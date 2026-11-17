@@ -7,9 +7,6 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   motion,
   useInView,
-  useScroll,
-  useTransform,
-  useMotionValueEvent,
 } from "framer-motion";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import NetworkRow from "@/components/NetworkRow";
@@ -242,8 +239,8 @@ export default function Blueprint({
         @media (hover:hover) and (pointer:fine){
           .bp-trust-card { transition: transform .22s ease-out, box-shadow .22s ease-out, border-left-color .22s ease-out; border-left: 3px solid transparent; }
           .bp-trust-card:hover { transform: translateY(-3px); box-shadow:${SHADOW.md}; border-left-color: ${C.accent}; }
-          .bp-trust-mech { opacity: 0; transform: translateY(4px); transition: opacity .2s ease-out, transform .2s ease-out; }
-          .bp-trust-card:hover .bp-trust-mech { opacity: 1; transform: translateY(0); }
+          .bp-trust-mech { opacity: 1; }
+          
         }
         @media (prefers-reduced-motion: reduce){
           .bp-trust-card { border-left: 3px solid transparent; }
@@ -255,8 +252,8 @@ export default function Blueprint({
           .bp-proof-card:hover { transform: translateY(-4px) scale(1.015); box-shadow:${SHADOW.md}; }
           .bp-proof-metric { transition: text-shadow .22s ease-out; }
           .bp-proof-card:hover .bp-proof-metric { text-shadow: 0 0 28px rgba(17,126,115,0.22); }
-          .bp-proof-view { opacity: 0; transform: translateX(-4px); transition: opacity .18s ease-out, transform .18s ease-out; }
-          .bp-proof-card:hover .bp-proof-view { opacity: 1; transform: translateX(0); }
+          .bp-proof-view { opacity: 1; }
+          
         }
         @media (prefers-reduced-motion: reduce){
           .bp-proof-view { opacity: 1; transform: none; }
@@ -276,8 +273,8 @@ export default function Blueprint({
         }
         /* Gallery: scrim + caption reveal on hover */
         @media (hover:hover) and (pointer:fine){
-          .bp-gallery-scrim { opacity: 0; transition: opacity .2s ease-out; background: linear-gradient(to top, rgba(14,27,26,0.72) 0%, transparent 55%); position:absolute; inset:0; display:flex; align-items:flex-end; padding:12px; pointer-events:none; }
-          .bp-tile:hover .bp-gallery-scrim { opacity: 1; }
+          .bp-gallery-scrim { display:none; }
+          
         }
         @media (prefers-reduced-motion: reduce){
           .bp-gallery-scrim { display: none; }
@@ -318,22 +315,10 @@ export default function Blueprint({
         {reviews}
         <How reduce={reduce} />
         <Stack reduce={reduce} />
-        {/* Proof: pinned scrollytelling deck on desktop w/ motion; classic grid on
-            mobile + reduced-motion. id lives on the wrapper so #proof anchors work
-            in every mode without duplicate ids. */}
+        {/* Proof: always the plain grid. Content never depends on scroll-driven
+            animation (the pinned scrollytelling deck was removed 2026-11-17). */}
         <div id="proof">
-          {reduce ? (
-            <Proof reduce={reduce} />
-          ) : (
-            <>
-              <div className="hidden lg:block">
-                <ProofPinned reduce={reduce} />
-              </div>
-              <div className="lg:hidden">
-                <Proof reduce={reduce} />
-              </div>
-            </>
-          )}
+          <Proof reduce={reduce} />
         </div>
         <NowBuilding reduce={reduce} />
         <About reduce={reduce} />
@@ -732,7 +717,7 @@ function Hero({ reduce }: { reduce: boolean }) {
     reduce
       ? {}
       : {
-          initial: { opacity: 0, y: 20 },
+          initial: { opacity: 1, y: 20 },
           animate: { opacity: 1, y: 0 },
           transition: { duration: 0.55, ease: EASE, delay: 0.08 * i },
         };
@@ -752,7 +737,7 @@ function Hero({ reduce }: { reduce: boolean }) {
             "radial-gradient(60% 80% at 78% 8%, rgba(17,126,115,0.07), transparent 60%), radial-gradient(40% 60% at 20% 0%, rgba(226,241,238,0.6), transparent 65%)",
         }}
       />
-      <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-12 px-5 py-16 sm:px-6 sm:py-24 lg:grid-cols-12 lg:gap-10">
+      <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-12 px-5 py-10 sm:px-6 sm:py-14 lg:grid-cols-12 lg:gap-10">
         {/* copy */}
         <div className="lg:col-span-7">
           <motion.div {...stagger(0)} className="mb-5">
@@ -766,11 +751,11 @@ function Hero({ reduce }: { reduce: boolean }) {
             style={{
               fontFamily: "var(--font-display)",
               fontWeight: 600,
-              fontSize: "clamp(2.75rem, 6vw, 4.75rem)",
-              lineHeight: 1.02,
+              fontSize: "clamp(2.15rem, 4.1vw, 3.4rem)",
+              lineHeight: 1.06,
               letterSpacing: "-0.028em",
               color: C.ink,
-              maxWidth: "16ch",
+              maxWidth: "22ch",
             }}
           >
             Every hour your team works by hand, your business leaks money.
@@ -890,7 +875,7 @@ function Hero({ reduce }: { reduce: boolean }) {
 
         {/* photo card */}
         <motion.div
-          initial={reduce ? false : { opacity: 0, x: 24 }}
+          initial={reduce ? false : { opacity: 1, x: 24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.55, ease: EASE, delay: 0.2 }}
           className="lg:col-span-5"
@@ -1003,7 +988,7 @@ function Trust({ reduce }: { reduce: boolean }) {
         borderBottom: `1px solid ${C.hairline}`,
       }}
     >
-      <div className="mx-auto max-w-[1200px] px-5 py-16 sm:px-6 sm:py-20">
+      <div className="mx-auto max-w-[1200px] px-5 py-12 sm:px-6 sm:py-16">
         <Reveal
           reduce={reduce}
           className="mb-10 flex flex-wrap items-center justify-between gap-4"
@@ -1230,7 +1215,7 @@ function How({ reduce }: { reduce: boolean }) {
   return (
     <section
       id="how"
-      className="mx-auto max-w-[1200px] px-5 py-24 sm:px-6 sm:py-28"
+      className="mx-auto max-w-[1200px] px-5 py-16 sm:px-6 sm:py-20"
     >
       <Reveal reduce={reduce} className="mb-16 flex items-center gap-3">
         <Mono color={C.accent}>03 — How I fix it</Mono>
@@ -1334,7 +1319,7 @@ function Stack({ reduce }: { reduce: boolean }) {
       id="stack"
       style={{ background: C.surface, borderTop: `1px solid ${C.hairline}` }}
     >
-      <div className="mx-auto max-w-[1200px] px-5 py-24 sm:px-6 sm:py-28">
+      <div className="mx-auto max-w-[1200px] px-5 py-16 sm:px-6 sm:py-20">
         <Reveal reduce={reduce} className="mb-12">
           <Mono color={C.accent}>04 — Where it leaks</Mono>
           <h2
@@ -1648,171 +1633,12 @@ function CaseCard({ c, reduce }: { c: Case; reduce: boolean }) {
   );
 }
 
-/* Pinned scrollytelling deck — the ONE "wow" motion moment (REVAMP-PLAN §4/§5).
-   Desktop + motion-on only; mobile and reduced-motion get the classic grid.
-   HARD SEO rule: every case's text is always in the DOM — only opacity/transform animate. */
-function PinnedCase({
-  c,
-  i,
-  total,
-  progress,
-  active,
-  reduce,
-}: {
-  c: Case;
-  i: number;
-  total: number;
-  progress: ReturnType<typeof useScroll>["scrollYProgress"];
-  active: boolean;
-  reduce: boolean;
-}) {
-  const seg = 1 / total;
-  const start = i * seg;
-  const end = (i + 1) * seg;
-  const fade = Math.min(0.08, seg / 3);
-  const opacity = useTransform(
-    progress,
-    i === 0
-      ? [0, end - fade, end]
-      : i === total - 1
-        ? [start, start + fade, 1]
-        : [start, start + fade, end - fade, end],
-    i === 0 ? [1, 1, 0] : i === total - 1 ? [0, 1, 1] : [0, 1, 1, 0],
-  );
-  const y = useTransform(
-    progress,
-    [start, end],
-    i === 0 ? [0, -28] : [36, -28],
-  );
-  return (
-    <motion.div
-      className="absolute inset-0 flex items-center"
-      style={{
-        opacity,
-        y,
-        pointerEvents: active ? "auto" : "none",
-      }}
-      aria-hidden={!active}
-      /* inert: kill keyboard focus into invisible cards (WCAG 4.1.2) —
-         pointer-events alone does not block Tab */
-      ref={(el) => {
-        if (el) el.inert = !active;
-      }}
-    >
-      <div className="mx-auto w-full max-w-[460px]">
-        {/* key on active: re-arms CountUp so the metric counts up when THIS
-            card becomes the visible one, not while hidden at pin-start */}
-        <div key={active ? "active" : "idle"}>
-          <CaseCard c={c} reduce={reduce} />
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-function ProofPinned({ reduce }: { reduce: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"],
-  });
-  const total = CASES.length;
-  const [idx, setIdx] = useState(0);
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    setIdx(Math.min(total - 1, Math.max(0, Math.floor(v * total))));
-  });
-  return (
-    <section
-      style={{ background: C.surface, borderTop: `1px solid ${C.hairline}` }}
-    >
-      {/* tall scroll runway drives the deck */}
-      <div ref={ref} style={{ height: `${total * 100 + 60}vh` }}>
-        <div className="sticky top-0 flex h-screen items-center">
-          <div className="mx-auto grid w-full max-w-[1200px] grid-cols-12 items-center gap-10 px-6">
-            {/* left — pinned heading + live index */}
-            <div className="col-span-5">
-              <Mono color={C.accent}>05 — Proof</Mono>
-              <h2
-                className="mt-4"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontWeight: 600,
-                  fontSize: "clamp(1.9rem,4vw,3rem)",
-                  lineHeight: 1.04,
-                  letterSpacing: "-0.026em",
-                  color: C.ink,
-                }}
-              >
-                Shipped systems, running today.
-              </h2>
-              <p className="mt-4">
-                <Mono color={C.mute}>Named clients · specific outcomes</Mono>
-              </p>
-              <div
-                className="mt-10 font-mono"
-                style={{
-                  color: C.accentDeep,
-                  fontSize: "0.8rem",
-                  fontWeight: 500,
-                  letterSpacing: "0.1em",
-                }}
-                aria-live="polite"
-              >
-                0{idx + 1} <span style={{ color: C.mute }}>/ 0{total}</span>
-              </div>
-              {/* progress ticks */}
-              <div className="mt-3 flex gap-2" aria-hidden>
-                {CASES.map((c, i) => (
-                  <div
-                    key={c.client}
-                    style={{
-                      height: 3,
-                      width: 34,
-                      borderRadius: 999,
-                      background: i <= idx ? C.accent : C.hairline,
-                      transition: "background .25s ease-out",
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-            {/* right — crossfading case deck (bp-pin-deck: CTA link always visible
-                here — hover-reveal makes no sense mid-scrollytelling) */}
-            <div
-              className="bp-pin-deck relative col-span-7"
-              style={{ height: 480 }}
-            >
-              {CASES.map((c, i) => (
-                <PinnedCase
-                  key={c.client}
-                  c={c}
-                  i={i}
-                  total={total}
-                  progress={scrollYProgress}
-                  active={i === idx}
-                  reduce={reduce}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* wide 4th tile lands after the deck */}
-      <div className="mx-auto max-w-[1200px] px-6 pb-24">
-        <Reveal reduce={reduce}>
-          <DentalTile />
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
 function Proof({ reduce }: { reduce: boolean }) {
   return (
     <section
       style={{ background: C.surface, borderTop: `1px solid ${C.hairline}` }}
     >
-      <div className="mx-auto max-w-[1200px] px-5 py-24 sm:px-6 sm:py-28">
+      <div className="mx-auto max-w-[1200px] px-5 py-16 sm:px-6 sm:py-20">
         <Reveal
           reduce={reduce}
           className="mb-14 flex flex-wrap items-end justify-between gap-4"
@@ -1866,7 +1692,7 @@ function NowBuilding({ reduce }: { reduce: boolean }) {
   return (
     <section
       id="now"
-      className="mx-auto max-w-[1200px] px-5 py-16 sm:px-6 sm:py-20"
+      className="mx-auto max-w-[1200px] px-5 py-12 sm:px-6 sm:py-16"
     >
       <Reveal reduce={reduce}>
         <div
@@ -1969,7 +1795,7 @@ function About({ reduce }: { reduce: boolean }) {
   return (
     <section
       id="about"
-      className="mx-auto max-w-[1200px] px-5 py-24 sm:px-6 sm:py-28"
+      className="mx-auto max-w-[1200px] px-5 py-16 sm:px-6 sm:py-20"
     >
       <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-16">
         <Reveal reduce={reduce} className="lg:col-span-5">
@@ -2104,7 +1930,7 @@ function Gallery({ reduce }: { reduce: boolean }) {
       id="gallery"
       style={{ background: C.surface, borderTop: `1px solid ${C.hairline}` }}
     >
-      <div className="mx-auto max-w-[1200px] px-5 py-24 sm:px-6 sm:py-28">
+      <div className="mx-auto max-w-[1200px] px-5 py-16 sm:px-6 sm:py-20">
         <Reveal
           reduce={reduce}
           className="mb-12 flex flex-wrap items-end justify-between gap-5"
@@ -2253,7 +2079,7 @@ function Faq({ reduce }: { reduce: boolean }) {
   return (
     <section
       id="faq"
-      className="mx-auto max-w-[1200px] px-5 py-24 sm:px-6 sm:py-28"
+      className="mx-auto max-w-[1200px] px-5 py-16 sm:px-6 sm:py-20"
     >
       <script
         type="application/ld+json"
@@ -2324,7 +2150,7 @@ function Faq({ reduce }: { reduce: boolean }) {
 function Convert({ reduce }: { reduce: boolean }) {
   return (
     <section id="convert" style={{ background: C.accentDeep }}>
-      <div className="mx-auto max-w-[1200px] px-5 py-24 sm:px-6 sm:py-32">
+      <div className="mx-auto max-w-[1200px] px-5 py-20 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-[720px] text-center">
           <Reveal reduce={reduce}>
             <h2

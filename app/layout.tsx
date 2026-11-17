@@ -74,7 +74,7 @@ export const metadata: Metadata = {
   },
 };
 
-const HEADSHOT = "/img/v2/founder-stool-navy-polo.webp";
+const HEADSHOT = "/img/v2/portrait-garden-glasses.jpg";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -91,8 +91,8 @@ const jsonLd = {
   image: {
     "@type": "ImageObject",
     url: `${SITE}${HEADSHOT}`,
-    width: 1356,
-    height: 1800,
+    width: 1400,
+    height: 1750,
     caption: "Waseem Nasir, founder of SkynetLabs",
   },
   email: "mailto:waseem@skynetjoe.com",

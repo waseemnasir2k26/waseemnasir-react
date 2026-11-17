@@ -410,15 +410,15 @@ export default function MentorshipClient() {
           </p>
         </Reveal>
 
-        <div className="mt-14 grid items-stretch gap-6 lg:grid-cols-3">
+        <div className="mt-14 grid items-start gap-6 lg:grid-cols-3">
           {TIERS.map((t, i) => {
             const f = !!t.featured;
             const ink = f ? "#FFFFFF" : C.ink;
             const text = f ? C.onDeep : C.body;
             return (
-              <Reveal key={t.name} delay={i * 0.06} className="h-full">
+              <Reveal key={t.name} delay={i * 0.06}>
                 <div
-                  className="flex h-full flex-col p-7 sm:p-8"
+                  className="flex flex-col p-7 sm:p-8"
                   style={{
                     borderRadius: 24,
                     background: f ? C.accentDeep : C.card,
@@ -492,8 +492,30 @@ export default function MentorshipClient() {
                     {t.blurb}
                   </p>
 
+                  <div
+                    className="mt-8"
+                  >
+                    {MENTORSHIP_FIVERR_URL ? (
+                      <Button
+                        href={MENTORSHIP_FIVERR_URL}
+                        external
+                        variant={f ? "onDeep" : "outline"}
+                        className="w-full"
+                      >
+                        {t.fiverrCta}
+                      </Button>
+                    ) : (
+                      <Button
+                        href={CTA}
+                        variant={f ? "onDeep" : "outline"}
+                        className="w-full"
+                      >
+                        Book the free fit call
+                      </Button>
+                    )}
+                  </div>
                   <ul
-                    className="m-0 mt-7 flex-1 list-none space-y-3.5 px-0 pb-0 pt-7"
+                    className="m-0 mt-8 list-none space-y-3.5 px-0 pb-0 pt-8"
                     style={{
                       borderTop: `1px solid ${
                         f ? "rgba(226,241,238,0.18)" : C.hairline
@@ -516,26 +538,6 @@ export default function MentorshipClient() {
                     ))}
                   </ul>
 
-                  <div className="mt-9">
-                    {MENTORSHIP_FIVERR_URL ? (
-                      <Button
-                        href={MENTORSHIP_FIVERR_URL}
-                        external
-                        variant={f ? "onDeep" : "outline"}
-                        className="w-full"
-                      >
-                        {t.fiverrCta}
-                      </Button>
-                    ) : (
-                      <Button
-                        href={CTA}
-                        variant={f ? "onDeep" : "outline"}
-                        className="w-full"
-                      >
-                        Book the free fit call
-                      </Button>
-                    )}
-                  </div>
                 </div>
               </Reveal>
             );
@@ -607,11 +609,11 @@ export default function MentorshipClient() {
       <Section innerClassName="grid items-center gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
         <Reveal>
           <Photo
-            src={IMG("founder-stool-navy-polo.webp")}
-            alt="Waseem Nasir seated on a stool in a navy polo, smiling, in a bright cafe interior"
+            src={IMG("portrait-garden-glasses.jpg")}
+            alt="Waseem Nasir in glasses and a cream striped shirt, facing the camera in a leafy garden"
             ratio="4 / 5"
             sizes="(max-width:1024px) 92vw, 440px"
-            position="center 30%"
+            position="center 35%"
           />
         </Reveal>
         <Reveal delay={0.06}>

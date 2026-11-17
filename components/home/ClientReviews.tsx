@@ -8,7 +8,7 @@ export default function ClientReviews() {
       aria-labelledby="client-reviews-h"
       style={{ background: "#FBFCFD" }}
     >
-      <div className="mx-auto max-w-[1200px] px-5 py-20 sm:px-6 sm:py-24">
+      <div className="mx-auto max-w-[1200px] px-5 py-14 sm:px-6 sm:py-16">
         <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
           <h2
             id="client-reviews-h"

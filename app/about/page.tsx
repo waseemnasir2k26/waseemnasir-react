@@ -17,7 +17,7 @@ import {
 
 const SITE = "https://www.waseemnasir.com";
 const url = `${SITE}/about`;
-const HEADSHOT = "/img/v2/founder-stool-navy-polo.webp";
+const HEADSHOT = "/img/v2/portrait-garden-glasses.jpg";
 
 /* The one-liner is the canonical identity string (2026-09-05 entity audit).
    It must stay byte-identical here, in the Person JSON-LD in app/layout.tsx,
@@ -39,8 +39,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: HEADSHOT,
-        width: 1356,
-        height: 1800,
+        width: 1400,
+        height: 1750,
         alt: "Waseem Nasir, founder of SkynetLabs",
       },
     ],
@@ -179,17 +179,18 @@ export default function AboutPage() {
             style={{
               borderRadius: 24,
               boxShadow: SHADOW.md,
-              aspectRatio: "4 / 3",
+              aspectRatio: "4 / 5",
+              maxWidth: 520,
             }}
           >
             <Image
               src={HEADSHOT}
-              alt="Waseem Nasir seated on a stool in a navy polo, smiling, in a bright cafe interior"
+              alt="Waseem Nasir in glasses and a cream striped shirt, facing the camera in a leafy garden"
               fill
               priority
-              sizes="(max-width: 760px) 100vw, 760px"
+              sizes="(max-width: 560px) 100vw, 520px"
               className="object-cover"
-              style={{ objectPosition: "center 28%" }}
+              style={{ objectPosition: "center 35%" }}
             />
           </div>
 

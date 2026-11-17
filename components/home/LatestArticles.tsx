@@ -10,7 +10,7 @@ export default function LatestArticles() {
       aria-labelledby="latest-articles-h"
       style={{ background: "#FBFCFD" }}
     >
-      <div className="mx-auto max-w-[1200px] px-5 py-20 sm:px-6 sm:py-24">
+      <div className="mx-auto max-w-[1200px] px-5 py-14 sm:px-6 sm:py-16">
         <div className="flex items-end justify-between gap-4">
           <h2
             id="latest-articles-h"

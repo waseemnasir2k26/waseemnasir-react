@@ -20,7 +20,6 @@ NEW = [
     "LIFESTYLE-2025-08-05-coffee-cup-raise-bamboo-cafe.jpg",
     # PORTRAIT (best additional)
     "PORTRAIT-2025-08-14-sunglasses-headphones-clifftop-ocean-view.jpg",  # landscape full-bleed
-    "PORTRAIT-2026-05-18-window-seat-sunglasses-facing-camera-relaxed.jpg",
     "PORTRAIT-2026-05-24-aframe-villas-smile-blue-polo.jpg",
     "PORTRAIT-2026-05-24-profile-sunglasses-jungle-ridge.jpg",
     "PORTRAIT-2026-05-24-river-rock-smile-palms-sunglasses.jpg",
@@ -28,7 +27,6 @@ NEW = [
     "PORTRAIT-lakefront-railing-adidas-hoodie-cap.jpg",
     "PORTRAIT-mural-closeup-cream-relaxed-tee.jpg",
     "PORTRAIT-snow-portrait-beanie-adidas-front-smile.jpg",
-    "PORTRAIT-2026-03-29-smiling-hoodie-selfie-misty-valley.jpg",
     "PORTRAIT-2026-05-07-garden-stool-striped-shirt-tropical-greenery.jpg",
     # TRAVEL / SCENERY (landscapes prioritized for full-bleed/horizontal panels)
     "TRAVEL-2025-05-17-beach-standing-smile-moody-sky.jpg",
