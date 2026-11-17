@@ -261,7 +261,7 @@ export default function NewsletterPopup({
                   Thanks{firstName.trim() ? `, ${firstName.trim()}` : ""}. Check your inbox for a welcome email.
                 </h2>
                 <p className="nlp-lede">
-                  Builds, workflows, the tools that actually paid off. Reply to any email and it reaches me; reply &ldquo;stop&rdquo; and you are removed.
+                  Builds, workflows, the tools that actually paid off. Reply to any email and it reaches me. Unsubscribe in one click from any email.
                 </p>
               </div>
             ) : (
@@ -271,7 +271,7 @@ export default function NewsletterPopup({
                   We ship a lot. Get the best of it in one email.
                 </h2>
                 <p className="nlp-lede">
-                  New AI videos, free n8n workflows, site teardowns and the services we add. You get a welcome email now and a short welcome series. No spam; reply &ldquo;stop&rdquo; to any email and you are off the list.
+                  New AI videos, free n8n workflows, site teardowns and the services we add. You get a welcome email now and a short welcome series. No spam; every email has a one-click unsubscribe.
                 </p>
 
                 <div className="nlp-row">
@@ -363,7 +363,7 @@ export default function NewsletterPopup({
                   </button>
                 </div>
                 <p className="nlp-fine">
-                  4 welcome emails over 2 weeks, then occasional. Leave anytime.{" "}
+                  A welcome email plus 3 more over 2 weeks, then occasional. Leave anytime.{" "}
                   <a href={site === "waseemnasir" ? "/privacy" : "/privacy-policy"}>Privacy</a>
                 </p>
               </form>
