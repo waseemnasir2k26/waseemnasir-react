@@ -258,7 +258,7 @@ export default function NewsletterPopup({
               <div className="nlp-body">
                 <p className="nlp-eyebrow">You&apos;re on the list</p>
                 <h2 id="nlp-title" className="nlp-title">
-                  Thanks{firstName.trim() ? `, ${firstName.trim()}` : ""}. Check your inbox for a welcome email.
+                  Thanks{firstName.trim() ? `, ${firstName.trim()}` : ""}. If you&apos;re new to the list, a welcome email is on its way.
                 </h2>
                 <p className="nlp-lede">
                   Builds, workflows, the tools that actually paid off. Reply to any email and it reaches me. Unsubscribe in one click from any email.
