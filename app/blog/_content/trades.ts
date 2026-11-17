@@ -27,7 +27,7 @@ export const body: Block[] = [
     t: "list",
     items: [
       "Who picks up when you can't, and what do they do with the message?",
-      "Where do enquiries land today: calls, texts, a web form, a social inbox?",
+      "Where do inquiries land today: calls, texts, a web form, a social inbox?",
       "What does a quote look like, and who decides the price?",
       "Which job or customer type do you most want more of?",
     ],
@@ -49,10 +49,10 @@ export const body: Block[] = [
   { t: "h2", text: "Do this before you message me" },
   {
     t: "p",
-    text: "Count how many calls you missed last week, and how many quotes went quiet with no follow-up. Write the two numbers down. That tells us where to start, and it'll tell you something even if we never speak.",
+    text: "Write down two things. First, the kind of job you lose most often because someone else answered sooner. Second, the hour of the day it usually slips away: mid-morning on a site, the drive home, after dinner. Those two lines tell me more than any tool list would, and they'll show you where your own week has a gap even if we never speak.",
   },
   {
     t: "p",
-    text: "When you have them, tell me which trade you run and I'll tell you what I'd build first.",
+    text: "Tell me which trade you run and I'll tell you where I'd start.",
   },
 ];

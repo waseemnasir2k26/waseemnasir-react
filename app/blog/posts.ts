@@ -94,17 +94,17 @@ export const POSTS: PostMeta[] = [
       "Waseem Nasir at a coworking desk, focused on his phone while reviewing a message",
   },
   {
-    slug: "why-trades-are-my-next-focus-and-what-id-build-first",
-    title: "Why trades are my next focus, and what I'd build first",
+    slug: "why-trades-are-my-next-focus",
+    title: "Why trades are my next focus, and how I'd start with a first client",
     date: "2026-11-05",
     dateLabel: "November 5, 2026",
     readingTime: "3 min read",
     tag: "Plan",
     kind: "PLAN",
     excerpt:
-      "Trades are the direction I am choosing next, not a long client list. Here is the honest plan: why I picked it, what I would ask on the first call, what I would measure, and what I would refuse to build.",
+      "Trades are the direction I am choosing next, not a long client list. Here is the honest plan: why I picked it, what I would ask on a first call, what I would measure in week one, and what I would refuse to build.",
     description:
-      "An honest plan for building automations for trades and local service businesses: why I am focusing there, how I would start with a first client, and a two-number check you can do today.",
+      "An honest plan for building automations for trades and local service businesses: why I am focusing there, how I would start with a first client, and a short exercise you can do before we talk.",
     ogImage:
       "/img/pro/CAFE-WORK-2026-06-05-garden-cafe-blue-polo-smile-laptop.jpg",
     ogAlt:

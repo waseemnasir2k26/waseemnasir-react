@@ -12,7 +12,7 @@ export const body: Block[] = [
   },
   {
     t: "p",
-    text: "Weigh that against the price of a check. Reading a short draft and tapping a button takes a few seconds. A wrong message can cost a customer, or leave you honouring a promise you never made. With stakes that lopsided, I don't need much convincing.",
+    text: "Weigh that against the price of a check. Reading a short draft and tapping a button takes a few seconds. A wrong message can cost a customer, or leave you honoring a promise you never made. With stakes that lopsided, I don't need much convincing.",
   },
   { t: "h2", text: "My rules for every build" },
   {
@@ -48,18 +48,14 @@ export const body: Block[] = [
     t: "p",
     text: "When you correct a draft, you're also correcting the instructions behind it, so the next draft starts from a better place. You'll usually edit less as the drafts improve. Even so, I keep the approval step, because the point was never to catch a high number of errors. It was to make sure the rare bad one doesn't reach a customer.",
   },
-  {
-    t: "h2",
-    text: "If you're adding AI replies to your business, check these four things",
-  },
+  { t: "h2", text: "Questions to answer before you add AI replies" },
   {
     t: "list",
-    ordered: true,
     items: [
-      "Who is the named person that approves drafts, and who covers when they're away?",
-      "Where do messages go when the system fails or isn't sure of the answer?",
-      "Which topics are off limits for AI drafting in your business, and is that written down?",
-      "Which single measure will tell you in a month whether this is working?",
+      "Who on your team would read the drafts, and at what point in their day?",
+      "What do customers write in about most often? Start with that one kind of message.",
+      "Do you have three past replies you're proud of? They're the best way to teach the tone.",
+      "How will you tell in a month that it helped: faster answers, fewer dropped messages, less time typing?",
     ],
   },
 ];

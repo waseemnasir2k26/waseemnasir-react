@@ -2,7 +2,7 @@ import { ArticlePage, articleMetadata, otherPosts } from "../_article";
 import { getPost } from "../posts";
 import { body } from "../_content/trades";
 
-const post = getPost("why-trades-are-my-next-focus-and-what-id-build-first")!;
+const post = getPost("why-trades-are-my-next-focus")!;
 
 export const metadata = articleMetadata(post);
 
