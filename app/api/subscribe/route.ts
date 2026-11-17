@@ -19,6 +19,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX = 8 * 1024;
 const PER_MIN = 30;
 const hits = new Map<string, { n: number; t: number }>();
+// Logs never carry a full address: j***@example.com is enough to follow up.
+const mask = (e: string) => e.replace(/^(.).*?(@.*)$/, "$1***$2");
 
 function limited(key: string): boolean {
   const now = Date.now();
@@ -57,7 +59,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const text = await req.text();
-  if (text.length > MAX)
+  if (new TextEncoder().encode(text).length > MAX)
     return NextResponse.json({ error: "Too large" }, { status: 413 });
   let body: unknown;
   try {
@@ -93,7 +95,7 @@ export async function POST(req: Request) {
   const url = process.env.HQ_SUBSCRIBER_URL?.trim();
   const secret = process.env.HQ_SUBSCRIBER_SECRET?.trim();
   if (!url || !secret) {
-    console.error("[subscribe] HQ lane not configured; lead:", email);
+    console.error("[subscribe] HQ lane not configured; lead:", mask(email));
     return NextResponse.json(
       {
         error:
@@ -126,7 +128,7 @@ export async function POST(req: Request) {
     if (!res.ok) throw new Error(`HQ ${res.status}`);
     return NextResponse.json({ ok: true });
   } catch (e) {
-    console.error("[subscribe] HQ write failed; lead:", email, e);
+    console.error("[subscribe] HQ write failed; lead:", mask(email), e);
     return NextResponse.json(
       {
         error:

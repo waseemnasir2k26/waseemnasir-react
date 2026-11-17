@@ -11,10 +11,10 @@
  *     (shared "skynet-popup-fired" key kept for the retired popups).
  *   - "Not right now" snoozes for 14 days; a successful subscribe never shows
  *     it again. ?popup=off disables it for QA.
- *   - Posts to /api/lead-capture with source "newsletter" (GHL → Resend → disk
- *     sink, honeypot, rate-limit) AND mirrors to HQ via the same route
- *     (server-side, see lib/hq-subscriber.ts). Success only after the server
- *     confirms a write.
+  *   - skynetjoe: posts to /api/lead-capture (source "newsletter-skynetjoe";
+ *     GHL → Resend → disk sink, then an HQ mirror after a confirmed write).
+ *     waseemnasir: posts to /api/subscribe (HQ only, honest 502 otherwise).
+ *     Success only after the server confirms a write.
  *   - Zero third-party requests. Keyboard: Esc closes, focus trapped inside.
  */
 
@@ -80,13 +80,14 @@ export default function NewsletterPopup({
     } catch {
       /* ignore */
     }
-    let fired = false;
+        let fired = false;
+    let retry: number | undefined;
     const fire = () => {
       if (fired) return;
       // Never on top of another dialog or an undecided consent bar: Esc or a
       // backdrop click meant for them would otherwise snooze this for 14 days.
-      if (document.querySelector('[role="dialog"], [data-consent-bar]') !== null) {
-        window.setTimeout(fire, 8000);
+            if (document.querySelector('[role="dialog"], [data-consent-bar]') !== null) {
+        retry = window.setTimeout(fire, 8000);
         return;
       }
       fired = true;
@@ -103,8 +104,9 @@ export default function NewsletterPopup({
       if (max > 0 && window.scrollY / max >= SCROLL_PCT) fire();
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
+        return () => {
       window.clearTimeout(t);
+      if (retry) window.clearTimeout(retry);
       window.removeEventListener("scroll", onScroll);
     };
   }, [pathname]);
@@ -137,8 +139,17 @@ export default function NewsletterPopup({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
 
-  const snooze = () => {
+    const snooze = () => {
+    // Closing the success card must not downgrade "subscribed" to a snooze.
+    if (status === "success") {
+      setShow(false);
+      return;
+    }
     try {
+      if (window.localStorage.getItem(DONE_KEY) === "subscribed") {
+        setShow(false);
+        return;
+      }
       const until = new Date(Date.now() + SNOOZE_DAYS * 864e5).toISOString();
       window.localStorage.setItem(DONE_KEY, until);
     } catch {
@@ -346,7 +357,7 @@ export default function NewsletterPopup({
                 </div>
                 <p className="nlp-fine">
                   Occasional, not weekly. Leave anytime.{" "}
-                  <a href="/privacy-policy">Privacy</a>
+                  <a href={site === "waseemnasir" ? "/privacy" : "/privacy-policy"}>Privacy</a>
                 </p>
               </form>
             )}
