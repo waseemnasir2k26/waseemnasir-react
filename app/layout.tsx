@@ -110,9 +110,9 @@ const jsonLd = {
     "https://x.com/Skynetjoe1",
     "https://www.facebook.com/Waseemskynetjoe",
     "https://www.instagram.com/waseemnasir2k27",
-    "https://skynetjoe.com",
-    "https://skynetlabs.si",
-    "https://skynetlabsai.com",
+    "https://skynetjoe.com/",
+    "https://skynetlabs.si/",
+    "https://skynetlabsai.com/",
   ],
   knowsAbout: [
     "AI automation",
