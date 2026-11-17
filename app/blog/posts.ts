@@ -36,10 +36,9 @@ export const POSTS: PostMeta[] = [
       "Pre-dawn cafe, an Italian travel plugin stuck behind a hosting firewall, agents building while I film, and a rule I don't break: no eight-hour days. An honest walk through one working day — and how an accounting-firm job led here.",
     description:
       "An honest account of one working day running an AI automation agency from Bali — a client fire, the quiet build, and the real cost.",
-    ogImage:
-      "/img/pro/CAFE-WORK-2026-06-02-night-cafe-typing-backlit-keyboard-candid.jpg",
+    ogImage: "/img/v2/post-real-day-bali.jpg",
     ogAlt:
-      "Waseem Nasir typing on a backlit laptop keyboard at a night cafe in Bali",
+      "Waseem Nasir working on a laptop at a cafe in Bali, seen from across the table",
   },
   {
     slug: "edited-10-travel-vlogs-in-one-night-with-claude-code",
@@ -53,10 +52,9 @@ export const POSTS: PostMeta[] = [
       "Ten Ubud vlogs and their teasers, cut, captioned, and rendered in a single night — driven from the terminal with Claude Code and an ffmpeg NVENC pipeline. Here's exactly how the system works, in three steps.",
     description:
       "Ten Ubud travel vlogs plus teasers, edited and rendered in one night with Claude Code and an ffmpeg NVENC pipeline, in three steps.",
-    ogImage:
-      "/img/pro/CAFE-WORK-2026-03-30-dual-laptop-analytics-dashboard-coffee.jpg",
+    ogImage: "/img/v2/post-ten-vlogs-dual-laptop.jpg",
     ogAlt:
-      "Waseem Nasir at a dual-laptop setup running an editing and analytics pipeline over coffee",
+      "Waseem Nasir at a dual-laptop setup with an analytics dashboard open and a coffee beside it",
   },
   {
     slug: "what-i-automate-first-in-a-small-business",
@@ -71,10 +69,9 @@ export const POSTS: PostMeta[] = [
       "Owners ask for something clever. I start with leaks, then repeats, then reports, one build at a time. The order I use, where it came from, and a quick leak check you can run today.",
     description:
       "Why I start small-business automation with leaking inquiries, then repeated tasks, then reports, plus a five-minute leak check you can do yourself.",
-    ogImage:
-      "/img/pro/CAFE-WORK-2026-05-22-bali-terrace-typing-laptop-latte-sunglasses.jpg",
+    ogImage: "/img/v2/post-automate-first.jpg",
     ogAlt:
-      "Waseem Nasir typing on a laptop at a terrace cafe in Bali with a latte beside him",
+      "Waseem Nasir at a rooftop cafe table with a laptop and a tall glass of orange juice",
   },
   {
     slug: "why-i-never-let-ai-send-a-customer-reply-without-a-human-check",
@@ -88,10 +85,9 @@ export const POSTS: PostMeta[] = [
       "The AI drafts, a person sends. The reasoning behind that rule, what approval looks like day to day, what I refuse to fully automate, and four checks before you add AI replies.",
     description:
       "My reasoning for having a person approve every AI-written customer reply, what I will not fully automate, and four things to check before you add AI replies.",
-    ogImage:
-      "/img/pro/WORK-2025-06-10-coworking-desk-focused-phone-candid.jpg",
+    ogImage: "/img/v2/post-human-check.jpg",
     ogAlt:
-      "Waseem Nasir at a coworking desk, focused on his phone while reviewing a message",
+      "Waseem Nasir in a rattan chair under a thatched roof, headphones around his neck",
   },
   {
     slug: "why-trades-are-my-next-focus",
@@ -105,10 +101,9 @@ export const POSTS: PostMeta[] = [
       "Trades are the direction I am choosing next, not a long client list. Here is the honest plan: why I picked it, what I would ask on a first call, what I would measure in week one, and what I would refuse to build.",
     description:
       "An honest plan for building automations for trades and local service businesses: why I am focusing there, how I would start with a first client, and a short exercise you can do before we talk.",
-    ogImage:
-      "/img/pro/CAFE-WORK-2026-06-05-garden-cafe-blue-polo-smile-laptop.jpg",
+    ogImage: "/img/v2/post-trades.jpg",
     ogAlt:
-      "Waseem Nasir smiling at a laptop in a garden cafe",
+      "Waseem Nasir smiling in a blue polo in front of green rice-terrace plants",
   },
   {
     slug: "my-claude-code-setup-for-client-work",
@@ -122,10 +117,9 @@ export const POSTS: PostMeta[] = [
       "A rules file, a file-based memory, four reviewer subagents, plan mode and a ship gate that blocks deploys. Plus three real failures and the rule each one became.",
     description:
       "How I run client work in Claude Code: rules file, memory, subagents, plan mode and a deploy gate, plus three real failures and the rules they became.",
-    ogImage:
-      "/img/pro/CAFE-WORK-2026-03-29-rooftop-cafe-laptop-mountain-clouds.jpg",
+    ogImage: "/img/v2/post-claude-code-setup.jpg",
     ogAlt:
-      "Waseem Nasir working on a laptop at a rooftop cafe with mountains and clouds behind",
+      "Waseem Nasir working on a laptop on a cafe sofa in the evening",
   },
   {
     slug: "why-i-publish-my-n8n-workflows-for-free",
@@ -139,10 +133,9 @@ export const POSTS: PostMeta[] = [
       "I show my n8n workflows in a free series and people ask if I am giving away what I sell. My reasoning, what I keep back, what the free route really costs you, and where to start.",
     description:
       "Why I publish my n8n workflows for free: what I share, what I do not, what the free route costs your time, and how to start with one small workflow.",
-    ogImage:
-      "/img/pro/CAFE-WORK-2026-03-30-dual-laptop-analytics-dashboard-coffee.jpg",
+    ogImage: "/img/v2/post-free-n8n-workflows.jpg",
     ogAlt:
-      "Waseem Nasir at a dual-laptop setup with coffee, building and testing workflows",
+      "Waseem Nasir smiling in an olive jacket with headphones around his neck, cafe sign behind him",
   },
 ];
 

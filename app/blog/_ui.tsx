@@ -11,56 +11,13 @@
 
 import Link from "next/link";
 import WhatsAppCta from "@/components/WhatsAppCta";
-import {
-  Bricolage_Grotesque,
-  Hanken_Grotesk,
-  JetBrains_Mono,
-} from "next/font/google";
 import NetworkRow from "@/components/NetworkRow";
+import { display, body, mono } from "@/lib/fonts";
+import { C, SHADOW, CTA, IMG } from "@/lib/design";
 
-/* ─── Fonts (self-hosted at build via next/font/google) ─── */
-const display = Bricolage_Grotesque({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-display",
-  weight: ["300", "400", "500", "600", "700", "800"],
-});
-const body = Hanken_Grotesk({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-body",
-  weight: ["400", "500", "600", "700"],
-});
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-mono",
-  weight: ["400", "500"],
-});
-
-/* ─── Tokens (identical to blueprint C / SHADOW) ─── */
-export const C = {
-  canvas: "#FBFCFD",
-  surface: "#F4F8F7",
-  card: "#FFFFFF",
-  ink: "#0E1B1A",
-  body: "#3C4744",
-  mute: "#5B6764",
-  hairline: "#E2EAE8",
-  accent: "#117E73",
-  accentDeep: "#0A3D38",
-  accentTint: "#E2F1EE",
-  pillInk: "#0C5F57",
-  live: "#15A06B",
-  onDeep: "#EAF4F1",
-};
-export const SHADOW = {
-  sm: "0 1px 2px rgba(8,40,38,0.08), 0 0 0 1px rgba(8,40,38,0.05)",
-  md: "0 8px 24px rgba(8,40,38,0.08), 0 0 0 1px rgba(8,40,38,0.05)",
-  lg: "0 24px 48px rgba(8,40,38,0.10), 0 0 0 1px rgba(8,40,38,0.05)",
-};
-export const CTA = "/book";
-export const IMG = (f: string) => `/img/pro/${f}`;
+/* Tokens live in lib/design.ts (single source of truth); re-exported here so
+   existing imports from "../blog/_ui" keep working. */
+export { C, SHADOW, CTA, IMG };
 
 /* ─── Mono label ─── */
 export function Mono({
@@ -140,6 +97,10 @@ function ScopeStyle() {
         .bp-postcard-arrow { transition: transform .18s ease-out; display:inline-block; }
       }
       :focus-visible { outline: 2px solid ${C.accent}; outline-offset: 2px; border-radius: 4px; }
+      .wn-flow > * + * { margin-top: 1.15rem; }
+      .wn-flow > h2 { margin-top: 3.25rem; }
+      .wn-flow > h2 + * { margin-top: 1rem; }
+      img { -webkit-user-drag: none; }
     `,
       }}
     />
@@ -234,17 +195,8 @@ function SiteFooter() {
   return (
     <footer
       className="relative overflow-hidden"
-      style={{ background: C.surface, borderTop: `2px solid ${C.accentDeep}` }}
+      style={{ background: C.surface, borderTop: `1px solid ${C.hairline}` }}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage: `radial-gradient(${C.hairline} 1px, transparent 1px)`,
-          backgroundSize: "22px 22px",
-          opacity: 0.55,
-        }}
-      />
       <div className="relative mx-auto max-w-[1200px] px-5 py-20 sm:px-6">
         <div className="flex flex-col justify-between gap-12 lg:flex-row">
           <div>
@@ -539,15 +491,6 @@ export function SoftCTA({
         boxShadow: SHADOW.lg,
       }}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(rgba(234,244,241,0.10) 1px, transparent 1px)",
-          backgroundSize: "22px 22px",
-        }}
-      />
       <div className="relative flex flex-col items-start gap-5 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
         <p
           style={{

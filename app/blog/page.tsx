@@ -20,10 +20,10 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/img/pro/CAFE-WORK-2026-06-02-night-cafe-typing-backlit-keyboard-candid.jpg",
-        width: 1700,
-        height: 956,
-        alt: "Waseem Nasir working late at a Bali cafe",
+        url: "/img/v2/post-ten-vlogs-dual-laptop.jpg",
+        width: 1600,
+        height: 900,
+        alt: "Waseem Nasir at a dual-laptop setup in a cafe",
       },
     ],
   },

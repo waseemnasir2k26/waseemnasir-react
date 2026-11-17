@@ -1,42 +1,29 @@
 "use client";
 
-import Image from "next/image";
-import WhatsAppCta from "@/components/WhatsAppCta";
-import NetworkRow from "@/components/NetworkRow";
 import Link from "next/link";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { MENTORSHIP_FIVERR_URL } from "@/components/site";
+import { FAQ } from "./faq-data";
+import { C, SHADOW, TYPE, IMG, CTA } from "@/lib/design";
+import {
+  Section,
+  Eyebrow,
+  H1,
+  H2,
+  H3,
+  Button,
+  Photo,
+} from "@/components/ui/system";
 
 /* ============================================================
    /mentorship — 1:1 Claude Code & AI vibe-coding mentorship.
-   Standalone route. Lives under the global dark RootLayout, so it
-   matches whichever homepage variant ships. Self-contained.
+   Rendered inside BlogShell (app/mentorship/page.tsx), so it shares the
+   site nav, footer, fonts and tokens (lib/design.ts) with every other page.
+   Section tones alternate canvas / surface; hairlines, not boxes.
    Real proof only — no fabricated testimonials or student counts.
    ============================================================ */
-
-const CTA = "/book";
-const EMAIL = "waseem@skynetjoe.com";
-const GITHUB = "https://github.com/waseemnasir2k26";
-const AGENCY = "https://skynetjoe.com";
-const IMG = (f: string) => `/img/pro/${f}`;
-
-/* ---- palette (tuned to the global dark canvas) ---- */
-const BG = "#0A0A0C";
-const SURFACE = "#121218";
-const SURFACE_2 = "#16161E";
-const TEXT = "#ECEAF2";
-const MUTED = "#8C8AA0";
-const HAIRLINE = "rgba(236,234,242,0.08)";
-const ACCENT = "#7C6CFF"; // electric violet
-const ACCENT_SOFT = "rgba(124,108,255,0.14)";
-const TICK = "#5EE6A8"; // checklist green
-
-const MONO = "var(--font-mono, 'JetBrains Mono', monospace)";
-const SERIF = "var(--font-serif, 'Fraunces', serif)";
-
-/* ============================================================ */
 
 const CURRICULUM = [
   {
@@ -76,22 +63,22 @@ const STEPS = [
     k: "Live, screen-to-screen",
     title: "We build on the same screen",
     body: "Every session is a real working call — you drive, I guide. You watch how I actually use Claude Code, then you do it while I catch the mistakes in real time.",
-    photo: "CAFE-WORK-2026-03-30-dual-laptop-analytics-dashboard-coffee.jpg",
-    alt: "Waseem working across two laptops on a real build",
+    photo: "dual-laptop-dashboard-cafe.webp",
+    alt: "Waseem Nasir at a dual-laptop setup with a dashboard open and a coffee beside him",
   },
   {
     k: "Your project, not a sandbox",
     title: "You leave with something real",
     body: "We work on the thing you want to exist. No throwaway exercises — the app you ship is yours, deployed and on a URL you can share.",
-    photo: "WORK-2025-06-10-coworking-desk-focused-phone-candid.jpg",
-    alt: "Focused desk work session on a real project",
+    photo: "lake-dock-laptop.webp",
+    alt: "Waseem Nasir working on a laptop on a floating dock with a lake and mountain behind him",
   },
   {
     k: "Between calls",
     title: "Async support so you never stay stuck",
     body: "Hit a wall on a Tuesday? Message me. I review your work, unblock you, and keep the momentum going between live sessions.",
-    photo: "CAFE-WORK-2026-06-02-night-cafe-typing-backlit-keyboard-candid.jpg",
-    alt: "Late-night coding session, hands on keyboard",
+    photo: "night-cafe-rattan-laptop.webp",
+    alt: "Waseem Nasir at a laptop in a rattan-furnished cafe in the evening",
   },
 ];
 
@@ -171,9 +158,10 @@ const NOT_YOU = [
   "You want a passive video course to binge and forget",
 ];
 
-import { FAQ } from "./faq-data";
 
-/* ---- small reveal wrapper ---- */
+
+/* Reveal: opacity is 1 at rest (only position animates) so a static render,
+   print, or a missed IntersectionObserver never leaves a blank band. */
 function Reveal({
   children,
   delay = 0,
@@ -185,423 +173,280 @@ function Reveal({
 }) {
   const reduce = useSafeReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { once: true, amount: 0 });
   return (
     <motion.div
       ref={ref}
       className={className}
-      initial={reduce ? false : { opacity: 0, y: 28 }}
+      initial={reduce ? false : { opacity: 1, y: 16 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ type: "spring", stiffness: 70, damping: 18, delay }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay }}
     >
       {children}
     </motion.div>
   );
 }
 
-function BookButton({
-  label,
-  variant = "solid",
-  className = "",
-  href = CTA,
-  external = false,
-}: {
-  label: string;
-  variant?: "solid" | "ghost";
-  className?: string;
-  href?: string;
-  external?: boolean;
-}) {
-  const solid = variant === "solid";
-  return (
-    <Link
-      href={href}
-      {...(external ? { target: "_blank", rel: "noopener" } : {})}
-      className={`inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold tracking-wide transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0C] ${className}`}
-      style={
-        solid
-          ? {
-              background: ACCENT,
-              color: "#0A0A0C",
-              boxShadow: "0 18px 50px -20px rgba(124,108,255,0.7)",
-            }
-          : {
-              background: "transparent",
-              color: ACCENT,
-              border: `1px solid ${ACCENT}`,
-            }
-      }
-    >
-      {label}
-      <svg width="15" height="15" viewBox="0 0 14 14" fill="none" aria-hidden>
-        <path
-          d="M3 7h8M7.5 3.5 11 7l-3.5 3.5"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </Link>
-  );
-}
+const CHECK = (color: string) => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    className="mt-1 shrink-0"
+    aria-hidden
+  >
+    <path
+      d="M3.5 8.5l3 3 6-7"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
-function Kicker({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      className="inline-flex items-center gap-2 text-[11px] uppercase"
-      style={{ color: ACCENT, fontFamily: MONO, letterSpacing: "0.22em" }}
-    >
-      <span
-        className="inline-block h-px w-6"
-        style={{ background: ACCENT }}
-        aria-hidden
-      />
-      {children}
-    </span>
-  );
-}
+const EMPATHY = [
+  {
+    h: "You don't need to be “technical”",
+    p: "If you can explain what you want clearly, you can build it. I teach you the rest.",
+  },
+  {
+    h: "Stop collecting tutorials",
+    p: "You've watched enough. This is hands-on-keyboard, shipping real things, with feedback.",
+  },
+  {
+    h: "Get unstuck fast",
+    p: "The thing that kills beginners is staying stuck for days. With me on the call, that doesn't happen.",
+  },
+];
+
+const STATS = [
+  ["180+", "automations built"],
+  ["40+", "sites shipped"],
+  ["9", "countries served"],
+  ["2018", "in practice since"],
+];
 
 export default function MentorshipClient() {
   return (
     <>
-      {/* skip-link target uses global layout's skip-link */}
-      <main
-        id="main-content"
-        className="relative z-10"
-        style={{ background: BG, color: TEXT }}
-      >
-        {/* ── nav (header landmark, like the other pages) ── */}
-        <header
-          className="sticky top-0 z-50 backdrop-blur-md"
-          style={{
-            background: "rgba(10,10,12,0.72)",
-            borderBottom: `1px solid ${HAIRLINE}`,
-          }}
-        >
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-            <Link
-              href="/"
-              className="text-sm font-semibold tracking-tight focus-visible:outline-none focus-visible:ring-2 rounded"
-              style={{ color: TEXT }}
-            >
-              Waseem Nasir
-            </Link>
-            <div className="flex items-center gap-2">
-              <WhatsAppCta />
-              <BookButton
-                label="Book a call"
-                variant="ghost"
-                className="!px-5 !py-2.5"
-              />
-            </div>
-          </div>
-        </header>
-
-        {/* ── hero ── */}
-        <section className="relative overflow-hidden">
-          <div
-            className="pointer-events-none absolute inset-0"
-            aria-hidden
-            style={{
-              background:
-                "radial-gradient(900px 520px at 15% -10%, rgba(124,108,255,0.16), transparent 60%)",
-            }}
-          />
-          <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:pb-28 lg:pt-24">
-            <div>
-              <Reveal>
-                <Kicker>1:1 Mentorship · Live · Beginner-friendly</Kicker>
-              </Reveal>
-              <Reveal delay={0.06}>
-                <h1
-                  className="mt-6 text-[clamp(2.4rem,6vw,4.2rem)] font-semibold leading-[1.04]"
-                  style={{ fontFamily: SERIF, color: TEXT }}
-                >
-                  Learn to build real software by{" "}
-                  <span style={{ color: ACCENT }}>vibe-coding</span> with Claude
-                  Code.
-                </h1>
-              </Reveal>
-              <Reveal delay={0.12}>
-                <p
-                  className="mt-6 max-w-xl text-[1.05rem] leading-relaxed"
-                  style={{ color: MUTED }}
-                >
-                  No computer-science degree. No years of tutorials. In private
-                  1-on-1 sessions, I teach you to describe what you want, steer
-                  the AI that writes the code, and actually ship it — the same
-                  workflow I use to run a software agency every day.
-                </p>
-              </Reveal>
-              <Reveal delay={0.18}>
-                <div className="mt-9 flex flex-wrap items-center gap-4">
-                  <BookButton label="Book a free 30-min fit call" />
-                  <Link
-                    href="#pricing"
-                    className="text-sm font-medium underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 rounded px-2 py-1"
-                    style={{ color: TEXT }}
-                  >
-                    See pricing & tracks
-                  </Link>
-                </div>
-              </Reveal>
-              <Reveal delay={0.24}>
-                <p
-                  className="mt-6 text-xs"
-                  style={{ color: MUTED, fontFamily: MONO }}
-                >
-                  Taught by a founder who&apos;s shipped 40+ sites & 180+
-                  automations across 9 countries — building in Claude Code
-                  daily.
-                </p>
-              </Reveal>
-            </div>
-
-            <Reveal delay={0.1}>
-              <div
-                className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl"
-                style={{ border: `1px solid ${HAIRLINE}`, background: SURFACE }}
-              >
-                <Image
-                  src={IMG(
-                    "CAFE-WORK-2026-06-05-garden-cafe-blue-polo-smile-laptop.jpg",
-                  )}
-                  alt="Waseem Nasir building on a laptop at a cafe"
-                  fill
-                  priority
-                  sizes="(max-width:1024px) 100vw, 45vw"
-                  className="object-cover"
-                  style={{ objectPosition: "center 20%" }}
-                />
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  aria-hidden
-                  style={{
-                    background:
-                      "linear-gradient(180deg, transparent 55%, rgba(10,10,12,0.85) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute bottom-4 left-4 rounded-lg px-3 py-2 text-[11px]"
-                  style={{
-                    background: "rgba(10,10,12,0.7)",
-                    color: TICK,
-                    fontFamily: MONO,
-                    border: `1px solid ${HAIRLINE}`,
-                  }}
-                >
-                  $ claude — let&apos;s build something real
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ── empathy strip ── */}
-        <section
-          className="border-y"
-          style={{ borderColor: HAIRLINE, background: SURFACE }}
-        >
-          <div className="mx-auto grid max-w-6xl gap-8 px-6 py-14 sm:grid-cols-3">
-            {[
-              {
-                h: "You don't need to be “technical”",
-                p: "If you can explain what you want clearly, you can build it. I teach you the rest.",
-              },
-              {
-                h: "Stop collecting tutorials",
-                p: "You've watched enough. This is hands-on-keyboard, shipping real things, with feedback.",
-              },
-              {
-                h: "Get unstuck fast",
-                p: "The thing that kills beginners is staying stuck for days. With me on the call, that doesn't happen.",
-              },
-            ].map((c, i) => (
-              <Reveal key={c.h} delay={i * 0.06}>
-                <h3
-                  className="text-lg font-semibold"
-                  style={{ color: TEXT, fontFamily: SERIF }}
-                >
-                  {c.h}
-                </h3>
-                <p
-                  className="mt-2 text-sm leading-relaxed"
-                  style={{ color: MUTED }}
-                >
-                  {c.p}
-                </p>
-              </Reveal>
-            ))}
-          </div>
-        </section>
-
-        {/* ── curriculum ── */}
-        <section className="mx-auto max-w-6xl px-6 py-24">
+      {/* ── hero ── */}
+      <Section innerClassName="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
+        <div>
           <Reveal>
-            <Kicker>What you&apos;ll learn</Kicker>
-            <h2
-              className="mt-5 max-w-2xl text-[clamp(1.9rem,4vw,2.9rem)] font-semibold leading-tight"
-              style={{ fontFamily: SERIF, color: TEXT }}
-            >
-              From &quot;I don&apos;t know where to start&quot; to shipping on a
-              live URL.
-            </h2>
+            <Eyebrow>1:1 Mentorship · Live · Beginner-friendly</Eyebrow>
           </Reveal>
-          <div
-            className="mt-14 grid gap-px overflow-hidden rounded-2xl sm:grid-cols-2 lg:grid-cols-3"
-            style={{ background: HAIRLINE }}
-          >
-            {CURRICULUM.map((m, i) => (
-              <Reveal key={m.n} delay={(i % 3) * 0.05}>
-                <div className="h-full p-7" style={{ background: SURFACE_2 }}>
+          <Reveal delay={0.05} className="mt-6">
+            <H1>
+              Learn to build real software by{" "}
+              <span style={{ color: C.accent }}>vibe-coding</span> with Claude
+              Code.
+            </H1>
+          </Reveal>
+          <Reveal delay={0.1} className="mt-6">
+            <p style={{ ...TYPE.lead, maxWidth: "52ch" }}>
+              No computer-science degree. No years of tutorials. In private
+              1-on-1 sessions, I teach you to describe what you want, steer the
+              AI that writes the code, and actually ship it — the same workflow
+              I use to run a software agency every day.
+            </p>
+          </Reveal>
+          <Reveal delay={0.15} className="mt-9">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+              <Button href={CTA}>Book a free 30-min fit call</Button>
+              <Link
+                href="#pricing"
+                className="bp-link font-semibold"
+                style={{ color: C.ink, fontSize: "0.95rem" }}
+              >
+                See pricing &amp; tracks
+              </Link>
+            </div>
+          </Reveal>
+          <Reveal delay={0.2} className="mt-8">
+            <p style={{ ...TYPE.small, color: C.mute, maxWidth: "52ch" }}>
+              Taught by a founder who&apos;s shipped 40+ sites &amp; 180+
+              automations across 9 countries — building in Claude Code daily.
+            </p>
+          </Reveal>
+        </div>
+
+        <Reveal delay={0.1}>
+          <figure className="m-0">
+            <Photo
+              src={IMG("bali-rooftop-smile.webp")}
+              alt="Waseem Nasir smiling at a cafe table in Bali, wearing glasses and a striped open shirt"
+              ratio="4 / 5"
+              priority
+              sizes="(max-width:1024px) 92vw, 460px"
+              position="center 40%"
+            />
+            <figcaption
+              className="mt-4 font-mono"
+              style={{ color: C.mute, fontSize: "0.78rem" }}
+            >
+              $ claude — let&apos;s build something real
+            </figcaption>
+          </figure>
+        </Reveal>
+      </Section>
+
+      {/* ── empathy ── */}
+      <Section tone="surface" innerClassName="!py-14 sm:!py-16">
+        <div className="grid gap-10 sm:grid-cols-3 sm:gap-12">
+          {EMPATHY.map((c, i) => (
+            <Reveal key={c.h} delay={i * 0.05}>
+              <h2 style={TYPE.h3}>{c.h}</h2>
+              <p className="mt-3" style={TYPE.small}>
+                {c.p}
+              </p>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      {/* ── curriculum ── */}
+      <Section innerClassName="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+        <Reveal>
+          <div className="lg:sticky lg:top-28">
+            <Eyebrow>What you&apos;ll learn</Eyebrow>
+            <div className="mt-5">
+              <H2>
+                From &quot;I don&apos;t know where to start&quot; to shipping on
+                a live URL.
+              </H2>
+            </div>
+          </div>
+        </Reveal>
+        <ol className="m-0 list-none p-0">
+          {CURRICULUM.map((m) => (
+            <li key={m.n}>
+              <Reveal>
+                <div
+                  className="grid grid-cols-[2.75rem_1fr] gap-x-2 py-8"
+                  style={{ borderTop: `1px solid ${C.hairline}` }}
+                >
                   <span
-                    className="text-xs"
+                    className="font-mono"
                     style={{
-                      color: ACCENT,
-                      fontFamily: MONO,
-                      letterSpacing: "0.2em",
+                      color: C.accent,
+                      fontSize: "0.78rem",
+                      fontWeight: 500,
+                      paddingTop: 5,
                     }}
                   >
                     {m.n}
                   </span>
-                  <h3
-                    className="mt-4 text-lg font-semibold leading-snug"
-                    style={{ color: TEXT }}
-                  >
-                    {m.title}
-                  </h3>
-                  <p
-                    className="mt-3 text-sm leading-relaxed"
-                    style={{ color: MUTED }}
-                  >
-                    {m.body}
-                  </p>
+                  <div>
+                    <H3>{m.title}</H3>
+                    <p className="mt-2.5" style={TYPE.body}>
+                      {m.body}
+                    </p>
+                  </div>
                 </div>
               </Reveal>
-            ))}
+            </li>
+          ))}
+        </ol>
+      </Section>
+
+      {/* ── how it works ── */}
+      <Section tone="surface">
+        <Reveal>
+          <Eyebrow>How it works</Eyebrow>
+          <div className="mt-5">
+            <H2 style={{ maxWidth: "20ch" }}>
+              Real calls. Real project. Real URL at the end.
+            </H2>
           </div>
-        </section>
-
-        {/* ── how it works ── */}
-        <section
-          className="border-y"
-          style={{ borderColor: HAIRLINE, background: SURFACE }}
-        >
-          <div className="mx-auto max-w-6xl px-6 py-24">
-            <Reveal>
-              <Kicker>How it works</Kicker>
-              <h2
-                className="mt-5 text-[clamp(1.9rem,4vw,2.9rem)] font-semibold"
-                style={{ fontFamily: SERIF, color: TEXT }}
-              >
-                Real calls. Real project. Real URL at the end.
-              </h2>
-            </Reveal>
-            <div className="mt-14 space-y-16">
-              {STEPS.map((s, i) => (
-                <Reveal key={s.title}>
-                  <div
-                    className={`grid items-center gap-8 lg:grid-cols-2 ${
-                      i % 2 === 1 ? "lg:[&>div:first-child]:order-2" : ""
-                    }`}
-                  >
-                    <div
-                      className="relative aspect-[16/10] overflow-hidden rounded-xl"
-                      style={{ border: `1px solid ${HAIRLINE}` }}
-                    >
-                      <Image
-                        src={IMG(s.photo)}
-                        alt={s.alt}
-                        fill
-                        sizes="(max-width:1024px) 100vw, 45vw"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div>
-                      <span
-                        className="text-xs"
-                        style={{
-                          color: ACCENT,
-                          fontFamily: MONO,
-                          letterSpacing: "0.18em",
-                        }}
-                      >
-                        {String(i + 1).padStart(2, "0")} · {s.k}
-                      </span>
-                      <h3
-                        className="mt-3 text-2xl font-semibold"
-                        style={{ color: TEXT, fontFamily: SERIF }}
-                      >
-                        {s.title}
-                      </h3>
-                      <p
-                        className="mt-3 max-w-md text-sm leading-relaxed"
-                        style={{ color: MUTED }}
-                      >
-                        {s.body}
-                      </p>
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── pricing ── */}
-        <section id="pricing" className="mx-auto max-w-6xl px-6 py-24">
-          <Reveal>
-            <Kicker>Pricing & tracks</Kicker>
-            <h2
-              className="mt-5 text-[clamp(1.9rem,4vw,2.9rem)] font-semibold"
-              style={{ fontFamily: SERIF, color: TEXT }}
-            >
-              Pick the depth that fits you.
-            </h2>
-            <p
-              className="mt-4 max-w-xl text-sm leading-relaxed"
-              style={{ color: MUTED }}
-            >
-              Every track starts with a free 30-minute fit call so we both know
-              it&apos;s right before you commit. Spots are limited — I only take
-              a handful of 1:1 students at a time.
-            </p>
-          </Reveal>
-
-          <div className="mt-14 grid gap-6 lg:grid-cols-3">
-            {TIERS.map((t, i) => (
-              <Reveal key={t.name} delay={i * 0.07}>
-                <div
-                  className="flex h-full flex-col rounded-2xl p-7"
+        </Reveal>
+        <div className="mt-14 grid gap-12 md:grid-cols-3 md:gap-8 lg:gap-12">
+          {STEPS.map((s, i) => (
+            <Reveal key={s.title} delay={i * 0.06}>
+              <Photo
+                src={IMG(s.photo)}
+                alt={s.alt}
+                ratio="4 / 3"
+                sizes="(max-width:768px) 92vw, 380px"
+                position="center 45%"
+                shadow={false}
+              />
+              <div className="mt-6">
+                <span
+                  className="font-mono"
                   style={{
-                    background: t.featured ? SURFACE_2 : SURFACE,
-                    border: t.featured
-                      ? `1px solid ${ACCENT}`
-                      : `1px solid ${HAIRLINE}`,
-                    boxShadow: t.featured
-                      ? "0 30px 80px -40px rgba(124,108,255,0.55)"
-                      : "none",
+                    color: C.accent,
+                    fontSize: "0.72rem",
+                    fontWeight: 500,
+                    letterSpacing: "0.04em",
                   }}
                 >
-                  <div className="flex items-center justify-between">
+                  {String(i + 1).padStart(2, "0")} · {s.k}
+                </span>
+                <div className="mt-3">
+                  <H3>{s.title}</H3>
+                </div>
+                <p className="mt-3" style={TYPE.small}>
+                  {s.body}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      {/* ── pricing ── */}
+      <Section id="pricing">
+        <Reveal>
+          <Eyebrow>Pricing &amp; tracks</Eyebrow>
+          <div className="mt-5">
+            <H2>Pick the depth that fits you.</H2>
+          </div>
+          <p className="mt-5" style={{ ...TYPE.lead, maxWidth: "56ch" }}>
+            Every track starts with a free 30-minute fit call so we both know
+            it&apos;s right before you commit. Spots are limited — I only take a
+            handful of 1:1 students at a time.
+          </p>
+        </Reveal>
+
+        <div className="mt-14 grid items-stretch gap-6 lg:grid-cols-3">
+          {TIERS.map((t, i) => {
+            const f = !!t.featured;
+            const ink = f ? "#FFFFFF" : C.ink;
+            const text = f ? C.onDeep : C.body;
+            return (
+              <Reveal key={t.name} delay={i * 0.06} className="h-full">
+                <div
+                  className="flex h-full flex-col p-7 sm:p-8"
+                  style={{
+                    borderRadius: 24,
+                    background: f ? C.accentDeep : C.card,
+                    boxShadow: f
+                      ? SHADOW.lg
+                      : `0 0 0 1px ${C.hairline}, ${SHADOW.sm}`,
+                  }}
+                >
+                  <div className="flex items-center justify-between gap-3">
                     <span
-                      className="text-[11px] uppercase"
+                      className="font-mono uppercase"
                       style={{
-                        color: t.featured ? ACCENT : MUTED,
-                        fontFamily: MONO,
-                        letterSpacing: "0.16em",
+                        color: f ? C.accentTint : C.mute,
+                        fontSize: "0.7rem",
+                        fontWeight: 500,
+                        letterSpacing: "0.1em",
                       }}
                     >
                       {t.tag}
                     </span>
-                    {t.featured && (
+                    {f && (
                       <span
-                        className="rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase"
+                        className="rounded-full px-2.5 py-1 font-mono uppercase"
                         style={{
-                          background: ACCENT_SOFT,
-                          color: ACCENT,
-                          fontFamily: MONO,
+                          background: "rgba(226,241,238,0.14)",
+                          color: C.accentTint,
+                          fontSize: "0.62rem",
+                          letterSpacing: "0.1em",
                         }}
                       >
                         ★ Popular
@@ -609,384 +454,292 @@ export default function MentorshipClient() {
                     )}
                   </div>
 
-                  <h3
-                    className="mt-4 text-xl font-semibold"
-                    style={{ color: TEXT, fontFamily: SERIF }}
-                  >
+                  <h3 className="mt-5" style={{ ...TYPE.h3, color: ink }}>
                     {t.name}
                   </h3>
 
-                  <div className="mt-4 flex items-end gap-2">
+                  <div className="mt-4 flex flex-wrap items-baseline gap-x-2">
                     <span
-                      className="text-4xl font-semibold"
-                      style={{ color: TEXT }}
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontWeight: 700,
+                        fontSize: "2.75rem",
+                        letterSpacing: "-0.03em",
+                        lineHeight: 1,
+                        color: ink,
+                      }}
                     >
                       {t.price}
                     </span>
-                    <span className="pb-1 text-xs" style={{ color: MUTED }}>
+                    <span
+                      style={{
+                        fontSize: "0.85rem",
+                        color: f ? C.onDeep : C.mute,
+                      }}
+                    >
                       {t.unit}
                     </span>
                   </div>
 
                   <p
-                    className="mt-3 text-sm leading-relaxed"
-                    style={{ color: MUTED }}
+                    className="mt-4"
+                    style={{
+                      fontSize: "0.95rem",
+                      lineHeight: 1.6,
+                      color: text,
+                    }}
                   >
                     {t.blurb}
                   </p>
 
-                  <ul className="mt-6 flex-1 space-y-3">
-                    {t.features.map((f) => (
+                  <ul
+                    className="m-0 mt-7 flex-1 list-none space-y-3.5 px-0 pb-0 pt-7"
+                    style={{
+                      borderTop: `1px solid ${
+                        f ? "rgba(226,241,238,0.18)" : C.hairline
+                      }`,
+                    }}
+                  >
+                    {t.features.map((x) => (
                       <li
-                        key={f}
-                        className="flex gap-3 text-sm"
-                        style={{ color: TEXT }}
+                        key={x}
+                        className="flex gap-3"
+                        style={{
+                          fontSize: "0.93rem",
+                          lineHeight: 1.5,
+                          color: text,
+                        }}
                       >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                          className="mt-0.5 shrink-0"
-                          aria-hidden
-                        >
-                          <path
-                            d="M3.5 8.5l3 3 6-7"
-                            stroke={TICK}
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        <span style={{ color: MUTED }}>{f}</span>
+                        {CHECK(f ? C.accentTint : C.accent)}
+                        <span>{x}</span>
                       </li>
                     ))}
                   </ul>
 
-                  <div className="mt-8">
+                  <div className="mt-9">
                     {MENTORSHIP_FIVERR_URL ? (
-                      <BookButton
-                        label={t.fiverrCta}
+                      <Button
                         href={MENTORSHIP_FIVERR_URL}
                         external
-                        variant={t.featured ? "solid" : "ghost"}
+                        variant={f ? "onDeep" : "outline"}
                         className="w-full"
-                      />
+                      >
+                        {t.fiverrCta}
+                      </Button>
                     ) : (
-                      <BookButton
-                        label="Book the free fit call"
-                        variant={t.featured ? "solid" : "ghost"}
+                      <Button
+                        href={CTA}
+                        variant={f ? "onDeep" : "outline"}
                         className="w-full"
-                      />
+                      >
+                        Book the free fit call
+                      </Button>
                     )}
                   </div>
                 </div>
               </Reveal>
-            ))}
-          </div>
-          <Reveal>
+            );
+          })}
+        </div>
+        <Reveal>
+          <p
+            className="mt-10 text-center"
+            style={{ ...TYPE.small, color: C.mute }}
+          >
+            Prices in USD. Payment plans available on the 3-month track — ask on
+            your fit call.
+          </p>
+          {MENTORSHIP_FIVERR_URL && (
             <p
-              className="mt-8 text-center text-xs"
-              style={{ color: MUTED, fontFamily: MONO }}
+              className="mt-2 text-center"
+              style={{ ...TYPE.small, color: C.mute }}
             >
-              Prices in USD. Payment plans available on the 3-month track — ask
-              on your fit call.
+              Checkout, payment protection and refunds are handled by Fiverr.
             </p>
-            {MENTORSHIP_FIVERR_URL && (
-              <p
-                className="mt-3 text-center text-xs"
-                style={{ color: MUTED, fontFamily: MONO }}
-              >
-                Checkout, payment protection and refunds are handled by Fiverr.
-              </p>
-            )}
-          </Reveal>
-        </section>
+          )}
+        </Reveal>
+      </Section>
 
-        {/* ── who it's for ── */}
-        <section
-          className="border-y"
-          style={{ borderColor: HAIRLINE, background: SURFACE }}
-        >
-          <div className="mx-auto grid max-w-6xl gap-10 px-6 py-24 lg:grid-cols-2">
-            <Reveal>
-              <h3
-                className="text-xl font-semibold"
-                style={{ color: TEXT, fontFamily: SERIF }}
+      {/* ── who it's for ── */}
+      <Section
+        tone="surface"
+        innerClassName="grid gap-14 lg:grid-cols-2 lg:gap-24"
+      >
+        <Reveal>
+          <h2 style={TYPE.h3}>This is for you if…</h2>
+          <ul className="m-0 mt-6 list-none p-0">
+            {FOR_YOU.map((f) => (
+              <li
+                key={f}
+                className="flex gap-3 py-4"
+                style={{ ...TYPE.body, borderTop: `1px solid ${C.hairline}` }}
               >
-                This is for you if…
-              </h3>
-              <ul className="mt-6 space-y-4">
-                {FOR_YOU.map((f) => (
-                  <li key={f} className="flex gap-3 text-sm leading-relaxed">
-                    <span style={{ color: TICK, fontFamily: MONO }} aria-hidden>
-                      +
-                    </span>
-                    <span style={{ color: MUTED }}>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <h3
-                className="text-xl font-semibold"
-                style={{ color: TEXT, fontFamily: SERIF }}
+                {CHECK(C.accent)}
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+        <Reveal delay={0.06}>
+          <h2 style={TYPE.h3}>It&apos;s not for you if…</h2>
+          <ul className="m-0 mt-6 list-none p-0">
+            {NOT_YOU.map((f) => (
+              <li
+                key={f}
+                className="flex gap-3 py-4"
+                style={{ ...TYPE.body, borderTop: `1px solid ${C.hairline}` }}
               >
-                It&apos;s not for you if…
-              </h3>
-              <ul className="mt-6 space-y-4">
-                {NOT_YOU.map((f) => (
-                  <li key={f} className="flex gap-3 text-sm leading-relaxed">
-                    <span
-                      style={{ color: MUTED, fontFamily: MONO }}
-                      aria-hidden
-                    >
-                      –
-                    </span>
-                    <span style={{ color: MUTED }}>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-          </div>
-        </section>
+                <span
+                  className="mt-0.5 shrink-0 font-mono"
+                  style={{ color: C.mute, width: 16, textAlign: "center" }}
+                  aria-hidden
+                >
+                  –
+                </span>
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+      </Section>
 
-        {/* ── about ── */}
-        <section className="mx-auto max-w-6xl px-6 py-24">
-          <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
-            <Reveal>
-              <div
-                className="relative aspect-[4/5] overflow-hidden rounded-2xl"
-                style={{ border: `1px solid ${HAIRLINE}` }}
-              >
-                <Image
-                  src={IMG(
-                    "PORTRAIT-2026-05-18-arms-crossed-sunglasses-confident-table-pose.jpg",
-                  )}
-                  alt="Portrait of Waseem Nasir"
-                  fill
-                  sizes="(max-width:1024px) 100vw, 40vw"
-                  className="object-cover"
-                />
-              </div>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <Kicker>Who&apos;s teaching</Kicker>
-              <h2
-                className="mt-5 text-[clamp(1.8rem,4vw,2.7rem)] font-semibold leading-tight"
-                style={{ fontFamily: SERIF, color: TEXT }}
-              >
-                I don&apos;t just talk about this — I build in it every day.
-              </h2>
-              <p
-                className="mt-5 text-sm leading-relaxed"
-                style={{ color: MUTED }}
-              >
-                I&apos;m Waseem — founder of SkynetLabs. I run a real software &
-                automation agency where Claude Code does the heavy lifting on
-                client work: websites, AI workflows, automations. I&apos;ve
-                shipped 40+ sites and 180+ automations for clients across 9
-                countries, in practice since 2018.
-              </p>
-              <p
-                className="mt-4 text-sm leading-relaxed"
-                style={{ color: MUTED }}
-              >
-                I&apos;m not a course-seller who learned this last week. I teach
-                you the exact workflow I use to ship paid work — so you skip the
-                months I spent figuring it out the hard way.
-              </p>
-              <div
-                className="mt-8 flex flex-wrap gap-x-8 gap-y-4 border-t pt-6"
-                style={{ borderColor: HAIRLINE }}
-              >
-                {[
-                  ["180+", "automations built"],
-                  ["40+", "sites shipped"],
-                  ["9", "countries served"],
-                  ["2018", "in practice since"],
-                ].map(([v, l]) => (
-                  <div key={l}>
-                    <div
-                      className="text-2xl font-semibold"
-                      style={{ color: TEXT, fontFamily: SERIF }}
-                    >
-                      {v}
-                    </div>
-                    <div
-                      className="text-[11px]"
-                      style={{ color: MUTED, fontFamily: MONO }}
-                    >
-                      {l}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ── FAQ ── */}
-        <section
-          className="border-y"
-          style={{ borderColor: HAIRLINE, background: SURFACE }}
-        >
-          <div className="mx-auto max-w-3xl px-6 py-24">
-            <Reveal>
-              <Kicker>Questions</Kicker>
-              <h2
-                className="mt-5 text-[clamp(1.8rem,4vw,2.6rem)] font-semibold"
-                style={{ fontFamily: SERIF, color: TEXT }}
-              >
-                The honest answers.
-              </h2>
-            </Reveal>
-            <div className="mt-12 divide-y" style={{ borderColor: HAIRLINE }}>
-              {FAQ.map((item, i) => (
-                <Reveal key={item.q} delay={(i % 3) * 0.04}>
-                  <details
-                    className="group py-5"
-                    style={{ borderColor: HAIRLINE }}
-                  >
-                    <summary
-                      className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-medium focus-visible:outline-none focus-visible:ring-2 rounded"
-                      style={{ color: TEXT }}
-                    >
-                      {item.q}
-                      <span
-                        className="shrink-0 text-lg transition-transform group-open:rotate-45"
-                        style={{ color: ACCENT }}
-                        aria-hidden
-                      >
-                        +
-                      </span>
-                    </summary>
-                    <p
-                      className="mt-3 text-sm leading-relaxed"
-                      style={{ color: MUTED }}
-                    >
-                      {item.a}
-                    </p>
-                  </details>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── final CTA ── */}
-        <section className="relative overflow-hidden">
-          <div
-            className="pointer-events-none absolute inset-0"
-            aria-hidden
-            style={{
-              background:
-                "radial-gradient(800px 500px at 50% 120%, rgba(124,108,255,0.2), transparent 60%)",
-            }}
+      {/* ── about ── */}
+      <Section innerClassName="grid items-center gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
+        <Reveal>
+          <Photo
+            src={IMG("founder-stool-navy-polo.webp")}
+            alt="Waseem Nasir seated on a stool in a navy polo, smiling, in a bright cafe interior"
+            ratio="4 / 5"
+            sizes="(max-width:1024px) 92vw, 440px"
+            position="center 30%"
           />
-          <div className="relative mx-auto max-w-3xl px-6 py-28 text-center">
-            <Reveal>
-              <h2
-                className="text-[clamp(2rem,5vw,3.4rem)] font-semibold leading-tight"
-                style={{ fontFamily: SERIF, color: TEXT }}
-              >
-                Stop watching. Start shipping.
-              </h2>
-              <p
-                className="mx-auto mt-5 max-w-xl text-base leading-relaxed"
-                style={{ color: MUTED }}
-              >
-                Book a free 30-minute fit call. We&apos;ll talk about what you
-                want to build, and I&apos;ll tell you honestly if this is right
-                for you.
-              </p>
-              <div className="mt-9 flex justify-center">
-                <BookButton label="Book your free fit call" />
+        </Reveal>
+        <Reveal delay={0.06}>
+          <Eyebrow>Who&apos;s teaching</Eyebrow>
+          <div className="mt-5">
+            <H2>
+              I don&apos;t just talk about this — I build in it every day.
+            </H2>
+          </div>
+          <p className="mt-6" style={{ ...TYPE.body, maxWidth: "56ch" }}>
+            I&apos;m Waseem — founder of SkynetLabs. I run a real software &amp;
+            automation agency where Claude Code does the heavy lifting on client
+            work: websites, AI workflows, automations. I&apos;ve shipped 40+
+            sites and 180+ automations for clients across 9 countries, in
+            practice since 2018.
+          </p>
+          <p className="mt-4" style={{ ...TYPE.body, maxWidth: "56ch" }}>
+            I&apos;m not a course-seller who learned this last week. I teach you
+            the exact workflow I use to ship paid work — so you skip the months
+            I spent figuring it out the hard way.
+          </p>
+          <dl
+            className="m-0 mt-10 grid grid-cols-2 gap-y-8 pt-8 sm:grid-cols-4"
+            style={{ borderTop: `1px solid ${C.hairline}` }}
+          >
+            {STATS.map(([v, l]) => (
+              <div key={l}>
+                <dt
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontWeight: 700,
+                    fontSize: "2rem",
+                    letterSpacing: "-0.03em",
+                    lineHeight: 1,
+                    color: C.ink,
+                  }}
+                >
+                  {v}
+                </dt>
+                <dd
+                  className="m-0 mt-2"
+                  style={{ fontSize: "0.82rem", color: C.mute }}
+                >
+                  {l}
+                </dd>
               </div>
-              <p
-                className="mt-5 text-xs"
-                style={{ color: MUTED, fontFamily: MONO }}
-              >
-                Limited 1:1 spots · no pressure · honest fit-check
-              </p>
-            </Reveal>
-          </div>
-        </section>
+            ))}
+          </dl>
+        </Reveal>
+      </Section>
 
-        {/* ── footer ── */}
-        <footer
-          className="border-t"
-          style={{ borderColor: HAIRLINE, background: BG }}
-        >
-          <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-12 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <Link
-                href="/"
-                className="text-sm font-semibold"
-                style={{ color: TEXT }}
-              >
-                Waseem Nasir
-              </Link>
-              <p
-                className="mt-1 text-xs"
-                style={{ color: MUTED, fontFamily: MONO }}
-              >
-                1:1 Claude Code & AI vibe-coding mentorship
-              </p>
+      {/* ── FAQ ── */}
+      <Section
+        tone="surface"
+        innerClassName="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20"
+      >
+        <Reveal>
+          <div className="lg:sticky lg:top-28">
+            <Eyebrow>Questions</Eyebrow>
+            <div className="mt-5">
+              <H2>The honest answers.</H2>
             </div>
-            <div
-              className="flex flex-wrap gap-x-6 gap-y-2 text-xs"
-              style={{ color: MUTED }}
+          </div>
+        </Reveal>
+        <div style={{ borderBottom: `1px solid ${C.hairline}` }}>
+          {FAQ.map((item) => (
+            <details
+              key={item.q}
+              className="group"
+              style={{ borderTop: `1px solid ${C.hairline}` }}
             >
-              <a
-                href={`mailto:${EMAIL}`}
-                className="hover:underline focus-visible:outline-none focus-visible:ring-2 rounded"
-                style={{ color: MUTED }}
+              <summary
+                className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 [&::-webkit-details-marker]:hidden"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontWeight: 600,
+                  fontSize: "1.1rem",
+                  letterSpacing: "-0.01em",
+                  lineHeight: 1.3,
+                  color: C.ink,
+                }}
               >
-                {EMAIL}
-              </a>
-              <a
-                href={GITHUB}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:underline focus-visible:outline-none focus-visible:ring-2 rounded"
-                style={{ color: MUTED }}
-              >
-                GitHub
-              </a>
-              <a
-                href={AGENCY}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:underline focus-visible:outline-none focus-visible:ring-2 rounded"
-                style={{ color: MUTED }}
-              >
-                skynetjoe.com
-              </a>
-              {/* The terms and privacy notice describe this mentorship, so the
-                  page selling it has to link them. Previously they were only
-                  reachable from the homepage and blog footers. */}
-              <a
-                href="/terms"
-                className="hover:underline focus-visible:outline-none focus-visible:ring-2 rounded"
-                style={{ color: MUTED }}
-              >
-                Terms
-              </a>
-              <a
-                href="/privacy"
-                className="hover:underline focus-visible:outline-none focus-visible:ring-2 rounded"
-                style={{ color: MUTED }}
-              >
-                Privacy
-              </a>
-            </div>
+                {item.q}
+                <span
+                  className="shrink-0 text-2xl leading-none transition-transform duration-200 group-open:rotate-45"
+                  style={{ color: C.accent }}
+                  aria-hidden
+                >
+                  +
+                </span>
+              </summary>
+              <p className="pb-7" style={{ ...TYPE.body, maxWidth: "62ch" }}>
+                {item.a}
+              </p>
+            </details>
+          ))}
+        </div>
+      </Section>
+
+      {/* ── final CTA ── */}
+      <Section tone="deep" innerClassName="text-center">
+        <Reveal>
+          <h2
+            className="mx-auto"
+            style={{ ...TYPE.h2, color: "#FFFFFF", maxWidth: "20ch" }}
+          >
+            Stop watching. Start shipping.
+          </h2>
+          <p
+            className="mx-auto mt-6"
+            style={{ ...TYPE.lead, color: C.onDeep, maxWidth: "50ch" }}
+          >
+            Book a free 30-minute fit call. We&apos;ll talk about what you want
+            to build, and I&apos;ll tell you honestly if this is right for you.
+          </p>
+          <div className="mt-10 flex justify-center">
+            <Button href={CTA} variant="onDeep">
+              Book your free fit call
+            </Button>
           </div>
-          <div className="mx-auto max-w-6xl px-6 pb-10">
-            <NetworkRow color={MUTED} />
-          </div>
-        </footer>
-      </main>
+          <p
+            className="mt-6"
+            style={{ ...TYPE.small, color: "rgba(234,244,241,0.78)" }}
+          >
+            Limited 1:1 spots · no pressure · honest fit-check
+          </p>
+        </Reveal>
+      </Section>
     </>
   );
 }

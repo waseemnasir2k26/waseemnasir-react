@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import MentorshipClient from "./MentorshipClient";
 import { FAQ } from "./faq-data";
+import { BlogShell } from "../blog/_ui";
 
 const SITE = "https://www.waseemnasir.com";
 
@@ -18,10 +19,10 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/img/pro/CAFE-WORK-2026-03-30-dual-laptop-analytics-dashboard-coffee.jpg",
-        width: 1700,
-        height: 956,
-        alt: "Waseem Nasir building software with Claude Code",
+        url: "/img/v2/og-mentorship.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Waseem Nasir smiling at a cafe table in Bali, the teacher of the 1:1 Claude Code mentorship",
       },
     ],
   },
@@ -86,7 +87,9 @@ export default function MentorshipPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      <MentorshipClient />
+      <BlogShell>
+        <MentorshipClient />
+      </BlogShell>
     </>
   );
 }

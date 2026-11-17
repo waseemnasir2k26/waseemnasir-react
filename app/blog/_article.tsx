@@ -37,7 +37,7 @@ export function articleMetadata(post: PostMeta): Metadata {
       publishedTime: post.date,
       authors: ["Waseem Nasir"],
       images: [
-        { url: post.ogImage, width: 1700, height: 956, alt: post.ogAlt },
+        { url: post.ogImage, width: 1600, height: 900, alt: post.ogAlt },
       ],
     },
     twitter: {
@@ -219,7 +219,7 @@ export function ArticlePage({
                 }}
               >
                 <Image
-                  src="/img/pro/PORTRAIT-restaurant-closeup-glasses-beige-shirt.jpg"
+                  src="/img/v2/avatar-waseem.jpg"
                   alt="Waseem Nasir"
                   fill
                   sizes="40px"

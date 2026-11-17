@@ -12,13 +12,10 @@ import {
   useMotionValueEvent,
 } from "framer-motion";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
-import {
-  Bricolage_Grotesque,
-  Hanken_Grotesk,
-  JetBrains_Mono,
-} from "next/font/google";
 import NetworkRow from "@/components/NetworkRow";
 import { RATINGS } from "@/lib/reviews";
+import { display, body, mono } from "@/lib/fonts";
+import { C, SHADOW, IMG } from "@/lib/design";
 
 /* ============================================================
    VARIANT: blueprint
@@ -32,48 +29,7 @@ import { RATINGS } from "@/lib/reviews";
    isometric blueprint node-ribbon threading the section indices.
    ============================================================ */
 
-/* ─── Fonts (self-hosted at build via next/font/google) ─── */
-const display = Bricolage_Grotesque({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-display",
-  weight: ["300", "400", "500", "600", "700", "800"],
-});
-const body = Hanken_Grotesk({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-body",
-  weight: ["400", "500", "600", "700"],
-});
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-mono",
-  weight: ["400", "500"],
-});
-
-/* ─── Tokens ─── */
-const C = {
-  canvas: "#FBFCFD",
-  surface: "#F4F8F7",
-  card: "#FFFFFF",
-  ink: "#0E1B1A",
-  body: "#3C4744",
-  mute: "#5B6764",
-  hairline: "#E2EAE8",
-  accent: "#117E73",
-  accentDeep: "#0A3D38",
-  accentTint: "#E2F1EE",
-  pillInk: "#0C5F57",
-  live: "#15A06B",
-  onDeep: "#EAF4F1",
-};
-const SHADOW = {
-  sm: "0 1px 2px rgba(8,40,38,0.08), 0 0 0 1px rgba(8,40,38,0.05)",
-  md: "0 8px 24px rgba(8,40,38,0.08), 0 0 0 1px rgba(8,40,38,0.05)",
-  lg: "0 24px 48px rgba(8,40,38,0.10), 0 0 0 1px rgba(8,40,38,0.05)",
-};
-const IMG = (f: string) => `/img/pro/${f}`;
+/* Fonts + tokens: lib/fonts.ts + lib/design.ts (single source of truth). */
 const CTA = "/book";
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -950,15 +906,13 @@ function Hero({ reduce }: { reduce: boolean }) {
           >
             <div className="relative" style={{ aspectRatio: "4/5" }}>
               <Image
-                src={IMG(
-                  "PORTRAIT-2026-05-18-arms-crossed-sunglasses-confident-table-pose.jpg",
-                )}
-                alt="Waseem Nasir — confident founder portrait, arms crossed in sunglasses"
+                src={IMG("blue-polo-cafe-phone.webp")}
+                alt="Waseem Nasir in a blue polo holding his phone at a cafe table, looking at the camera"
                 fill
                 priority
                 sizes="(max-width:1024px) 90vw, 40vw"
                 className="object-cover"
-                style={{ filter: "saturate(0.94) contrast(1.02)" }}
+                style={{ objectPosition: "center 30%" }}
               />
             </div>
             <figcaption
@@ -1102,7 +1056,7 @@ function Trust({ reduce }: { reduce: boolean }) {
                   <span
                     style={{
                       fontFamily: "var(--font-display)",
-                      fontWeight: 500,
+                      fontWeight: 600,
                       fontSize: "1.05rem",
                       color: C.ink,
                       lineHeight: 1.15,
@@ -1297,7 +1251,7 @@ function How({ reduce }: { reduce: boolean }) {
                 <h2
                   style={{
                     fontFamily: "var(--font-display)",
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: "clamp(1.9rem,3.5vw,2.75rem)",
                     lineHeight: 1.08,
                     letterSpacing: "-0.024em",
@@ -1387,7 +1341,7 @@ function Stack({ reduce }: { reduce: boolean }) {
             className="mt-4"
             style={{
               fontFamily: "var(--font-display)",
-              fontWeight: 500,
+              fontWeight: 600,
               fontSize: "clamp(1.9rem,4vw,3rem)",
               lineHeight: 1.04,
               letterSpacing: "-0.026em",
@@ -1782,7 +1736,7 @@ function ProofPinned({ reduce }: { reduce: boolean }) {
                 className="mt-4"
                 style={{
                   fontFamily: "var(--font-display)",
-                  fontWeight: 500,
+                  fontWeight: 600,
                   fontSize: "clamp(1.9rem,4vw,3rem)",
                   lineHeight: 1.04,
                   letterSpacing: "-0.026em",
@@ -1869,7 +1823,7 @@ function Proof({ reduce }: { reduce: boolean }) {
               className="mt-4"
               style={{
                 fontFamily: "var(--font-display)",
-                fontWeight: 500,
+                fontWeight: 600,
                 fontSize: "clamp(1.9rem,4vw,3rem)",
                 lineHeight: 1.04,
                 letterSpacing: "-0.026em",
@@ -1964,7 +1918,7 @@ function NowBuilding({ reduce }: { reduce: boolean }) {
               <h2
                 style={{
                   fontFamily: "var(--font-display)",
-                  fontWeight: 500,
+                  fontWeight: 600,
                   fontSize: "clamp(1.9rem,3.5vw,2.75rem)",
                   lineHeight: 1.08,
                   letterSpacing: "-0.024em",
@@ -2030,15 +1984,12 @@ function About({ reduce }: { reduce: boolean }) {
           >
             <div className="relative" style={{ aspectRatio: "4/5" }}>
               <Image
-                src={IMG(
-                  "CAFE-WORK-2025-08-15-couch-laptop-brick-wall-cafe-candid.jpg",
-                )}
-                alt="Waseem Nasir working on a laptop on a cafe couch against an exposed-brick wall"
+                src={IMG("bali-cafe-arch-laptop.webp")}
+                alt="Waseem Nasir working on a laptop at a cafe table under a black arch in Bali"
                 fill
                 sizes="(max-width:1024px) 90vw, 40vw"
                 loading="eager"
                 className="object-cover"
-                style={{ filter: "saturate(0.94)" }}
               />
             </div>
             <figcaption
@@ -2058,7 +2009,7 @@ function About({ reduce }: { reduce: boolean }) {
             className="mt-4"
             style={{
               fontFamily: "var(--font-display)",
-              fontWeight: 500,
+              fontWeight: 600,
               fontSize: "clamp(1.9rem,3.5vw,2.75rem)",
               lineHeight: 1.08,
               letterSpacing: "-0.024em",
@@ -2123,116 +2074,28 @@ function About({ reduce }: { reduce: boolean }) {
 const GITHUB = "https://github.com/waseemnasir2k26";
 const GALLERY: { src: string; alt: string }[] = [
   {
-    src: "WORK-2025-06-10-coworking-desk-focused-phone-candid.jpg",
-    alt: "Waseem focused at a coworking desk, phone in hand",
+    src: "rice-field-smile-palms.webp",
+    alt: "Waseem Nasir smiling on a rice-field path with palms and a green mountain behind",
   },
   {
-    src: "CAFE-WORK-2026-02-27-olive-track-jacket-coffee-laptop-tea-sign.jpg",
-    alt: "Working on a laptop over coffee at a cafe in an olive track jacket",
+    src: "coffee-cup-cafe.webp",
+    alt: "Waseem Nasir raising a coffee cup at a bamboo cafe in Bali",
   },
   {
-    src: "EVENT-expo-booth-navy-polo-chandelier-hall.jpg",
-    alt: "At an expo booth in a chandelier hall — networking proof",
+    src: "guitar-cafe.webp",
+    alt: "Waseem Nasir holding an acoustic guitar in a bright white cafe",
   },
   {
-    src: "WORK-2026-05-24-rice-terrace-phone-powerbank-focus.jpg",
-    alt: "Working from a rice terrace, phone and power bank — nomad operator",
+    src: "lake-dock-laptop.webp",
+    alt: "Waseem Nasir working on a laptop on a floating dock with a mountain and lake behind him",
   },
   {
-    src: "TRAVEL-2025-05-31-cliff-bucket-hat-crossbody-ocean.jpg",
-    alt: "On an ocean cliff in a bucket hat with a crossbody bag",
+    src: "cafe-counter-blue-wall.webp",
+    alt: "Waseem Nasir leaning on a cafe counter in front of a bright blue wall",
   },
   {
-    src: "PORTRAIT-restaurant-closeup-glasses-beige-shirt.jpg",
-    alt: "Close-up portrait in glasses and a beige shirt at a restaurant",
-  },
-  {
-    src: "CAFE-WORK-2026-06-01-rooftop-laptop-orange-juice-foreground.jpg",
-    alt: "Rooftop laptop session with fresh orange juice in the foreground",
-  },
-  {
-    src: "TRAVEL-2026-03-27-tan-knit-sweater-mountain-ridge-portrait.jpg",
-    alt: "Mountain-ridge portrait in a tan knit sweater",
-  },
-  {
-    src: "LIFESTYLE-2025-08-05-coffee-cup-raise-bamboo-cafe.jpg",
-    alt: "Raising a coffee cup at a bamboo cafe",
-  },
-  {
-    src: "PORTRAIT-2026-05-24-rice-field-smile-palms-mountain.jpg",
-    alt: "Smiling in a rice field framed by palms and mountains",
-  },
-  {
-    src: "PORTRAIT-stool-portrait-navy-polo-framed-art.jpg",
-    alt: "Seated portrait in a navy polo beside framed art",
-  },
-  {
-    src: "CAFE-WORK-2026-02-14-night-rooftop-cafe-phone-city-lights.jpg",
-    alt: "Night rooftop cafe, phone in hand with city lights behind",
-  },
-  {
-    src: "TRAVEL-2026-05-24-jungle-rail-lean-sunglasses-candid.jpg",
-    alt: "Leaning on a jungle rail in sunglasses, candid",
-  },
-  {
-    src: "LIFESTYLE-cafe-counter-espresso-machine-facing-camera.jpg",
-    alt: "Behind a cafe counter by the espresso machine, facing camera",
-  },
-  {
-    src: "TRAVEL-2025-05-17-beach-standing-smile-moody-sky.jpg",
-    alt: "Standing on a beach under a moody sky, smiling",
-  },
-  {
-    src: "CAFE-WORK-2026-06-05-garden-cafe-blue-polo-phone-focus.jpg",
-    alt: "Focused on a phone at a garden cafe in a blue polo",
-  },
-  {
-    src: "BALI-2026-05-06-cafe-arch-working-side.jpg",
-    alt: "Working on a laptop under a stone arch cafe, side profile",
-  },
-  {
-    src: "PORTRAIT-2026-06-09-guitar-closeup-strumming-glasses.jpg",
-    alt: "Strumming a guitar, close-up in glasses — off the clock",
-  },
-  {
-    src: "TRAVEL-kuala-lumpur-street-crossbody-bag-portrait.jpg",
-    alt: "Street portrait in Kuala Lumpur with a crossbody bag",
-  },
-  {
-    src: "LIFESTYLE-2026-06-01-neon-gaming-cafe-headphones-candid.jpg",
-    alt: "Candid in headphones at a neon-lit gaming cafe",
-  },
-  {
-    src: "TRAVEL-2026-05-05-airport-lounge-armchair-phone-paintings.jpg",
-    alt: "Airport lounge armchair between flights, phone in hand",
-  },
-  {
-    src: "PORTRAIT-2026-05-24-river-gaze-profile-contemplative.jpg",
-    alt: "Contemplative river-side profile portrait",
-  },
-  {
-    src: "LIFESTYLE-2026-05-07-bali-cafe-thumbs-up-iced-latte.jpg",
-    alt: "Thumbs up over an iced latte at a Bali cafe",
-  },
-  {
-    src: "TRAVEL-thailand-straw-hat-pier-selfie.jpg",
-    alt: "Pier selfie in a straw hat in Thailand",
-  },
-  {
-    src: "LIFESTYLE-2026-03-29-photographing-valley-phone-knit-sweater.jpg",
-    alt: "Photographing a valley view, knit sweater",
-  },
-  {
-    src: "TRAVEL-night-valley-lights-balcony-selfie.jpg",
-    alt: "Balcony selfie over night valley lights",
-  },
-  {
-    src: "BALI-2026-05-07-veranda-phone-thinking.jpg",
-    alt: "Thinking through a build on a veranda, phone in hand",
-  },
-  {
-    src: "TRAVEL-castle-dusk-plaza-distant-stand.jpg",
-    alt: "Standing in a castle plaza at dusk",
+    src: "rattan-chair-cream-tee.webp",
+    alt: "Waseem Nasir relaxing in a rattan chair at a glass-walled cafe",
   },
 ];
 function Gallery({ reduce }: { reduce: boolean }) {
@@ -2252,7 +2115,7 @@ function Gallery({ reduce }: { reduce: boolean }) {
               className="mt-4"
               style={{
                 fontFamily: "var(--font-display)",
-                fontWeight: 500,
+                fontWeight: 600,
                 fontSize: "clamp(1.9rem,4vw,3rem)",
                 lineHeight: 1.04,
                 letterSpacing: "-0.026em",
@@ -2287,48 +2150,27 @@ function Gallery({ reduce }: { reduce: boolean }) {
           </Link>
         </Reveal>
 
-        {/* masonry via CSS columns */}
-        <div
-          style={{ columnGap: 16 }}
-          className="columns-2 sm:columns-3 lg:columns-4"
-        >
+        {/* even 3 x 2 grid, one aspect ratio, no hover transforms */}
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3">
           {GALLERY.map((g, i) => (
-            <Reveal as="div" reduce={reduce} delay={(i % 4) * 0.04} key={g.src}>
+            <Reveal as="div" reduce={reduce} delay={(i % 3) * 0.05} key={g.src}>
               <figure
-                className="bp-tile group relative mb-4 overflow-hidden"
+                className="relative overflow-hidden"
                 style={{
-                  breakInside: "avoid",
-                  borderRadius: 14,
-                  border: `1px solid ${C.hairline}`,
-                  background: C.card,
-                  boxShadow: SHADOW.sm,
+                  borderRadius: 20,
+                  background: C.surface,
+                  aspectRatio: "4 / 5",
                 }}
               >
                 <Image
                   src={IMG(g.src)}
                   alt={g.alt}
-                  width={600}
-                  height={750}
-                  sizes="(max-width:640px) 45vw, (max-width:1024px) 30vw, 22vw"
+                  fill
+                  sizes="(max-width:1024px) 50vw, 380px"
                   loading="lazy"
-                  className="h-auto w-full"
-                  style={{ display: "block", filter: "saturate(0.96)" }}
+                  className="object-cover"
+                  style={{ objectPosition: "center 35%" }}
                 />
-                {/* hover scrim with caption — CSS-only, no JS */}
-                <div className="bp-gallery-scrim" aria-hidden>
-                  <span
-                    className="font-mono"
-                    style={{
-                      color: "rgba(234,244,241,0.92)",
-                      fontSize: "0.62rem",
-                      fontWeight: 500,
-                      letterSpacing: "0.06em",
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    {g.alt}
-                  </span>
-                </div>
               </figure>
             </Reveal>
           ))}
@@ -2488,7 +2330,7 @@ function Convert({ reduce }: { reduce: boolean }) {
             <h2
               style={{
                 fontFamily: "var(--font-display)",
-                fontWeight: 500,
+                fontWeight: 600,
                 fontSize: "clamp(2rem,4.5vw,3.25rem)",
                 lineHeight: 1.06,
                 letterSpacing: "-0.026em",

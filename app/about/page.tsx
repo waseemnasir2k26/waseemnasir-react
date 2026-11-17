@@ -17,8 +17,7 @@ import {
 
 const SITE = "https://www.waseemnasir.com";
 const url = `${SITE}/about`;
-const HEADSHOT =
-  "/img/pro/PORTRAIT-2026-05-08-black-kurta-soft-smile-wood-interior.jpg";
+const HEADSHOT = "/img/v2/founder-stool-navy-polo.webp";
 
 /* The one-liner is the canonical identity string (2026-09-05 entity audit).
    It must stay byte-identical here, in the Person JSON-LD in app/layout.tsx,
@@ -40,8 +39,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: HEADSHOT,
-        width: 956,
-        height: 1700,
+        width: 1356,
+        height: 1800,
         alt: "Waseem Nasir, founder of SkynetLabs",
       },
     ],
@@ -150,13 +149,14 @@ export default function AboutPage() {
           <Mono color={C.accent}>About</Mono>
 
           <h1
-            className="mt-5 font-serif"
+            className="mt-5"
             style={{
+              fontFamily: "var(--font-display)",
               color: C.ink,
-              fontSize: "clamp(2rem, 5vw, 3.1rem)",
-              lineHeight: 1.08,
-              letterSpacing: "-0.02em",
-              fontWeight: 700,
+              fontSize: "clamp(2.2rem, 5vw, 3.4rem)",
+              lineHeight: 1.05,
+              letterSpacing: "-0.03em",
+              fontWeight: 600,
             }}
           >
             Waseem Nasir — founder of SkynetLabs.
@@ -164,6 +164,7 @@ export default function AboutPage() {
 
           {/* Extractable definition block: one plain paragraph answering
               "who is this?" in a form an answer engine can lift verbatim. */}
+          <div className="mt-7">
           <Lead>
             Waseem Nasir is the founder of SkynetLabs, an AI automation studio.
             He builds n8n and Claude Code systems for service businesses, from
@@ -171,27 +172,28 @@ export default function AboutPage() {
             nine countries, and works hands-on with a few projects a month
             rather than running a team.
           </Lead>
+          </div>
 
           <div
-            className="mt-10"
+            className="relative mt-12 overflow-hidden"
             style={{
-              borderRadius: 14,
-              overflow: "hidden",
+              borderRadius: 24,
               boxShadow: SHADOW.md,
+              aspectRatio: "4 / 3",
             }}
           >
             <Image
               src={HEADSHOT}
-              alt="Waseem Nasir, founder of SkynetLabs"
-              width={956}
-              height={1700}
+              alt="Waseem Nasir seated on a stool in a navy polo, smiling, in a bright cafe interior"
+              fill
+              priority
               sizes="(max-width: 760px) 100vw, 760px"
-              loading="eager"
-              style={{ width: "100%", height: "auto", display: "block" }}
+              className="object-cover"
+              style={{ objectPosition: "center 28%" }}
             />
           </div>
 
-          <div className="mt-12">
+          <div className="wn-flow mt-16">
             <H2>What he builds</H2>
             <P>
               The systems that run behind a business so the owner stops doing
