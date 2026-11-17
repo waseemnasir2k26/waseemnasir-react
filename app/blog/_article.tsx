@@ -83,6 +83,25 @@ function renderBlock(b: Block, i: number) {
       return <H2 key={i}>{b.text}</H2>;
     case "quote":
       return <PullQuote key={i}>{b.text}</PullQuote>;
+    case "list": {
+      const Tag = b.ordered ? "ol" : "ul";
+      return (
+        <Tag
+          key={i}
+          className="flex flex-col gap-3 pl-6"
+          style={{
+            listStyle: b.ordered ? "decimal" : "disc",
+            fontSize: "1.0625rem",
+            lineHeight: 1.7,
+            color: C.body,
+          }}
+        >
+          {b.items.map((it) => (
+            <li key={it}>{it}</li>
+          ))}
+        </Tag>
+      );
+    }
     default:
       return <P key={i}>{b.text}</P>;
   }
@@ -90,7 +109,7 @@ function renderBlock(b: Block, i: number) {
 
 export function otherPosts(slug: string): [string, string][] {
   return POSTS.filter((p) => p.slug !== slug)
-    .slice(0, 3)
+    .sort((x, y) => (x.date < y.date ? 1 : x.date > y.date ? -1 : 0))
     .map((p) => [`/blog/${p.slug}`, p.title] as [string, string]);
 }
 

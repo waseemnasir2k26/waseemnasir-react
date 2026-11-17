@@ -3,4 +3,5 @@ export type Block =
   | { t: "lead"; text: string }
   | { t: "p"; text: string }
   | { t: "h2"; text: string }
-  | { t: "quote"; text: string };
+  | { t: "quote"; text: string }
+  | { t: "list"; items: string[]; ordered?: boolean };

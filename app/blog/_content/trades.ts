@@ -3,58 +3,58 @@ import type { Block } from "./types";
 export const body: Block[] = [
   {
     t: "lead",
-    text: "Most of the automation content online is written for software companies and marketing teams. Almost none of it is written for the person who is high up a ladder when the phone rings. That person is who I most want to build for, and I want to say why.",
+    text: "Most of what's written about automation is aimed at software companies and marketing teams. The people who spend their days on roofs, under sinks and inside crawl spaces rarely get a mention. I want to change where my own attention goes, and this is my plan.",
   },
   {
     t: "p",
-    text: "I should be upfront about something first. My client work so far has been in clinics, travel, real estate and freight, plus a handful of other small service businesses. Trades are where I am putting my attention now, and I would rather tell you that than pretend I have a long list of roofers on my books. What I do have is a clear view of the problem, because I have seen the same one in every business I have worked with.",
+    text: "Let me be clear about where I stand. My client work since 2019 has been in clinics, travel, real estate and freight, along with some other small service businesses. Trades are a direction I'm choosing now. I don't have a long list of trade clients to point at, and I won't pretend to.",
   },
-  { t: "h2", text: "The problem is the same everywhere" },
+  { t: "h2", text: "Why trades" },
   {
     t: "p",
-    text: "Before I started my own company, I worked inside accounting firms. Payroll, QuickBooks, spreadsheets nobody wanted to touch. What I noticed there is that a business loses most of its time and money in small, repeated gaps. A reminder that did not go out. A reply that took a day. A number copied wrong.",
-  },
-  {
-    t: "p",
-    text: "Trades have those same gaps, with one extra twist: the owner is physically somewhere else when they happen. You cannot answer the phone from inside a crawl space. You cannot write a quote while you are holding a pipe wrench. The work is the reason the business exists, and it is also the reason the business cannot reply.",
-  },
-  { t: "h2", text: "Three situations I keep thinking about" },
-  {
-    t: "p",
-    text: "These are pictures, not case studies. I use them because they are what I would build first.",
+    text: "Before running my own company I worked inside accounting firms, and what stayed with me is how much business trouble comes from small, repeated gaps. A reminder nobody sent. A reply that waited a day. A figure copied wrongly.",
   },
   {
     t: "p",
-    text: "A roofer is up a ladder and a call comes in. They cannot answer, so the customer calls the next roofer. Roof jobs are among the biggest a small business takes, and one missed call can be one lost job. The fix I would build: the moment a call is missed, a text goes back automatically, something like \"Sorry, we're on a roof. What's the address and what's the problem?\" The answer lands in one list, with a link to any photo. The owner calls back at lunch already knowing the job.",
+    text: "Trades have all of those, with one added difficulty. The person who could close the gap is usually busy doing the actual work with their hands, somewhere without a signal or a free moment. The business depends on that work, and the same work keeps the phone unanswered.",
   },
   {
     t: "p",
-    text: "A heating and cooling company has a list full of last year's customers who are due for a tune-up. Nobody is reminding them. Then the weather turns, and they call whoever answers first. The fix: each month, the automation finds who is due and writes a friendly text with a booking link. The owner reads it, taps approve, and it sends. When someone says yes, the visit lands in the calendar.",
+    text: "There's another reason. A trades business is easy to judge. Either a missed call got a response or it didn't, and either a quote went out that day or it sat. There's little room for me to hide behind jargon, which suits a builder who'd rather be checked.",
+  },
+  { t: "h2", text: "The first builds I'd offer" },
+  {
+    t: "p",
+    text: "These are starting points rather than a finished product, and I'd adapt each to the trade and the owner's habits.",
+  },
+  {
+    t: "list",
+    items: [
+      "Missed-call reply: when a call goes unanswered, the caller gets a text asking what they need, and the answer lands in one list for you to work through.",
+      "Quote-photo intake: customers send a photo and a few details, and the system sorts them into a draft quote based on your own price list for you to review.",
+      "Maintenance reminder: the system finds past customers who are due for a repeat visit and prepares a message with a booking link for you to approve.",
+    ],
   },
   {
     t: "p",
-    text: "A customer sends a plumber a photo of a leaking pipe and asks how much. The plumber is under a sink, so the quote waits until evening, and by evening the customer has booked whoever answered at lunch. The fix: the photo and message land in the automation, which drafts a quote from the plumber's own price list and a short note. The plumber checks it, adjusts it if they want, and taps send. Same hour, not same week.",
+    text: "The missed-call text can be a fixed line you write yourself. Anything an AI composes for a customer, like the quote note or the reminder, you read and approve first. Your name carries a lot of weight locally, and I don't want a machine spending it for you.",
   },
-  { t: "h2", text: "Why the person stays in the loop" },
+  { t: "h2", text: "What I don't know yet" },
   {
     t: "p",
-    text: "You will notice that two of those three have a person approving before anything goes out. That is deliberate. In a trade, your name is your reputation, and your reputation is local. A bad message does not just lose one sale, it gets repeated over a fence.",
-  },
-  {
-    t: "p",
-    text: "So I build the automation to do the slow parts, the finding, the drafting, the sorting, and leave the decision to the owner, who can approve a draft in a few seconds from the truck. It is the same principle I use everywhere: speed from the machine, judgment from the person.",
-  },
-  { t: "h2", text: "Why this suits me" },
-  {
-    t: "p",
-    text: "I work from Bali, and I have been building for clients since 2019. I take on a few projects a month and I am hands-on with each one. That is a bad fit for companies that want a big team and a long contract. It is a good fit for a business with one owner, a phone, and a calendar that is too full to look at itself.",
+    text: "I haven't yet run these builds inside a working trades business, so I expect surprises. I don't know how your jobs get scheduled, which apps your crew already uses, or how a typical quote comes together in your head. I'd rather learn that from you than guess at it from my desk.",
   },
   {
     t: "p",
-    text: "There is also something I simply like about it. A good automation for a trades business is easy to explain and easy to check. Either the missed call got a reply or it did not. Either the quote went out the same hour or it did not. There is nowhere for me to hide behind jargon, and I think that keeps me honest.",
+    text: "That's why the first conversation is mostly me listening. I'd ask who picks up the phone when you can't, where your customers' messages end up, and what you're doing at the moment you miss them. Those answers decide which build comes first, and they often decide that the answer is something much smaller than I walked in expecting.",
+  },
+  { t: "h2", text: "How I'd start" },
+  {
+    t: "p",
+    text: "With one build, not all three. We'd pick whichever gap is costing you the most, run it for a few weeks with you approving everything, and see what it teaches us before adding anything. I work from Bali and take on only a few projects a month, so each client gets me directly.",
   },
   {
     t: "p",
-    text: "It also does not need to be big. The first thing I build is usually one small automation, running with the owner approving everything, for a couple of weeks. Then we see what it taught us and add the next layer. Starting small is not thinking small. It is the fastest way to build something that lasts.",
+    text: "Tell me which trade you run and I'll tell you which of these I'd build first.",
   },
 ];

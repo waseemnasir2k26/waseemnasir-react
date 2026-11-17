@@ -13,7 +13,7 @@ export type PostMeta = {
   dateLabel: string;
   readingTime: string;
   tag: string;
-  kind: "STORY" | "LATEST NEWS";
+  kind: "STORY" | "LATEST NEWS" | "LESSON" | "PLAYBOOK" | "PLAN";
   excerpt: string;
   /** <meta name="description"> + OG description */
   description: string;
@@ -64,13 +64,13 @@ export const POSTS: PostMeta[] = [
       "What I automate first in a small business (and why it's the boring stuff)",
     date: "2026-11-05",
     dateLabel: "November 5, 2026",
-    readingTime: "5 min read",
-    tag: "Founder story",
-    kind: "STORY",
+    readingTime: "4 min read",
+    tag: "Playbook",
+    kind: "PLAYBOOK",
     excerpt:
-      "New business owners ask for something clever. I start with leaks, then repeats, then reports, and I start with one small automation, not ten. Here is the order I use and where it comes from.",
+      "Owners ask for something clever. I start with leaks, then repeats, then reports, one build at a time. The order I use, where it came from, and a quick leak check you can run today.",
     description:
-      "Why I start small-business automation with missed inquiries, repeated tasks and only then reports, and why I begin with one small automation instead of ten.",
+      "Why I start small-business automation with leaking inquiries, then repeated tasks, then reports, plus a five-minute leak check you can do yourself.",
     ogImage:
       "/img/pro/CAFE-WORK-2026-05-22-bali-terrace-typing-laptop-latte-sunglasses.jpg",
     ogAlt:
@@ -81,30 +81,30 @@ export const POSTS: PostMeta[] = [
     title: "Why I never let AI send a customer reply without a human check",
     date: "2026-11-05",
     dateLabel: "November 5, 2026",
-    readingTime: "5 min read",
-    tag: "Founder story",
-    kind: "STORY",
+    readingTime: "4 min read",
+    tag: "Lesson",
+    kind: "LESSON",
     excerpt:
-      "The AI can draft the reply. A person approves it before it goes out. Here is the thinking behind that one rule, what I still let run on its own, and what happens when a step breaks.",
+      "The AI drafts, a person sends. The reasoning behind that rule, what approval looks like day to day, what I refuse to fully automate, and four checks before you add AI replies.",
     description:
-      "Why every AI-written customer message I build gets approved by a person first, what can safely stay automatic, and how to plan for failure.",
+      "My reasoning for having a person approve every AI-written customer reply, what I will not fully automate, and four things to check before you add AI replies.",
     ogImage:
-      "/img/pro/CAFE-WORK-2026-02-27-olive-track-jacket-coffee-laptop-tea-sign.jpg",
+      "/img/pro/WORK-2025-06-10-coworking-desk-focused-phone-candid.jpg",
     ogAlt:
-      "Waseem Nasir at a cafe table with a laptop and coffee, reviewing messages",
+      "Waseem Nasir at a coworking desk, focused on his phone while reviewing a message",
   },
   {
-    slug: "why-i-build-automations-for-trades-and-small-local-businesses",
-    title: "Why I build automations for trades and small local businesses",
+    slug: "why-trades-are-my-next-focus-and-what-id-build-first",
+    title: "Why trades are my next focus, and what I'd build first",
     date: "2026-11-05",
     dateLabel: "November 5, 2026",
-    readingTime: "5 min read",
-    tag: "Founder story",
-    kind: "STORY",
+    readingTime: "3 min read",
+    tag: "Plan",
+    kind: "PLAN",
     excerpt:
-      "The owner is up a ladder or under a sink when the customer reaches out. That gap is the problem I want to work on, and an honest account of where I am with it.",
+      "Trades are the direction I am choosing next, not a long client list. Here is the honest plan, why I picked it, and the three first builds I would offer.",
     description:
-      "Why I build missed-call, reminder and quote automations for roofers, plumbers, HVAC and other local trades, and how an accounting background shaped it.",
+      "An honest plan for building automations for trades and local service businesses: why I am focusing there and the three first builds I would offer.",
     ogImage:
       "/img/pro/CAFE-WORK-2026-03-29-closeup-laptop-sunglasses-valley-view.jpg",
     ogAlt:

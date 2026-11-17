@@ -3,68 +3,66 @@ import type { Block } from "./types";
 export const body: Block[] = [
   {
     t: "lead",
-    text: "There is one rule I do not bend when I build automations that deal with customer messages. The AI can write the reply. It never gets to send it alone.",
+    text: "When I design anything that talks to a customer, I follow one rule: the AI drafts, a person sends. I've settled on it after thinking about where the risk sits, and I want to lay out that reasoning so you can judge whether it fits your business.",
+  },
+  { t: "h2", text: "Why I design it this way" },
+  {
+    t: "p",
+    text: "A language model writes fluent text whether or not it's right. That's useful for drafts and risky for anything final. It can miss that a customer is annoyed, state something about your policy that isn't true, or agree to a thing you'd never agree to. And when the message goes out, the customer sees your business name, not a model's.",
   },
   {
     t: "p",
-    text: "People sometimes hear that as timid, or as a sign I do not trust the technology. It is neither. I use AI all day, and it is genuinely good at what it is good at. The rule comes from looking honestly at what each side costs.",
+    text: "Weigh that against the price of a check. Reading a short draft and tapping a button takes a few seconds. A wrong message can cost a customer, or leave you honouring a promise you never made. With stakes that lopsided, I don't need much convincing.",
   },
-  { t: "h2", text: "What AI is good at, and where it goes wrong" },
+  { t: "h2", text: 'What "approve" looks like for a client' },
   {
     t: "p",
-    text: "An AI model is very good at a first draft, and good at remembering the details of a conversation. It is also capable of being confidently wrong. It can sound cold when a customer is upset. It can promise something the business cannot deliver. And when a wrong message goes out, it is your name on it, not the AI's.",
-  },
-  {
-    t: "p",
-    text: "Now put the two costs side by side. The cost of checking is small: a draft arrives on your phone, you read it in a few seconds, and you tap approve. The cost of a single bad message can be a lost customer, a public complaint, or a promise you now have to keep. Set next to each other, the choice is easy.",
-  },
-  { t: "h2", text: "A small example" },
-  {
-    t: "p",
-    text: "Say a customer writes in upset about a late delivery. An AI draft might open with a cheerful greeting and offer a discount nobody approved. That draft is not stupid. It is just doing what it does, which is producing something that sounds helpful.",
+    text: "I try to make the check so light that nobody resents it. In the setups I build, the draft shows up where the owner or their team already works, with the customer's original message right beside it. They get three choices: send it as is, change a few words and send, or throw it away and write their own.",
   },
   {
     t: "p",
-    text: "A person reads it in two seconds, deletes the discount, and adds a real apology. That small edit is the difference between rescuing the customer and making them angrier. The AI saved the typing. The person kept the judgment.",
+    text: "Anything the system isn't sure about goes to a named person instead of being guessed at. One person owns that queue, because a queue that belongs to everyone ends up belonging to nobody.",
   },
-  {
-    t: "quote",
-    text: "Customers rarely notice a good reply, but they never forget a bad one.",
-  },
-  { t: "h2", text: "This does not mean nothing is automatic" },
+  { t: "h2", text: "\"But the models keep getting better\"" },
   {
     t: "p",
-    text: "I am not saying every message needs a human. Fixed confirmations, like an appointment-booked note, can be plain templates that you wrote yourself, with no AI improvising anything. Internal alerts can go out automatically too.",
+    text: "They do, and I use that. A better model means better drafts and fewer corrections. What it doesn't change is the shape of the risk. A model that's right nearly every time still has the occasional miss, and the miss tends to arrive on the one message where the customer is already unhappy or the stakes are high. I'd rather pay a few seconds of review on every draft than meet that miss unprepared.",
   },
   {
     t: "p",
-    text: "The line I draw is simple. If an AI is writing words to a customer, a person approves them. Everything else can run on its own.",
+    text: "There's a human side too. Staff who approve drafts learn what the system does well and where it stumbles, so they trust it for the right reasons. People who were handed a finished black box tend to either distrust it completely or stop looking at it at all.",
   },
-  { t: "h2", text: "What happens when something breaks" },
+  { t: "h2", text: "What I won't fully automate" },
   {
     t: "p",
-    text: "Every automation I build has a plan for failure, because it will fail one day. A service goes down, an input arrives in a shape nobody expected, a step times out. The question is what the customer experiences when it does.",
-  },
-  {
-    t: "p",
-    text: "My answer is that the customer still gets a response. If a step breaks, the message is routed to a person, and that person is told what went wrong. One owner, one inbox, one rule. Nothing is silently dropped. A system that fails loudly to a human is annoying for an hour. A system that fails silently can cost you someone's business for months before you notice.",
-  },
-  { t: "h2", text: "Send it your worst messages first" },
-  {
-    t: "p",
-    text: "Before any of this goes live, I test it on the messages I would least like it to see. An angry customer. A message in another language. A blank one. A question it should not answer. Then I watch what it does, fix what breaks, and decide who gets alerted when it happens for real.",
+    text: "This list is short and I don't negotiate on it. Refunds and credits. Complaints. Bad news of any kind. Anything involving health, legal matters or someone's money. Any message that commits the business to a price, a date or an exception. In those cases the system can gather the facts and prepare a draft, but the decision and the words belong to a person.",
   },
   {
     t: "p",
-    text: "It is a little uncomfortable, but it is the cheapest testing you will ever do. You would much rather find out in a test that your system offers refunds to people who did not ask for one.",
+    text: "There's plenty I do let run alone. A fixed confirmation that you wrote yourself, such as a booking receipt, doesn't need a human in the loop, because no AI is improvising in it. Internal alerts can fire automatically too. The line is simple: if a model composes words a customer will read, someone approves them first.",
   },
-  { t: "h2", text: "It gets better over time" },
+  { t: "h2", text: "I plan for failure in every build" },
   {
     t: "p",
-    text: "The part people do not expect is that the human check gets lighter, not heavier. When you fix a bad draft, you fix the instructions behind it once, and every future draft improves. After a few weeks of reading drafts, the edits become rare, and you know which kinds of messages you can trust and which you cannot. You keep control the whole time, and your customer keeps a person behind the message.",
+    text: "Things break. A connection drops, an input arrives in a shape nobody expected, a step times out. What I care about is what the customer experiences meanwhile. In my builds a failed step hands the message to a person, with a note on what went wrong. A loud failure costs you an annoying hour. A silent one can cost you a customer you never knew you lost.",
   },
+  { t: "h2", text: "It gets lighter over time" },
   {
     t: "p",
-    text: "That is why I build it this way, and why I will keep building it this way even as the models get better.",
+    text: "When you correct a draft, you're also correcting the instructions behind it, so the next draft starts from a better place. You'll usually edit less as the drafts improve. Even so, I keep the approval step, because the point was never to catch a high number of errors. It was to make sure the rare bad one doesn't reach a customer.",
+  },
+  {
+    t: "h2",
+    text: "If you're adding AI replies to your business, check these four things",
+  },
+  {
+    t: "list",
+    ordered: true,
+    items: [
+      "Who is the named person that approves drafts, and who covers when they're away?",
+      "Where do messages go when the system fails or isn't sure of the answer?",
+      "Which topics are off limits for AI drafting in your business, and is that written down?",
+      "Which single measure will tell you in a month whether this is working?",
+    ],
   },
 ];

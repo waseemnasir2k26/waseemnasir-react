@@ -101,7 +101,9 @@ export default function BlogIndex() {
             className="flex flex-col gap-6"
             style={{ listStyle: "none", padding: 0 }}
           >
-            {POSTS.map((p) => (
+            {[...POSTS]
+              .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+              .map((p) => (
               <li key={p.slug}>
                 <Link
                   href={`/blog/${p.slug}`}

@@ -3,72 +3,73 @@ import type { Block } from "./types";
 export const body: Block[] = [
   {
     t: "lead",
-    text: "When a new business owner talks to me, they almost always ask for something clever. A chatbot that knows everything. A dashboard with every number on it. I understand why. Clever is what the internet shows them. But the first thing I build is almost never clever, and I want to explain why.",
+    text: "Owners tend to open with a wish list: a chatbot that knows the whole business, a dashboard with every number on it. I get it. Those are the things people see online. But when I start on a small business, the first build is usually dull, and I think that's the right call.",
   },
   {
     t: "p",
-    text: "My rule is simple: protect the money that is leaking before you build anything else. When an inquiry goes unanswered, that is a customer who was already on their way to you and quietly turned around. Nothing you build on top of a leak matters until the leak is closed.",
+    text: "My order of work is leaks, then repeats, then reports. I'll take them one at a time.",
+  },
+  { t: "h2", text: "Leaks first" },
+  {
+    t: "p",
+    text: "Every business has places where customers reach out and nobody catches them. A phone that rings while everyone is busy. A contact form wired to an address nobody opens. A message that arrives at night and gets answered the following afternoon, after the person has already talked to someone else.",
   },
   {
     t: "p",
-    text: "So the first question I ask is never what sounds exciting. It is where people are reaching you, and where those messages go to die. I sort what I find into three buckets, in this order: leaks, repeats, reports.",
-  },
-  { t: "h2", text: "First, leaks" },
-  {
-    t: "p",
-    text: "Missed calls. Website forms that email an address nobody checks anymore. Messages that sit overnight and get answered the next afternoon, by which time the customer has already found someone else.",
+    text: "Each of those is a lead that was already warm. Spending effort anywhere else before they're fixed makes little sense, because it's like decorating a shop with the front door open to the rain.",
   },
   {
     t: "p",
-    text: "The fix is a small, boring automation that makes sure every inquiry gets noticed and answered. Anything customer-facing gets approved by a person before it goes out. It does not look impressive in a demo. It looks very impressive on a quiet Monday morning when nothing slipped.",
+    text: "The fix is usually small. Make sure every inquiry is seen, acknowledged and routed to a person. If the system writes anything that a customer will read, someone on the team looks at it before it goes out. Nobody will applaud a build like this in a demo. You notice it on an ordinary Monday, when nothing got lost over the weekend.",
+  },
+  { t: "h2", text: "Repeats second" },
+  {
+    t: "p",
+    text: "Next I look for work your team does the same way again and again: copying details between a spreadsheet and an inbox, sending the same nudge to a different person each day. These make good candidates because the steps are already settled and someone has shown they work.",
   },
   {
     t: "p",
-    text: "Here is an example. Picture a small plumbing business. The calls go unanswered while the crew is out on jobs. The website form sends its messages to an old address. The reminders for annual service live in the owner's head. I would start with the unanswered calls and the dead form, because those lose customers today. The reminders come next. The reports come last.",
+    text: "I'm careful here. A process that's still being worked out shouldn't be automated yet, because the machine will just repeat your indecision faster. Let a person get it right first, then hand over the tedious part.",
   },
-  { t: "h2", text: "Second, repeats" },
+  { t: "h2", text: "Reports last" },
   {
     t: "p",
-    text: "Anything your team copies and pastes more than a few times a week is a good candidate. Moving details from a sheet into an inbox. Chasing the same reminder again and again. These are good first targets because the steps are already known, and a real person has already proven they work.",
+    text: "Everyone wants the dashboard first, and I understand why. But a report can only describe what's underneath it. If inquiries are still slipping through, a dashboard gives you a very clear picture of the slipping. Once the first two layers run, the numbers become worth trusting, and a weekly summary can replace the Sunday-night spreadsheet.",
   },
+  { t: "h2", text: "Where I picked this up" },
   {
     t: "p",
-    text: "That last part matters more than it sounds. If a process is still being figured out, automating it only automates the confusion. I would rather watch a person do it well for a month, then take the boring part off their hands.",
-  },
-  {
-    t: "quote",
-    text: "A dashboard looks great, but if inquiries are still leaking, the dashboard just shows you the leak more clearly.",
-  },
-  { t: "h2", text: "Third, reports" },
-  {
-    t: "p",
-    text: "Once the first two are running, you finally have numbers worth trusting, and a weekly summary saves you from building one on a Sunday night. Reports come last because they are only as good as the work underneath them. A report built on top of a leaking process is a very tidy picture of a mess.",
-  },
-  { t: "h2", text: "Where this comes from" },
-  {
-    t: "p",
-    text: "I did not arrive at this order by reading about it. Before I ran my own company, I worked inside accounting firms: QuickBooks, payroll runs, spreadsheets that had grown into small unmaintained cities. Doing payroll by hand teaches you that most of the work a business does is not thinking, it is copying. The same reminder, retyped. The same numbers, moved from one sheet to another.",
+    text: "Before I had my own company I worked inside accounting firms, with QuickBooks, payroll runs and spreadsheets that had grown into small unmaintained cities. Payroll by hand taught me that a lot of business work is copying more than thinking. Same figures moved from one sheet to another, every month, forever.",
   },
   {
     t: "p",
-    text: "What I also learned there is that the exciting problem is rarely the expensive one. The expensive one is the thing that quietly fails every week and that nobody has time to look at. That is where I start now, whether the business is a clinic, a travel agency or a one-person shop.",
+    text: "It also taught me that the costly problem is seldom the interesting one. It's whatever quietly fails every week while everyone is too busy to look. Since 2019 I've worked on that kind of problem for clients in clinics, travel, real estate and freight, and I take on only a few projects a month so I can stay hands-on with each.",
   },
-  { t: "h2", text: "Start with one small thing" },
+  { t: "h2", text: "One build, then the next" },
   {
     t: "p",
-    text: "People often want ten automations at once. I understand the appeal, but I start with one small one. When ten new things go live together and something breaks, nobody can tell which one broke. The team never learns to trust any of them, because they are all new at the same time. And if the first one was built on a wrong assumption, all ten inherit the mistake.",
-  },
-  {
-    t: "p",
-    text: "So I pick one automation that solves a real, visible problem, and I run it with a person approving everything. For a couple of weeks I watch it. I read the drafts, fix the wording, and notice what customers actually say. That is where the surprises show up, and they always show up. Only then do I add the next layer, on top of something the team already trusts.",
-  },
-  { t: "h2", text: "The mistake I see most" },
-  {
-    t: "p",
-    text: "The mistake is starting with whatever looks good in a demo. It is an easy trap, because the demo is what gets people excited and the unglamorous fix is what gets them paid. I would rather be the person who made sure nothing slipped than the person who built the prettiest screen.",
+    text: "Owners often ask for several automations at the same moment. I'd rather ship one. If five new things go live together and a customer complains, you can't tell which of them caused it, and your team has no time to learn to trust any of them. A shaky assumption in the first build also leaks into every build after it.",
   },
   {
     t: "p",
-    text: "So if you are deciding what to automate first, do not ask what would impress people. Ask where your customers reach you, and what happens to them next. Fix the leaks. Then the repeats. Then the reports.",
+    text: "So I choose the single problem that hurts most and is easiest to see. For the first couple of weeks a person approves everything it produces, and I read along. I fix wording, spot odd cases, and learn how customers really write. Then we add the next piece on top of something the team already relies on. It feels slower at the start and turns out quicker by the end.",
+  },
+  { t: "h2", text: "A five-minute leak check you can do today" },
+  {
+    t: "p",
+    text: "You don't need me for this. Open these four places and spend a minute on each:",
+  },
+  {
+    t: "list",
+    items: [
+      "Your phone's call log for the past week. How many missed calls did you ring back, and how quickly?",
+      "The inbox your website form sends to. Is it the right address, and does anyone check it?",
+      "Your messages and email. Is anything still waiting on a reply after a full day?",
+      "The quotes you've sent. Which ones went quiet with no follow-up?",
+    ],
+  },
+  {
+    t: "p",
+    text: "Wherever you found something sitting there, that's your first build. It probably won't be the exciting one, and it'll probably be the one that matters.",
   },
 ];
