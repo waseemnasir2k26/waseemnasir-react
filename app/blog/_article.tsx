@@ -114,6 +114,34 @@ function renderBlock(b: Block, i: number) {
         </Tag>
       );
     }
+    case "links":
+      return (
+        <ul
+          key={i}
+          className="flex flex-col gap-3 pl-6"
+          style={{
+            listStyle: "disc",
+            fontSize: "1.0625rem",
+            lineHeight: 1.7,
+            color: C.body,
+          }}
+        >
+          {b.items.map((it) => (
+            <li key={it.href}>
+              <a
+                href={it.href}
+                className="bp-link"
+                style={{ color: C.accent }}
+                rel="noopener"
+              >
+                {it.label}
+              </a>
+              {": "}
+              {it.note}
+            </li>
+          ))}
+        </ul>
+      );
     default:
       return <P key={i}>{b.text}</P>;
   }

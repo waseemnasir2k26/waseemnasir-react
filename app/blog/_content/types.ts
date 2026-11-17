@@ -4,7 +4,8 @@ export type Block =
   | { t: "p"; text: string }
   | { t: "h2"; text: string }
   | { t: "quote"; text: string }
-  | { t: "list"; items: string[]; ordered?: boolean };
+  | { t: "list"; items: string[]; ordered?: boolean }
+  | { t: "links"; items: { href: string; label: string; note: string }[] };
 
 /** Optional FAQ for an article; rendered as a section and as FAQPage JSON-LD. */
 export type Faq = { q: string; a: string };

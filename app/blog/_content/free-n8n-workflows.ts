@@ -3,16 +3,36 @@ import type { Block, Faq } from "./types";
 export const body: Block[] = [
   {
     t: "lead",
-    text: "I publish my n8n workflows for free, in a series on my YouTube channel, and people sometimes ask whether I'm giving away the thing I sell. I understand the worry. Here is my reasoning, including the parts that are not purely generous.",
+    text: "I publish my n8n workflows for free because explaining a build in public makes me a better builder, and because it lets the right clients find me while the wrong ones rebuild it themselves. Here is what is actually in the series, what you can import, and what it costs you if you go the free route.",
   },
-  { t: "h2", text: "What I actually give away" },
+  { t: "h2", text: "What is actually in the series" },
   {
     t: "p",
-    text: "The free series shows working n8n workflows: the trigger, the steps, the failure handling, and why I built it that way. You can follow along and rebuild the same thing in your own n8n. I don't hold back the interesting node or save the good version for paying clients. What I show is how I'd really build it.",
+    text: "Every workflow I show on video is published as an importable JSON file in a public GitHub repo, under the MIT licence, so you can use it in client work too. Each folder has its own README listing the nodes and the credentials you need. Three examples I can point to:",
+  },
+  {
+    t: "links",
+    items: [
+      {
+        href: "https://youtu.be/hbWm05jjwYU",
+        label: "Episode 5, the clinic WhatsApp booking agent",
+        note: "simulated WhatsApp messages come in, a rule in code sends anything about symptoms, medication or prices to a human handoff, and the rest goes to an agent that checks a slot grid and books. Every reply lands in an outbox table and is never sent. Import workflow 05 from the repo.",
+      },
+      {
+        href: "https://youtu.be/u8aXog9yphw",
+        label: "Episode 10, the Lead Stack",
+        note: "an install script that imports five of my published workflows into a fresh n8n, inactive, wired to one shared ledger. The folder is workflow 10 in the repo.",
+      },
+      {
+        href: "https://github.com/waseemnasir2k26/n8n-workflows",
+        label: "The repo itself",
+        note: "workflows 01 to 21 as workflow.json files, from a shorts factory to a missed-call text back to a review reply drafter that cannot post anything.",
+      },
+    ],
   },
   {
     t: "p",
-    text: "What I don't give away is the work around the workflow. Your business has its own tools, its own messy data and its own people, and that part cannot be copied from a video. A workflow is a small piece of a working system, and I sell the system.",
+    text: "What I keep back is the work around the workflow. Your business has its own tools, its own messy data and its own people, and that part cannot be copied from a video. A workflow is one piece of a working system, and the system is what I sell.",
   },
   { t: "h2", text: "Why free makes sense for me" },
   {
@@ -25,23 +45,19 @@ export const body: Block[] = [
       "It matches how I learned. A great deal of what I know about automation came from people who shared their builds. Sharing mine is partly paying that back.",
     ],
   },
-  { t: "h2", text: "How I decide what goes in the series" },
+  { t: "h2", text: "The caveat people miss" },
   {
     t: "p",
-    text: "I choose workflows that a small business could realistically use: something that catches a message, sorts it, drafts a reply or tidies a spreadsheet. I skip anything that only looks impressive on camera. If a build needs ten fragile steps to produce a nice demo, it is not teaching you anything you can use on a Monday morning.",
+    text: "Importing the JSON is not the same as having it running. The repo README tells you to replace every credential marked REPLACE_ME, and the folder README for each workflow lists what it expects: workflow 05, for example, needs a Postgres database and an OpenAI-compatible key, and I run it against Groq. The first thing people hit is a node that fails because a credential or table is missing, not because the workflow is wrong.",
   },
   {
     t: "p",
-    text: "I also try to show the unglamorous parts: what happens when an API call fails, how to read an execution log, and how to test a change without touching live data. Those habits matter more than any single node, and they are the part most tutorials leave out because they make for a duller video.",
-  },
-  {
-    t: "p",
-    text: "Not every episode lands. Some workflows turn out simpler than I expected, and some need a caveat I only noticed while recording. When that happens I would rather say so in the video than polish it away.",
+    text: "In the Lead Stack episode, two of the five workflows errored on screen when I ran them, and I left that in the video. It is a more honest picture of what the first run of an imported workflow looks like.",
   },
   { t: "h2", text: "What I'm careful about" },
   {
     t: "p",
-    text: "Free does not mean careless. Everything in the series is built on my own test data, never on a client's. I don't show customer messages, real credentials or anything that belongs to someone else's business. When a workflow touches customer communication, I show the human approval step too, for the same reason I explain in my post on why I never let AI send a customer reply without a human check.",
+    text: "Free does not mean careless. The repo's published workflows use placeholder hosts and REPLACE_ME credentials, and the ones that touch customers ship with their send nodes disabled or no send node at all. That is the same rule I explain in my post on why I never let AI send a customer reply without a human check.",
   },
   {
     t: "p",
@@ -59,21 +75,21 @@ export const body: Block[] = [
   { t: "h2", text: "Where to start" },
   {
     t: "p",
-    text: "Pick the one repeated task that annoys you most, find the nearest episode in the series, and rebuild it with your own test data before you connect anything real. If you get stuck, or you'd like me to look at what you have in mind, you can book a free audit and I'll tell you honestly whether it is a job for you or for me.",
+    text: "Pick the one repeated task that annoys you most, find the nearest episode in the series, and rebuild it with your own test data before you connect anything real. Browse the repo and pick one, or if you would rather have it built, book a free audit and I'll tell you honestly whether it is a job for you or for me.",
   },
 ];
 
 export const faq: Faq[] = [
   {
     q: "Are the n8n workflows really free?",
-    a: "Yes. The workflows in my series are free to watch and rebuild. n8n itself can be self-hosted, and the free Community edition works without a licence key, though hosting and any tools you connect have their own costs.",
+    a: "Yes. The JSON files are in a public repo under the MIT licence, with no signup needed to download them. What you pay for is your own hosting and any services you connect, such as a database or a model API.",
   },
   {
     q: "Why would a founder give workflows away?",
-    a: "Because explaining a build in the open makes me a better builder, it shows my approach before anyone hires me, and the paid work is the part a video cannot copy: fitting a system to one specific business and looking after it.",
+    a: "It is a working portfolio. Anyone can read how I build before they talk to me, and the paid work is the fitting and upkeep that a file cannot carry.",
   },
   {
     q: "Can I use the free workflows for my own business?",
-    a: "You can rebuild them and adapt them to your own tools. Test with dummy data first, add your own error alerts, and keep a person responsible for anything that sends messages to customers.",
+    a: "Yes, including client work, under the licence. Replace the placeholder credentials, test with dummy data first, and keep a person responsible for anything that messages customers.",
   },
 ];
