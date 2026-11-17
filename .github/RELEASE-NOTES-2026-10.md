@@ -1,0 +1,4 @@
+- waseemnasir-react is the public Next.js 14 / React 18 / Tailwind founder site for Waseem Nasir (waseemnasir.com): production homepage, 17 design variants under /v/<name>, plus brand, blog, mentorship and legal routes. MIT licensed.
+- Reviewed October 2026: README links (skynetjoe.com, waseemnasir.com) returned HTTP 200. Most recent commits are from 2026-09-21 to 09-24: shared WhatsApp and Book-a-call header CTAs, and security headers (CSP scoped to Calendly and self-hosted fonts) in next.config.mjs.
+- Known gaps: no tests and no CI workflow; the README route table still omits routes present in app/ (/about, /book, /inbox-ops, /legal, /privacy, /terms).
+- Release housekeeping only: package version 1.1.0 to 1.2.0, Status line, changelog and Work with SkynetLabs section. No app code changes in this release.
