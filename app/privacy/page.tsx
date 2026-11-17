@@ -67,12 +67,13 @@ export default function PrivacyPage() {
         it collects your email address, optionally your first name and the
         topic you picked, plus the page you were on. The address is stored in
         our own operations dashboard (hq.skynetjoe.com, self-hosted on a
-        Hostinger VPS) and passed to Brevo, the email service that sends the
-        list emails. You get a welcome email straight away and a short welcome
-        series (three more emails over two weeks), then only occasional emails.
-        To leave the list at any time, use the unsubscribe link in any list
-        email, reply to any email, or write to waseem@skynetjoe.com and the
-        address is removed within 7 days.
+        rented server in France) and passed to Brevo, the email service that sends the
+        list emails. You will get a welcome email when you join and a short
+        welcome series (up to three more emails over two weeks), then only
+        occasional emails. To leave the list at any time, use the unsubscribe
+        link in the series and newsletter emails, reply &ldquo;stop&rdquo; to
+        any email (including the welcome email), or write to
+        waseem@skynetjoe.com and the address is removed within 7 days.
         &ldquo;Not right now&rdquo; stores a 14-day snooze in your browser and
         nothing else.
       </p>
@@ -124,6 +125,11 @@ export default function PrivacyPage() {
           people who get in touch.
         </li>
         <li>
+          <strong>To send the email list you joined</strong> — your consent,
+          given when you submit the sign-up card. You can withdraw it at any
+          time by unsubscribing.
+        </li>
+        <li>
           <strong>To keep records for tax and accounting</strong> — a legal
           obligation.
         </li>
@@ -136,18 +142,20 @@ export default function PrivacyPage() {
       <h2>Who else touches it</h2>
       <ul>
         <li>
-          <strong>Vercel</strong> — hosts this website and serves its pages.
+          <strong>Vercel</strong> — hosts this website and serves its pages, and
+          runs the small server function that passes email-list sign-ups to
+          our dashboard.
         </li>
         <li>
           <strong>Calendly</strong> — runs the call booking.
         </li>
         <li>
-          <strong>Our own n8n server</strong> (self-hosted on a Hostinger VPS)
+          <strong>Our own n8n server</strong> (self-hosted on a rented server in France)
           — receives the anonymous funnel counts described above.
         </li>
         <li>
           <strong>Our own operations dashboard</strong> (hq.skynetjoe.com,
-          self-hosted on the same Hostinger VPS) — stores email-list sign-ups
+          self-hosted on the same server) — stores email-list sign-ups
           (email, optional first name, chosen topic, page).
         </li>
         <li>
