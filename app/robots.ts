@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-// /v/* and /variants are gone (301 -> /), so they no longer need a Disallow.
+// /v/* and /variants are gone (308 -> /), so they no longer need a Disallow.
 // /brand stays out of the index.
 const DISALLOW = ["/brand"];
 const ALLOW = ["/"];
