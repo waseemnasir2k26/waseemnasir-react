@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BlogShell, Mono, TagPill, C, SHADOW } from "../blog/_ui";
 import { EPISODES } from "./episodes";
+import { PlaylistEmbed } from "./PlaylistEmbed";
 
 const SITE = "https://www.waseemnasir.com";
 const URL = `${SITE}/claude-code-course`;
@@ -164,16 +165,7 @@ export default function ClaudeCodeCourse() {
             }}
           >
             <div className="relative w-full" style={{ aspectRatio: "16 / 9" }}>
-              <iframe
-                src={EMBED}
-                title="Claude Code for Real Business: YouTube playlist"
-                loading="lazy"
-                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-                className="absolute inset-0 h-full w-full"
-                style={{ border: 0 }}
-              />
+              <PlaylistEmbed embed={EMBED} playlist={PLAYLIST} />
             </div>
           </div>
           <p
