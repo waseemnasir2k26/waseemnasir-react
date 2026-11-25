@@ -241,6 +241,7 @@ function SiteFooter() {
                   ["/#how", "Work"],
                   ["/#proof", "Proof"],
                   ["/blog", "Blog"],
+                  ["/claude-code-course", "Free course"],
                   ["/about", "About"],
                 ],
               ],

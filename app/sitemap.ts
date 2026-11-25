@@ -25,6 +25,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: `${SITE}/claude-code-course`,
+      lastModified: new Date("2026-11-25"),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
       url: `${SITE}/mentorship`,
       lastModified: new Date("2026-09-06"),
       changeFrequency: "monthly",

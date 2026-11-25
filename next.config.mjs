@@ -9,7 +9,7 @@ const csp = [
   "img-src 'self' data: https:",
   "font-src 'self' data:",
   "connect-src 'self' https://n8n.skynetjoe.com https://calendly.com https://*.calendly.com",
-  "frame-src 'self' https://calendly.com https://*.calendly.com",
+  "frame-src 'self' https://calendly.com https://*.calendly.com https://www.youtube.com https://www.youtube-nocookie.com",
   "frame-ancestors 'self'",
   "base-uri 'self'",
   "form-action 'self'",
