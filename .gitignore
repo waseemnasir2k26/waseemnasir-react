@@ -13,3 +13,8 @@ out
 
 # Next.js incremental TS build cache — dirties the tree on every build
 tsconfig.tsbuildinfo
+
+# secrets - never commit
+.env
+.env.*
+!.env.example
